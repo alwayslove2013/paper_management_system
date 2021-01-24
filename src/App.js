@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.scss";
+import { StoreProvider, useGlobalStore } from "./Store";
+// import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import * as d3 from "d3";
+import ControlView from "./Views/ControlView";
+import UnitView from "./Views/UnitView";
+import DetailView from "./Views/DetailView";
+import Header from "./Views/Header";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <StoreProvider>
+      <ViewContainer />
+    </StoreProvider>
   );
 }
 
 export default App;
+
+// init data
+const ViewContainer = () => {
+  const store = useGlobalStore();
+  useEffect(() => {
+    const fetchPapers = async () => {
+      const papers = await d3.csv("data.csv");
+      store.setPapers(papers);
+    };
+    fetchPapers();
+  }, [store]);
+  return (
+    <div className="view-container">
+      <div className="header-container">
+        <Header />
+      </div>
+      <div className="main-container">
+        <div className="control-view-container">
+          <ControlView />
+        </div>
+        <div className="unit-view-container">
+          <UnitView />
+        </div>
+        <div className="detail-view-container">
+          <DetailView />
+        </div>
+      </div>
+    </div>
+  );
+};
