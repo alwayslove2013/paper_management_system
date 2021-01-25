@@ -5,6 +5,7 @@ const debug = false;
 const createStore = () => {
   return {
     papers: [],
+    unitBlockCount: {},
     maxUnitBlockPaperCount: 0,
     doi2paperBlockPos: {},
     setPapers(papers, compareAttr = "CitationCount") {
@@ -20,7 +21,7 @@ const createStore = () => {
       papers.sort((a, b) => b[compareAttr] - a[compareAttr]);
       this.papers = papers;
 
-      const unitBlockCount = {};
+      let unitBlockCount = {};
       let maxUnitBlockPaperCount = 0;
       this.papers.forEach((paper) => {
         const doi = paper.DOI;
@@ -39,7 +40,8 @@ const createStore = () => {
           maxUnitBlockPaperCount = unitBlockCount[xAttr][yAttr]
         }
       });
-      this.maxUnitBlockPaperCount = maxUnitBlockPaperCount * 0.95;
+      this.maxUnitBlockPaperCount = maxUnitBlockPaperCount * 0.6;
+      this.unitBlockCount = unitBlockCount;
       // this.maxUnitBlockPaperCount = 90;
     },
     get paperCount() {

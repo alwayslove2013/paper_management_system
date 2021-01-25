@@ -1,5 +1,6 @@
 $header-height: 30px;
-$control-view-width: 0px;
+$control-view-width: 0;
+$control-view-height: 60px;
 $detail-view-width: 240px;
 .view-container {
   position: absolute;
@@ -23,15 +24,21 @@ $detail-view-width: 240px;
     left: 0;
     right: 0;
     display: flex;
-    .control-view-container {
-      height: 100%;
-      width: $control-view-width;
-      // background: red;
-    }
-    .unit-view-container {
-      height: 100%;
+    .control-main-container {
       flex: 1;
-      // background: yellow;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      .control-view-container {
+        width: 100%;
+        height: $control-view-height;
+        // background: red;
+      }
+      .unit-view-container {
+        width: 100%;
+        flex: 1;
+        // background: yellow;
+      }
     }
     .detail-view-container {
       height: 100%;

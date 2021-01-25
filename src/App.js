@@ -34,11 +34,13 @@ const ViewContainer = () => {
         <Header />
       </div>
       <div className="main-container">
-        <div className="control-view-container">
-          <ControlView />
-        </div>
-        <div className="unit-view-container">
-          <UnitView />
+        <div className="control-main-container">
+          <div className="control-view-container">
+            <ControlView />
+          </div>
+          <div className="unit-view-container">
+            <UnitView />
+          </div>
         </div>
         <div className="detail-view-container">
           <DetailView />
