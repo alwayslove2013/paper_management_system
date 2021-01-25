@@ -1,25 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./index.scss";
 import CircleUnit from "./CircleUnit";
-import * as d3 from "d3";
 import { useGlobalStore } from "../../Store";
 import { observer } from "mobx-react-lite";
-import { toJS } from "mobx";
 import { get } from "lodash";
 
-const unitLayoutPadding = {
-  top: 30,
-  left: 50,
-  right: 15,
-  bottom: 1,
-};
 
-const unitBlockPadding = {
-  top: 2,
-  left: 1,
-  right: 2,
-  bottom: 1,
-};
 
 const UnitView = observer(() => {
   const store = useGlobalStore();
@@ -33,7 +19,6 @@ const UnitView = observer(() => {
     maxUnitBlockPaperCount,
     doi2paperBlockPos,
   } = store;
-  console.log("maxUnitBlockPaperCount", maxUnitBlockPaperCount);
 
   // const svg = document.querySelector("#unit-svg");
   // const svgWidth =
@@ -54,6 +39,19 @@ const UnitView = observer(() => {
       svg.clientHeight - unitLayoutPadding.top - unitLayoutPadding.bottom
     );
   }, []);
+  const unitLayoutPadding = {
+    top: svgWidth * 0.02,
+    left: svgWidth * 0.04,
+    right: 15,
+    bottom: 1,
+  };
+  
+  const unitBlockPadding = {
+    top: 2,
+    left: 2,
+    right: 2,
+    bottom: 1,
+  };
   const unitBlockWidth =
     unitXAttrList.length > 0
       ? svgWidth / unitXAttrList.length -
@@ -66,7 +64,7 @@ const UnitView = observer(() => {
         unitBlockPadding.top -
         unitBlockPadding.bottom
       : 0;
-  console.log(unitBlockWidth, unitBlockHeight);
+  // console.log(unitBlockWidth, unitBlockHeight);
 
   const aspectRatio = Math.floor(
     unitBlockWidth > 0 ? unitBlockHeight / unitBlockWidth : 1
@@ -89,12 +87,12 @@ const UnitView = observer(() => {
     }
     return blockCountX;
   });
-  console.log("xAttr2blockCountX", xAttr2blockCountX);
+  // console.log("xAttr2blockCountX", xAttr2blockCountX);
 
   // const blockCountY = Math.ceil(aspectRatio * blockCountX);
 
   let r = unitBlockWidth / blockCountX;
-  console.log("r", r);
+  // console.log("r", r);
 
   const xAttr2blockCountX_StartCount = [0];
   const xAttr2blockCountX_StartPos = [0];
@@ -110,7 +108,7 @@ const UnitView = observer(() => {
       (unitBlockPadding.left + unitBlockPadding.right) * unitXAttrList.length) /
     (xAttr2blockCountX_StartCount[xAttr2blockCountX_StartCount.length - 1] +
       xAttr2blockCountX[xAttr2blockCountX.length - 1]);
-  console.log("new r", r);
+  // console.log("new r", r);
 
   for (let i = 1; i < unitXAttrList.length; i++) {
     xAttr2blockCountX_StartPos.push(
@@ -118,8 +116,8 @@ const UnitView = observer(() => {
         (unitBlockPadding.left + unitBlockPadding.right) * i
     );
   }
-  console.log("xAttr2blockCountX_StartCount", xAttr2blockCountX_StartCount);
-  console.log("xAttr2blockCountX_StartPos", xAttr2blockCountX_StartPos);
+  // console.log("xAttr2blockCountX_StartCount", xAttr2blockCountX_StartCount);
+  // console.log("xAttr2blockCountX_StartPos", xAttr2blockCountX_StartPos);
 
   const paperCircles = papers.map((paper) => {
     const paperCircle = {};
@@ -157,7 +155,7 @@ const UnitView = observer(() => {
     return {
       value: xAttr,
       x: middleX,
-      y: unitLayoutPadding.top - 6,
+      y: unitLayoutPadding.top * 0.8,
     };
   });
 
@@ -165,12 +163,11 @@ const UnitView = observer(() => {
     const startY = unitLayoutPadding.top + (unitBlockHeight + unitBlockPadding.top + unitBlockPadding.bottom) * i
     return {
       value: yAttr,
-      x: unitLayoutPadding.left - 4,
-      y: startY + 8
+      x: unitLayoutPadding.left * 0.92,
+      y: startY + r * 1.2
     }
   })
 
-  const color = d3.schemeTableau10.slice(0, 5);
   return (
     <div className="unit-view">
       <svg id="unit-svg" width="100%" height="100%">

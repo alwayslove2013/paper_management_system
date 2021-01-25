@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { toJS } from "mobx";
 
 const debug = false;
 
@@ -8,7 +9,12 @@ const createStore = () => {
     unitBlockCount: {},
     maxUnitBlockPaperCount: 0,
     doi2paperBlockPos: {},
+    author2Count: {},
+    authorCountList: [],
+    countryCountList: [],
     setPapers(papers, compareAttr = "CitationCount") {
+      const author2Count = {};
+      const country2Count = {};
       papers.forEach((paper, i) => {
         if (paper.DOI === "#") {
           paper.DOI = `tmp-${i}`;
@@ -16,9 +22,53 @@ const createStore = () => {
         if (paper.CitationCount === "") {
           paper.CitationCount = 0;
         }
+        paper.authors = paper.AuthorNames.split(";").map((a) => a.trim());
+        paper.authors.forEach((author) => {
+          if (author in author2Count) {
+            author2Count[author] += 1;
+          } else {
+            author2Count[author] = 1;
+          }
+        });
+        paper.Countries = paper.Countries === "#" ? "" : paper.Countries;
+        paper.Countries = paper.Countries === "###" ? "" : paper.Countries;
+        paper.countries = paper.Countries.split(";")
+          .map((s) => {
+            const part = s.trim().split(" ");
+            return part.length === 0 ? "" : part[part.length - 1].trim();
+          })
+          .filter((a) => a);
+        paper.countries.forEach((country) => {
+          if (country in country2Count) {
+            country2Count[country] += 1;
+          } else {
+            country2Count[country] = 1;
+          }
+        });
+        paper.privateTags = [];
+        paper.publicTags = [];
       });
+      this.author2Count = author2Count;
+      const authorCountList = [];
+      for (let author in author2Count) {
+        authorCountList.push({
+          value: author,
+          count: author2Count[author],
+        });
+      }
+      authorCountList.sort((a, b) => b.count - a.count);
+      const countryCountList = [];
+      for (let country in country2Count) {
+        countryCountList.push({
+          value: country,
+          count: country2Count[country],
+        });
+      }
+      countryCountList.sort((a, b) => b.count - a.count);
+      this.authorCountList = authorCountList;
+      this.countryCountList = countryCountList;
       // 先按引用量排序，再去统计分组的排序，这个时间消耗其实还挺大的。
-      papers.sort((a, b) => b[compareAttr] - a[compareAttr]);
+      this.papers.sort((a, b) => b[compareAttr] - a[compareAttr]);
       this.papers = papers;
 
       let unitBlockCount = {};
@@ -37,7 +87,7 @@ const createStore = () => {
 
         unitBlockCount[xAttr][yAttr] += 1;
         if (maxUnitBlockPaperCount < unitBlockCount[xAttr][yAttr]) {
-          maxUnitBlockPaperCount = unitBlockCount[xAttr][yAttr]
+          maxUnitBlockPaperCount = unitBlockCount[xAttr][yAttr];
         }
       });
       this.maxUnitBlockPaperCount = maxUnitBlockPaperCount * 0.6;
@@ -66,7 +116,7 @@ const createStore = () => {
       this.unitYAttr = attrName;
     },
     get unitYAttrList() {
-      return ['SciVis', 'InfoVis', 'VAST', 'PacificVis']
+      return ["SciVis", "InfoVis", "VAST", "PacificVis"];
       // const yAttrSet = new Set();
       // this.papers.forEach((paper) => {
       //   yAttrSet.add(paper[this.unitYAttr]);
@@ -80,6 +130,73 @@ const createStore = () => {
     setUserId(userId) {
       this.userId = userId;
       debug && console.log("change userId", this.userId);
+    },
+
+    get controlTagNameList() {
+      return [
+        {
+          label: "Country",
+          value: "countries",
+          // list: ["USA", "China", "Japan", "Korea"],
+          list: this.countryCountList
+            .slice(0, 6)
+            .map((attr) => attr.value)
+            .concat(["Japan", "Korea"]),
+        },
+        {
+          label: "Author",
+          value: "authors",
+          list: this.authorCountList.slice(0, 8).map((attr) => attr.value),
+        },
+        {
+          label: "Private Tag",
+          value: "privateTags",
+          list: ["Read", "literature", "influence"],
+        },
+        {
+          label: "Public Tag",
+          value: "publicTags",
+          list: ["Classic", "China", "Japan", "Korea"],
+        },
+      ];
+    },
+    activeTags: {
+      countries: [],
+      authors: [],
+      privateTags: [],
+      publicTags: [],
+    },
+
+    tag2color: {},
+    colorUse: {},
+    activeTags: {},
+    setTagColor(tag, key) {
+      if (tag in this.tag2color) {
+        this.colorUse[this.tag2color[tag]] = false;
+        delete this.tag2color[tag];
+        this.activeTags[key] = [...this.activeTags[key]].filter(
+          (a) => a != tag
+        );
+      } else {
+        if (this.activeTags[key]) {
+          this.activeTags[key].push(tag);
+        } else {
+          this.activeTags[key] = [tag];
+        }
+        // console.log("activeTags", toJS(this.activeTags));
+        let i = 0;
+        let _color = d3.schemeTableau10[i];
+        while (this.colorUse[_color]) {
+          i += 1;
+          if (i === 10) {
+            _color = "black";
+            break;
+          }
+          _color = d3.schemeTableau10[i];
+        }
+        this.tag2color[tag] = _color;
+        this.colorUse[_color] = true;
+      }
     },
   };
 };
