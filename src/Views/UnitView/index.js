@@ -10,7 +10,7 @@ import { get } from "lodash";
 const unitLayoutPadding = {
   top: 30,
   left: 50,
-  right: 20,
+  right: 15,
   bottom: 1,
 };
 
@@ -189,7 +189,7 @@ const UnitView = observer(() => {
           {xLabels.map((label, i) => (
             <text key={label.value} x={label.x} y={label.y}
               textAnchor="middle"
-              fontSize={r * 1.5}
+              fontSize={r * 1.6}
               fill="rgb(78, 78, 78)"
             >
               {label.value}
@@ -200,7 +200,7 @@ const UnitView = observer(() => {
           {yLabels.map((label, i) => (
             <text key={label.value} x={label.x} y={label.y}
               textAnchor="end"
-              fontSize={r * 1.5}
+              fontSize={r * 1.6}
               fill="rgb(78, 78, 78)"
             >
               {label.value}
