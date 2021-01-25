@@ -4,7 +4,6 @@ import React from "react";
 // import { observer } from "mobx-react-lite";
 
 const CircleUnit = React.memo(({ cx, cy, r, colors = [] }) => {
-  console.log(colors, colors.length);
   const stepAngle = (2 * Math.PI) / colors.length;
   const polarX = (angle) => cx + Math.sin(angle) * r;
   const polarY = (angle) => cy + Math.cos(angle) * r;
@@ -14,7 +13,6 @@ const CircleUnit = React.memo(({ cx, cy, r, colors = [] }) => {
     endX: polarX(stepAngle * (i + 1)),
     endY: polarY(stepAngle * (i + 1)),
   }));
-  console.log("points", points);
 
   return (
     <g id="unit-g">
@@ -33,11 +31,11 @@ const CircleUnit = React.memo(({ cx, cy, r, colors = [] }) => {
           points.map((point, i) => (
             <path
               key={i}
-              d={`M 160 160
-            L ${point.startX} ${point.startY}
-            A ${r} ${r} 0 0 0 ${point.endX} ${point.endY}
-            Z
-            `}
+              d={`M ${cx} ${cy}
+              L ${point.startX} ${point.startY}
+              A ${r} ${r} 0 0 0 ${point.endX} ${point.endY}
+              Z
+              `}
               stroke="white"
               fill={colors[i]}
               strokeWidth={0.1 * r}
