@@ -12,6 +12,7 @@ const createStore = () => {
     author2Count: {},
     authorCountList: [],
     countryCountList: [],
+    doi2papers: {},
     setPapers(papers, compareAttr = "CitationCount") {
       const author2Count = {};
       const country2Count = {};
@@ -19,6 +20,7 @@ const createStore = () => {
         if (paper.DOI === "#") {
           paper.DOI = `tmp-${i}`;
         }
+        this.doi2papers[paper.DOI] = paper;
         if (paper.CitationCount === "") {
           paper.CitationCount = 0;
         }
@@ -239,6 +241,9 @@ const createStore = () => {
     setCurrentSelected(doi) {
       this.currentSelected = doi;
     },
+    get currentSelectedPaper() {
+      return this.doi2papers[this.currentSelected]
+    }
   };
 };
 
