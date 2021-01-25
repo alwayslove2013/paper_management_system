@@ -10,7 +10,7 @@ const ControlView = observer(() => {
   return (
     <div className="control-view">
       {controlTagNameList.map((tag) => (
-        <ControlItem key={tag.lable} tagData={tag} />
+        <ControlItem key={tag.label} tagData={tag} />
       ))}
     </div>
   );

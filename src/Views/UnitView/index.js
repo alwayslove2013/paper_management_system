@@ -3,9 +3,9 @@ import "./index.scss";
 import CircleUnit from "./CircleUnit";
 import { useGlobalStore } from "../../Store";
 import { observer } from "mobx-react-lite";
+import { toJS } from "mobx";
 import { get } from "lodash";
-
-
+import * as d3 from "d3";
 
 const UnitView = observer(() => {
   const store = useGlobalStore();
@@ -18,7 +18,16 @@ const UnitView = observer(() => {
     unitBlockCount,
     maxUnitBlockPaperCount,
     doi2paperBlockPos,
+    doi2privateTags,
+    doi2publicTags,
+    doi2comments,
+    doi2colors,
+    controlIsActive,
+    currentSelected,
+    setCurrentSelected,
   } = store;
+
+  // console.log("doi2colors", toJS(doi2colors));
 
   // const svg = document.querySelector("#unit-svg");
   // const svgWidth =
@@ -41,15 +50,15 @@ const UnitView = observer(() => {
   }, []);
   const unitLayoutPadding = {
     top: svgWidth * 0.02,
-    left: svgWidth * 0.04,
+    left: 40,
     right: 15,
     bottom: 1,
   };
-  
+
   const unitBlockPadding = {
     top: 2,
-    left: 2,
-    right: 2,
+    left: 3,
+    right: 3,
     bottom: 1,
   };
   const unitBlockWidth =
@@ -118,13 +127,18 @@ const UnitView = observer(() => {
   }
   // console.log("xAttr2blockCountX_StartCount", xAttr2blockCountX_StartCount);
   // console.log("xAttr2blockCountX_StartPos", xAttr2blockCountX_StartPos);
-
+  const scale = d3.scaleLinear().domain([0, 100]).range([0.25, 0.8]);
+  const citeCount2grey = (count) => d3.interpolateGreys(scale(count));
   const paperCircles = papers.map((paper) => {
     const paperCircle = {};
+    paperCircle.oriData = toJS(paper);
+
     paperCircle.BlockIndexX = unitXAttrList.indexOf(paper[unitXAttr]);
     paperCircle.BlockIndexY = unitYAttrList.indexOf(paper[unitYAttr]);
 
     const doi = paper.DOI;
+    paperCircle.doi = doi;
+
     paperCircle.circleIndexX =
       doi2paperBlockPos[doi] % xAttr2blockCountX[paperCircle.BlockIndexX];
     paperCircle.circleIndexY = Math.floor(
@@ -146,6 +160,22 @@ const UnitView = observer(() => {
       unitLayoutPadding.left +
       xAttr2blockCountX_StartPos[paperCircle.BlockIndexX] +
       (paperCircle.circleIndexX + 0.5) * r;
+
+    paperCircle.citationGrey = citeCount2grey(paper.CitationCount);
+    paperCircle.activeColors = get(doi2colors, doi, []);
+    paperCircle.colors =
+      paperCircle.activeColors.length > 0
+        ? paperCircle.activeColors
+        : [paperCircle.citationGrey];
+
+    paperCircle.opacity = controlIsActive
+      ? paperCircle.activeColors.length > 0
+        ? 0.8
+        : 0.4
+      : 0.8;
+
+    paperCircle.title = paper.Title;
+
     return paperCircle;
   });
 
@@ -160,13 +190,20 @@ const UnitView = observer(() => {
   });
 
   const yLabels = unitYAttrList.map((yAttr, i) => {
-    const startY = unitLayoutPadding.top + (unitBlockHeight + unitBlockPadding.top + unitBlockPadding.bottom) * i
+    const startY =
+      unitLayoutPadding.top +
+      (unitBlockHeight + unitBlockPadding.top + unitBlockPadding.bottom) * i;
     return {
       value: yAttr,
-      x: unitLayoutPadding.left * 0.92,
-      y: startY + r * 1.2
-    }
-  })
+      x: unitLayoutPadding.left * 0.35,
+      y: startY,
+    };
+  });
+
+  const handleClickPaper = (doi) => {
+    console.log("click", doi);
+    setCurrentSelected(doi);
+  };
 
   return (
     <div className="unit-view">
@@ -178,13 +215,23 @@ const UnitView = observer(() => {
               cx={paper.cx}
               cy={paper.cy}
               r={r / 2.4}
-              colors={['rgb(78, 78, 78)']}
+              // grey={paper.citationGrey}
+              // oriData={paper.oriData}
+              doi={paper.doi}
+              colors={paper.colors}
+              opacity={paper.opacity}
+              handleClick={handleClickPaper}
+              isSelect={currentSelected === paper.doi}
+              title={paper.title}
             />
           ))}
         </g>
         <g id="x-label">
-          {xLabels.map((label, i) => (
-            <text key={label.value} x={label.x} y={label.y}
+          {xLabels.map((label) => (
+            <text
+              key={label.value}
+              x={label.x}
+              y={label.y}
               textAnchor="middle"
               fontSize={r * 1.6}
               fill="rgb(78, 78, 78)"
@@ -194,9 +241,13 @@ const UnitView = observer(() => {
           ))}
         </g>
         <g id="y-label">
-          {yLabels.map((label, i) => (
-            <text key={label.value} x={label.x} y={label.y}
-              textAnchor="end"
+          {yLabels.map((label) => (
+            <text
+              key={label.value}
+              // x={label.x}
+              // y={label.y}
+              // textAnchor="start"
+              transform={`translate(${label.x}, ${label.y}) rotate(90)`}
               fontSize={r * 1.6}
               fill="rgb(78, 78, 78)"
             >

@@ -68,7 +68,7 @@ const createStore = () => {
       this.authorCountList = authorCountList;
       this.countryCountList = countryCountList;
       // 先按引用量排序，再去统计分组的排序，这个时间消耗其实还挺大的。
-      this.papers.sort((a, b) => b[compareAttr] - a[compareAttr]);
+      papers.sort((a, b) => b[compareAttr] - a[compareAttr]);
       this.papers = papers;
 
       let unitBlockCount = {};
@@ -166,16 +166,14 @@ const createStore = () => {
       privateTags: [],
       publicTags: [],
     },
-
     tag2color: {},
     colorUse: {},
-    activeTags: {},
     setTagColor(tag, key) {
       if (tag in this.tag2color) {
         this.colorUse[this.tag2color[tag]] = false;
         delete this.tag2color[tag];
         this.activeTags[key] = [...this.activeTags[key]].filter(
-          (a) => a != tag
+          (a) => a !== tag
         );
       } else {
         if (this.activeTags[key]) {
@@ -197,6 +195,49 @@ const createStore = () => {
         this.tag2color[tag] = _color;
         this.colorUse[_color] = true;
       }
+    },
+
+    get controlIsActive() {
+      let ans = false;
+      for (let key in this.activeTags) {
+        if (this.activeTags[key].length > 0) {
+          ans = true;
+        }
+      }
+      return ans;
+    },
+
+    get doi2colors() {
+      const doi2colors = {};
+      this.papers.forEach((paper) => {
+        for (let keyAttr in this.activeTags) {
+          const hightlightAttrs = this.activeTags[keyAttr];
+          hightlightAttrs.forEach((attr) => {
+            if (paper[keyAttr].indexOf(attr) > -1) {
+              if (
+                paper.DOI in doi2colors &&
+                Array.isArray(doi2colors[paper.DOI])
+              ) {
+                doi2colors[paper.DOI].push(this.tag2color[attr]);
+              } else {
+                doi2colors[paper.DOI] = [this.tag2color[attr]];
+              }
+            }
+          });
+        }
+      });
+      return doi2colors;
+    },
+
+    doi2privateTags: {},
+    doi2publicTags: {},
+    doi2comments: {},
+
+    maxCitationCount: 200,
+
+    currentSelected: "",
+    setCurrentSelected(doi) {
+      this.currentSelected = doi;
     },
   };
 };
