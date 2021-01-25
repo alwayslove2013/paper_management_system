@@ -20,7 +20,7 @@ const createStore = () => {
         if (paper.DOI === "#") {
           paper.DOI = `tmp-${i}`;
         }
-        this.doi2papers[paper.DOI] = paper;
+
         if (paper.CitationCount === "") {
           paper.CitationCount = 0;
         }
@@ -49,6 +49,7 @@ const createStore = () => {
         });
         paper.privateTags = [];
         paper.publicTags = [];
+        this.doi2papers[paper.DOI] = paper;
       });
       this.author2Count = author2Count;
       const authorCountList = [];
@@ -95,6 +96,10 @@ const createStore = () => {
       this.maxUnitBlockPaperCount = maxUnitBlockPaperCount * 0.6;
       this.unitBlockCount = unitBlockCount;
       // this.maxUnitBlockPaperCount = 90;
+    },
+    setPaper(doi, attr, value) {
+      const paper = this.doi2papers[doi]
+      paper[attr] = value
     },
     get paperCount() {
       return this.papers.length;
@@ -242,8 +247,8 @@ const createStore = () => {
       this.currentSelected = doi;
     },
     get currentSelectedPaper() {
-      return this.doi2papers[this.currentSelected]
-    }
+      return this.doi2papers[this.currentSelected];
+    },
   };
 };
 
