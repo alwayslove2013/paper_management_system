@@ -8,10 +8,10 @@ import { toJS } from "mobx";
 import { get } from "lodash";
 
 const unitLayoutPadding = {
-  top: 50,
+  top: 30,
   left: 50,
   right: 20,
-  bottom: 10,
+  bottom: 1,
 };
 
 const unitBlockPadding = {
@@ -151,43 +151,65 @@ const UnitView = observer(() => {
     return paperCircle;
   });
 
+  const xLabels = unitXAttrList.map((xAttr, i) => {
+    const startX = unitLayoutPadding.left + xAttr2blockCountX_StartPos[i];
+    const middleX = startX + (xAttr2blockCountX[i] * r) / 2;
+    return {
+      value: xAttr,
+      x: middleX,
+      y: unitLayoutPadding.top - 6,
+    };
+  });
+
+  const yLabels = unitYAttrList.map((yAttr, i) => {
+    const startY = unitLayoutPadding.top + (unitBlockHeight + unitBlockPadding.top + unitBlockPadding.bottom) * i
+    return {
+      value: yAttr,
+      x: unitLayoutPadding.left - 4,
+      y: startY + 8
+    }
+  })
+
   const color = d3.schemeTableau10.slice(0, 5);
   return (
     <div className="unit-view">
       <svg id="unit-svg" width="100%" height="100%">
-        {paperCircles.map((paper, i) => (
-          <CircleUnit
-            key={i}
-            cx={paper.cx}
-            cy={paper.cy}
-            r={r / 2.4}
-            colors={color}
-          />
-        ))}
+        <g id="units">
+          {paperCircles.map((paper, i) => (
+            <CircleUnit
+              key={i}
+              cx={paper.cx}
+              cy={paper.cy}
+              r={r / 2.4}
+              colors={['rgb(78, 78, 78)']}
+            />
+          ))}
+        </g>
+        <g id="x-label">
+          {xLabels.map((label, i) => (
+            <text key={label.value} x={label.x} y={label.y}
+              textAnchor="middle"
+              fontSize="9"
+              fill="rgb(78, 78, 78)"
+            >
+              {label.value}
+            </text>
+          ))}
+        </g>
+        <g id="y-label">
+          {yLabels.map((label, i) => (
+            <text key={label.value} x={label.x} y={label.y}
+              textAnchor="end"
+              fontSize="9"
+              fill="rgb(78, 78, 78)"
+            >
+              {label.value}
+            </text>
+          ))}
+        </g>
       </svg>
     </div>
   );
 });
 
 export default UnitView;
-
-// const UnitView = observer(() => {
-//   const store = useGlobalStore();
-//   const { papers } = store;
-//   console.log("papers", toJS(papers));
-//   const color = d3.schemeTableau10;
-//   const cx = 160;
-//   const cy = 160;
-//   const r = 60;
-//   return (
-//     <div>
-//       UnitView
-//       {store.maxUnitBlockPaperCount}
-//       <svg id="try_svg" width="320px" height="320px">
-//         <CircleUnit cx={cx} cy={cy} r={r} colors={color.slice(0, 1)} />
-//       </svg>
-//     </div>
-//   );
-// });
-
-// export default UnitView;

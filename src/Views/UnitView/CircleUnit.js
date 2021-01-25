@@ -24,6 +24,7 @@ const CircleUnit = React.memo(({ cx, cy, r, colors = [] }) => {
           fill="none"
           stroke="red"
           strokeWidth={0.15 * r}
+          opacity={0}
         />
       </g>
       <g id="unit-sector-g">
