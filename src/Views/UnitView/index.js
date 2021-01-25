@@ -189,7 +189,7 @@ const UnitView = observer(() => {
           {xLabels.map((label, i) => (
             <text key={label.value} x={label.x} y={label.y}
               textAnchor="middle"
-              fontSize="9"
+              fontSize={r * 1.5}
               fill="rgb(78, 78, 78)"
             >
               {label.value}
@@ -200,7 +200,7 @@ const UnitView = observer(() => {
           {yLabels.map((label, i) => (
             <text key={label.value} x={label.x} y={label.y}
               textAnchor="end"
-              fontSize="9"
+              fontSize={r * 1.5}
               fill="rgb(78, 78, 78)"
             >
               {label.value}
