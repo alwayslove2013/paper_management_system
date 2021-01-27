@@ -1,7 +1,20 @@
 import * as d3 from "d3";
 import { toJS } from "mobx";
+import {
+  setPublicTags,
+  setPrivateTags,
+  getPublicTags,
+  getPrivateTags,
+} from "../Server";
+import { get } from "lodash";
 
 const debug = false;
+
+const attr2func = {
+  publicTags: setPublicTags,
+  privateTags: setPrivateTags,
+  read: setPrivateTags,
+};
 
 const createStore = () => {
   return {
@@ -96,10 +109,35 @@ const createStore = () => {
       this.maxUnitBlockPaperCount = maxUnitBlockPaperCount * 0.6;
       this.unitBlockCount = unitBlockCount;
       // this.maxUnitBlockPaperCount = 90;
+      
+      this.initPublicTags();
     },
     setPaper(doi, attr, value) {
-      const paper = this.doi2papers[doi]
-      paper[attr] = value
+      const paper = this.doi2papers[doi];
+      paper[attr] = value;
+      console.log("attr", attr, value);
+      // attr === "publicTags" && setPublicTags(doi, value);
+      attr2func[attr]({
+        uid: this.userId,
+        pid: doi,
+        paper: toJS(paper),
+      });
+    },
+    async initPrivateTags() {
+      const privateTags = this.userId
+        ? await getPrivateTags({ uid: this.userId })
+        : {};
+      for (let doi in privateTags) {
+        const paper = get(this.doi2papers, false);
+        paper && (paper.privateTags = privateTags[doi]);
+      }
+    },
+    async initPublicTags() {
+      const publicTags = await getPublicTags();
+      for (let doi in publicTags) {
+        const paper = get(this.doi2papers, false);
+        paper && (paper.publicTags = publicTags[doi]);
+      }
     },
     get paperCount() {
       return this.papers.length;
@@ -137,6 +175,7 @@ const createStore = () => {
     setUserId(userId) {
       this.userId = userId;
       debug && console.log("change userId", this.userId);
+      userId && this.initPrivateTags();
     },
 
     get controlTagNameList() {

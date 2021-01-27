@@ -28,7 +28,10 @@ const DetailView = observer(() => {
       initTags: get(paper, "privateTags", []),
     },
   ];
-  const handleChangeTags = (attr, value) => doi && setPaper(doi, attr, value);
+  const handleChangeTags = (attr, value) => {
+    console.log("handleChangeTags", attr, value);
+    doi && setPaper(doi, attr, value);
+  };
   const handleChangeRead = (value) => {
     setPaper(doi, "read", value);
   };
