@@ -5,14 +5,18 @@ import { observer } from "mobx-react-lite";
 import { get } from "lodash";
 import { Switch } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
-import { Tag, Input, Tooltip } from "antd";
+import { Tag, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import { toJS } from "mobx";
 
 const DetailView = observer(() => {
   const store = useGlobalStore();
   const { currentSelectedPaper, setPaper } = store;
   const paper = currentSelectedPaper;
-  console.log("currentSelectedPaper", currentSelectedPaper);
+  // console.log("currentSelectedPaper", toJS(currentSelectedPaper));
+  // if (!currentSelectedPaper) {
+  //   return <div></div>;
+  // }
 
   const doi = get(paper, "DOI", "");
 
@@ -29,7 +33,6 @@ const DetailView = observer(() => {
     },
   ];
   const handleChangeTags = (attr, value) => {
-    console.log("handleChangeTags", attr, value);
     doi && setPaper(doi, attr, value);
   };
   const handleChangeRead = (value) => {
@@ -93,8 +96,8 @@ const DetailEditTags = ({ title, initTags, handleChangeTags }) => {
     _setTags(newTags);
   };
   const [editInputIndex, setEditInputIndex] = useState(-1);
-  const [editInput, setEditInput] = useState();
-  const saveEditInputRef = (input) => setEditInput(input);
+  // const [editInput, setEditInput] = useState();
+  // const saveEditInputRef = (input) => setEditInput(input);
   const input = useRef();
   // const saveInputRef = (input) => setInput(input);
 
@@ -117,7 +120,7 @@ const DetailEditTags = ({ title, initTags, handleChangeTags }) => {
   };
 
   const handleClose = (removeTag) => {
-    setTags(tags.filter((tag) => tag != removeTag));
+    setTags(tags.filter((tag) => tag !== removeTag));
   };
 
   const [inputVisible, setInputVisible] = useState(false);
@@ -134,7 +137,7 @@ const DetailEditTags = ({ title, initTags, handleChangeTags }) => {
             if (editInputIndex === index) {
               return (
                 <Input
-                  ref={saveEditInputRef}
+                  // ref={saveEditInputRef}
                   key={tag}
                   size="small"
                   className="tag-input"

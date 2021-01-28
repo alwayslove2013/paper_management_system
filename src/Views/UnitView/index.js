@@ -7,6 +7,20 @@ import { toJS } from "mobx";
 import { get } from "lodash";
 import * as d3 from "d3";
 
+const unitLayoutPadding = {
+  top: 30,
+  left: 40,
+  right: 15,
+  bottom: 1,
+};
+
+const unitBlockPadding = {
+  top: 2,
+  left: 3,
+  right: 3,
+  bottom: 1,
+};
+
 const UnitView = observer(() => {
   const store = useGlobalStore();
   const {
@@ -18,16 +32,14 @@ const UnitView = observer(() => {
     unitBlockCount,
     maxUnitBlockPaperCount,
     doi2paperBlockPos,
-    doi2privateTags,
-    doi2publicTags,
-    doi2comments,
-    doi2colors,
+    // doi2privateTags,
+    // doi2publicTags,
+    // doi2comments,
+    // doi2colors,
     controlIsActive,
     currentSelected,
     setCurrentSelected,
   } = store;
-
-  // console.log("doi2colors", toJS(doi2colors));
 
   // const svg = document.querySelector("#unit-svg");
   // const svgWidth =
@@ -48,19 +60,6 @@ const UnitView = observer(() => {
       svg.clientHeight - unitLayoutPadding.top - unitLayoutPadding.bottom
     );
   }, []);
-  const unitLayoutPadding = {
-    top: svgWidth * 0.02,
-    left: 40,
-    right: 15,
-    bottom: 1,
-  };
-
-  const unitBlockPadding = {
-    top: 2,
-    left: 3,
-    right: 3,
-    bottom: 1,
-  };
   const unitBlockWidth =
     unitXAttrList.length > 0
       ? svgWidth / unitXAttrList.length -
@@ -140,9 +139,9 @@ const UnitView = observer(() => {
     paperCircle.doi = doi;
 
     paperCircle.circleIndexX =
-      doi2paperBlockPos[doi] % xAttr2blockCountX[paperCircle.BlockIndexX];
+      paper.unitIndex % xAttr2blockCountX[paperCircle.BlockIndexX];
     paperCircle.circleIndexY = Math.floor(
-      doi2paperBlockPos[doi] / xAttr2blockCountX[paperCircle.BlockIndexX]
+      paper.unitIndex / xAttr2blockCountX[paperCircle.BlockIndexX]
     );
 
     paperCircle.cx =
@@ -162,7 +161,7 @@ const UnitView = observer(() => {
       (paperCircle.circleIndexX + 0.5) * r;
 
     paperCircle.citationGrey = citeCount2grey(paper.CitationCount);
-    paperCircle.activeColors = get(doi2colors, doi, []);
+    paperCircle.activeColors = paper.colors;
     paperCircle.colors =
       paperCircle.activeColors.length > 0
         ? paperCircle.activeColors
@@ -209,51 +208,54 @@ const UnitView = observer(() => {
     <div className="unit-view">
       <svg id="unit-svg" width="100%" height="100%">
         <g id="units">
-          {paperCircles.map((paper, i) => (
-            <CircleUnit
-              key={i}
-              cx={paper.cx}
-              cy={paper.cy}
-              r={r / 2.4}
-              // grey={paper.citationGrey}
-              // oriData={paper.oriData}
-              doi={paper.doi}
-              colors={paper.colors}
-              opacity={paper.opacity}
-              handleClick={handleClickPaper}
-              isSelect={currentSelected === paper.doi}
-              title={paper.title}
-            />
-          ))}
+          {r > 0 &&
+            paperCircles.map((paper, i) => (
+              <CircleUnit
+                key={i}
+                cx={paper.cx}
+                cy={paper.cy}
+                r={r / 2.4}
+                // grey={paper.citationGrey}
+                // oriData={paper.oriData}
+                doi={paper.doi}
+                colors={paper.colors}
+                opacity={paper.opacity}
+                handleClick={handleClickPaper}
+                isSelect={currentSelected === paper.doi}
+                title={paper.title}
+              />
+            ))}
         </g>
         <g id="x-label">
-          {xLabels.map((label) => (
-            <text
-              key={label.value}
-              x={label.x}
-              y={label.y}
-              textAnchor="middle"
-              fontSize={r * 1.6}
-              fill="rgb(78, 78, 78)"
-            >
-              {label.value}
-            </text>
-          ))}
+          {r > 0 &&
+            xLabels.map((label) => (
+              <text
+                key={label.value}
+                x={label.x}
+                y={label.y}
+                textAnchor="middle"
+                fontSize={r * 1.6}
+                fill="rgb(78, 78, 78)"
+              >
+                {label.value}
+              </text>
+            ))}
         </g>
         <g id="y-label">
-          {yLabels.map((label) => (
-            <text
-              key={label.value}
-              // x={label.x}
-              // y={label.y}
-              // textAnchor="start"
-              transform={`translate(${label.x}, ${label.y}) rotate(90)`}
-              fontSize={r * 1.6}
-              fill="rgb(78, 78, 78)"
-            >
-              {label.value}
-            </text>
-          ))}
+          {r > 0 &&
+            yLabels.map((label) => (
+              <text
+                key={label.value}
+                // x={label.x}
+                // y={label.y}
+                // textAnchor="start"
+                transform={`translate(${label.x}, ${label.y}) rotate(90)`}
+                fontSize={r * 1.6}
+                fill="rgb(78, 78, 78)"
+              >
+                {label.value}
+              </text>
+            ))}
         </g>
       </svg>
     </div>

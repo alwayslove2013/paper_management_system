@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./index.scss";
 import { useGlobalStore } from "../../Store";
 import { observer } from "mobx-react-lite";
-import { toJS } from "mobx";
+// import { toJS } from "mobx";
 
 const ControlView = observer(() => {
   const store = useGlobalStore();

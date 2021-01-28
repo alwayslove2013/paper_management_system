@@ -7,6 +7,7 @@ import {
   getPrivateTags,
 } from "../Server";
 import { get } from "lodash";
+import mostCommon from "../Common/Counter";
 
 const debug = false;
 
@@ -62,6 +63,7 @@ const createStore = () => {
         });
         paper.privateTags = [];
         paper.publicTags = [];
+        paper.colors = [];
         this.doi2papers[paper.DOI] = paper;
       });
       this.author2Count = author2Count;
@@ -109,7 +111,7 @@ const createStore = () => {
       this.maxUnitBlockPaperCount = maxUnitBlockPaperCount * 0.6;
       this.unitBlockCount = unitBlockCount;
       // this.maxUnitBlockPaperCount = 90;
-      
+
       this.initPublicTags();
     },
     setPaper(doi, attr, value) {
@@ -122,6 +124,7 @@ const createStore = () => {
         pid: doi,
         paper: toJS(paper),
       });
+      this.updateDoi2colors(doi);
     },
     async initPrivateTags() {
       const privateTags = this.userId
@@ -131,13 +134,22 @@ const createStore = () => {
         const paper = get(this.doi2papers, false);
         paper && (paper.privateTags = privateTags[doi]);
       }
+      // this.initDoi2colors();
     },
+    commonPublicTags: [],
     async initPublicTags() {
       const publicTags = await getPublicTags();
-      for (let doi in publicTags) {
-        const paper = get(this.doi2papers, false);
-        paper && (paper.publicTags = publicTags[doi]);
-      }
+      // for (let doi in publicTags) {
+      //   const paper = get(this.doi2papers, doi, false);
+      //   paper && (paper.publicTags = publicTags[doi]);
+      // }
+      this.papers.forEach((paper) => {
+        if (paper.DOI in publicTags) {
+          paper.publicTags = publicTags[paper.DOI];
+        }
+      });
+      this.commonPublicTags = mostCommon(Object.values(publicTags));
+      // this.initDoi2colors();
     },
     get paperCount() {
       return this.papers.length;
@@ -202,7 +214,7 @@ const createStore = () => {
         {
           label: "Public Tag",
           value: "publicTags",
-          list: ["Classic", "China", "Japan", "Korea"],
+          list: this.commonPublicTags,
         },
       ];
     },
@@ -215,6 +227,7 @@ const createStore = () => {
     tag2color: {},
     colorUse: {},
     setTagColor(tag, key) {
+      console.log("======> setTagColor", tag, key, toJS(this.tag2color));
       if (tag in this.tag2color) {
         this.colorUse[this.tag2color[tag]] = false;
         delete this.tag2color[tag];
@@ -241,6 +254,7 @@ const createStore = () => {
         this.tag2color[tag] = _color;
         this.colorUse[_color] = true;
       }
+      this.initDoi2colors();
     },
 
     get controlIsActive() {
@@ -252,14 +266,28 @@ const createStore = () => {
       }
       return ans;
     },
-
-    get doi2colors() {
+    doi2colors: {},
+    initDoi2colors() {
       const doi2colors = {};
+      console.log(
+        "begin initDoi2colors",
+        toJS(this.activeTags),
+        toJS(this.tag2color)
+      );
       this.papers.forEach((paper) => {
+        paper.colors = [];
+        paper.DOI === "10.1109/TVCG.2016.2599030" &&
+          console.log("====>", toJS(paper), toJS(this.activeTags));
         for (let keyAttr in this.activeTags) {
           const hightlightAttrs = this.activeTags[keyAttr];
           hightlightAttrs.forEach((attr) => {
             if (paper[keyAttr].indexOf(attr) > -1) {
+              paper.colors.push(this.tag2color[attr]);
+              console.log(
+                "==> initDoi2colors paper",
+                toJS(paper),
+                paper.colors
+              );
               if (
                 paper.DOI in doi2colors &&
                 Array.isArray(doi2colors[paper.DOI])
@@ -272,7 +300,34 @@ const createStore = () => {
           });
         }
       });
-      return doi2colors;
+      this.doi2colors = doi2colors;
+    },
+    updateDoi2colors(doi) {
+      const paper = this.papers.find((p) => (p.DOI = doi));
+      for (let keyAttr in this.activeTags) {
+        const hightlightAttrs = this.activeTags[keyAttr];
+        hightlightAttrs.forEach((attr) => {
+          console.log(
+            keyAttr,
+            this.activeTags,
+            attr,
+            paper[keyAttr],
+            paper[keyAttr].indexOf(attr)
+          );
+          if (paper[keyAttr].indexOf(attr) > -1) {
+            paper.colors.push(this.tag2color[attr]);
+            if (
+              paper.DOI in this.doi2colors &&
+              Array.isArray(this.doi2colors[paper.DOI])
+            ) {
+              this.doi2colors[paper.DOI].push(this.tag2color[attr]);
+            } else {
+              this.doi2colors[paper.DOI] = [this.tag2color[attr]];
+            }
+          }
+          console.log("this.doi2colors[paper.DOI]", this.doi2colors[paper.DOI]);
+        });
+      }
     },
 
     doi2privateTags: {},

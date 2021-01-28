@@ -12,6 +12,7 @@
     align-items: center;
     min-width: 20%;
     max-width: 35%;
+    padding: 0 10px;
     height: 90%;
     box-shadow: 0 0 5px rgb(138, 138, 138);
     border-radius: 5px;
@@ -19,7 +20,7 @@
     .control-item-title {
       font-size: 12px;
       border-radius: 3px;
-      font-weight: blod;
+      font-weight: 600;
       padding: 0 5px;
       // color: rgb(240, 240, 240);
       // background-color: rgb(107, 107, 107);
