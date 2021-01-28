@@ -40,10 +40,17 @@ $detail-view-width: 240px;
         // background: yellow;
       }
     }
-    .detail-view-container {
-      height: 100%;
-      width: $detail-view-width;
-      // background: blue;
-    }
+    // .detail-view-container {
+    //   height: 100%;
+    //   width: $detail-view-width;
+    //   // background: blue;
+    // }
+  }
+  .detail-view-container {
+    position: absolute;
+    right: 5%;
+    top: 55%;
+    left: 55%;
+    bottom: 5%;
   }
 }
