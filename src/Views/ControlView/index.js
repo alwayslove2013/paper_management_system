@@ -46,7 +46,9 @@ const ControlItem = observer(({ tagData }) => {
             key={item}
             value={item}
             clickOption={handleClickOption}
-            isSelect={tags.indexOf(item) > -1 && tag2color[item]}
+            isSelect={
+              tags.indexOf(item) > -1 && tag2color[`${tagData.value}---${item}`]
+            }
           />
         ))}
       </div>

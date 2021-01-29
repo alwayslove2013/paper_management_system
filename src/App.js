@@ -24,7 +24,8 @@ const ViewContainer = () => {
   useEffect(() => {
     const fetchPapers = async () => {
       const papers = await d3.csv("data.csv");
-      store.setPapers(papers);
+      await store.setPapers(papers);
+      store.initUserId();
     };
     fetchPapers();
   }, [store]);

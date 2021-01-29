@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { toJS } from "mobx";
+import { toJS, runInAction } from "mobx";
 import {
   setPublicTags,
   setPrivateTags,
@@ -25,7 +25,7 @@ const createStore = () => {
     commonPublicTags: [],
     commonPrivateTags: [],
     async setPapers(papers, compareAttr = "CitationCount") {
-      debug && console.log("==> init Papers");
+      debug && console.log("==> 初始化Papers");
       papers.forEach((paper, i) => {
         // 初始化，一些特殊处理，比如如果没有doi或者引用量，就安排一个
         if (paper.DOI === "#") paper.DOI = `tmp-${i}`;
@@ -33,6 +33,7 @@ const createStore = () => {
         if (paper.Countries === "#" || paper.Countries === "###")
           paper.Countries = "";
         paper.privateTags = [];
+        paper.read = false;
         paper.publicTags = [];
         paper.colors = [];
 
@@ -58,12 +59,14 @@ const createStore = () => {
       this.computedPosition(papers);
       await this.initPublicTags(papers);
 
-      this.papers = papers;
+      runInAction(() => {
+        this.papers = papers;
+      });
     },
     setPaper(doi, attr, value) {
       const paper = this.papers.find((p) => p.DOI === doi);
       paper[attr] = value;
-      debug && console.log("==> update paper", doi, attr, value);
+      debug && console.log("==> 更新paper数据 by doi:", doi, attr, value);
       // attr === "publicTags" && setPublicTags(doi, value);
       attr2func[attr]({
         uid: this.userId,
@@ -118,23 +121,42 @@ const createStore = () => {
           paper.publicTags = publicTags[paper.DOI].filter((a) => a);
         }
       });
-      this.commonPublicTags = mostCommon(Object.values(publicTags));
+      runInAction(() => {
+        this.commonPublicTags = mostCommon(Object.values(publicTags));
+      });
     },
     async initPrivateTags() {
       const privateTags = await getPrivateTags({ uid: this.userId });
-      this.papers.forEach((paper) => {
-        if (paper.DOI in privateTags) {
-          paper.privateTags = privateTags[paper.DOI].filter((a) => a);
-        }
+
+      runInAction(() => {
+        this.papers.forEach((paper) => {
+          if (paper.DOI in privateTags) {
+            const readIndex = privateTags[paper.DOI].indexOf("read");
+            if (readIndex > -1) {
+              paper.read = true;
+              privateTags[paper.DOI].splice(readIndex, 1);
+            }
+            paper.privateTags = privateTags[paper.DOI].filter((a) => a);
+          }
+        });
+        this.commonPrivateTags = mostCommon(Object.values(privateTags));
       });
-      this.commonPrivateTags = mostCommon(Object.values(privateTags));
+
+      this.batchUpdateColors();
     },
 
     userId: "",
     setUserId(userId) {
-      this.userId = userId;
-      debug && console.log("change userId", this.userId);
-      userId && this.initPrivateTags();
+      if (userId !== this.userId) {
+        this.userId = userId;
+        debug && console.log("==> change userId:", this.userId);
+        localStorage.setItem("paper-management-system-userId", userId);
+        userId && this.initPrivateTags();
+      }
+    },
+    initUserId() {
+      const userId = localStorage.getItem("paper-management-system-userId");
+      userId && this.setUserId(userId);
     },
 
     get controlTagNameList() {
@@ -180,11 +202,12 @@ const createStore = () => {
     tag2color: {},
     colorUse: {},
     setTagColor(tag, category) {
-      debug && console.log("==> setTagColor", tag, category);
-      if (tag in this.tag2color) {
+      debug && console.log("==> 设置tag颜色:", category, tag);
+      const fullTag = `${category}---${tag}`;
+      if (fullTag in this.tag2color) {
         // 回收该颜色
-        this.colorUse[this.tag2color[tag]] = false;
-        delete this.tag2color[tag];
+        this.colorUse[this.tag2color[fullTag]] = false;
+        delete this.tag2color[fullTag];
         this.activeTags[category] = [...this.activeTags[category]].filter(
           (a) => a !== tag
         );
@@ -201,7 +224,7 @@ const createStore = () => {
           }
           _color = d3.schemeTableau10[i];
         }
-        this.tag2color[tag] = _color;
+        this.tag2color[fullTag] = _color;
         this.colorUse[_color] = true;
       }
       this.batchUpdateColors();
@@ -213,20 +236,22 @@ const createStore = () => {
           const hightlightAttrs = this.activeTags[category];
           hightlightAttrs.forEach((attr) => {
             if (paper[category].indexOf(attr) > -1) {
-              paper.colors.push(this.tag2color[attr]);
+              const fullTag = `${category}---${attr}`;
+              paper.colors.push(this.tag2color[fullTag]);
             }
           });
         }
       });
     },
     doiUpdateColors(doi) {
-      const paper = this.papers.find((p) => (p.DOI === doi));
+      const paper = this.papers.find((p) => p.DOI === doi);
       paper.colors = [];
       for (let category in this.activeTags) {
         const hightlightAttrs = this.activeTags[category];
         hightlightAttrs.forEach((attr) => {
           if (paper[category].indexOf(attr) > -1) {
-            paper.colors.push(this.tag2color[attr]);
+            const fullTag = `${category}---${attr}`;
+            paper.colors.push(this.tag2color[fullTag]);
           }
         });
       }
@@ -235,7 +260,7 @@ const createStore = () => {
 
     currentSelected: "",
     setCurrentSelected(doi) {
-      debug && console.log("==> setCurrentSelected", doi);
+      debug && console.log("==> 选中文章:", doi);
       this.currentSelected = doi;
     },
     get currentSelectedPaper() {

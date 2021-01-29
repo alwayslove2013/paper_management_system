@@ -2,11 +2,11 @@ import React from "react";
 import "./index.scss";
 import userList from "../../Common/userList";
 import { useGlobalStore } from "../../Store";
+import { observer } from "mobx-react-lite";
 import { Select } from "antd";
 const { Option } = Select;
 
-
-const Header = () => {
+const Header = observer(() => {
   const store = useGlobalStore();
   const handleChange = (userId) => {
     store.setUserId(userId);
@@ -17,7 +17,7 @@ const Header = () => {
       <div className="user-selector title">
         User: &nbsp;
         <Select
-          // defaultValue=""
+          value={store.userId}
           size="small"
           onChange={handleChange}
           style={{ width: 130 }}
@@ -32,6 +32,6 @@ const Header = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Header;

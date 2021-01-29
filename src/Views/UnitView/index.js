@@ -31,7 +31,7 @@ const UnitView = observer(() => {
     unitYAttrList,
     unitBlockCount,
     maxUnitBlockPaperCount,
-    doi2paperBlockPos,
+    // doi2paperBlockPos,
     // doi2privateTags,
     // doi2publicTags,
     // doi2comments,
@@ -200,7 +200,7 @@ const UnitView = observer(() => {
   });
 
   const handleClickPaper = (doi) => {
-    console.log("click", doi);
+    // console.log("click", doi);
     setCurrentSelected(doi);
   };
 

@@ -17,7 +17,7 @@ export const getPublicTags = async () => {
 };
 
 export const getPrivateTags = async ({ uid }) => {
-  return await fetchData("get_public_tags", { uid });
+  return await fetchData("get_private_tags", { uid });
 };
 
 export const setPublicTags = ({ pid, paper }) => {
