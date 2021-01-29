@@ -22,6 +22,7 @@ export const userList = [
   "Sihang Li",
   "Zhen Li",
   "Haohua Liu",
+  "KaiChen Nie"
 ];
 
 export default userList;

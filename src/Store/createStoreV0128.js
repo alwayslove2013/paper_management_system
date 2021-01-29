@@ -174,7 +174,7 @@ const createStore = () => {
         {
           label: "Private Tag",
           value: "privateTags",
-          list: this.commonPrivateTags,
+          list: ["read"].concat(this.commonPrivateTags),
         },
         {
           label: "Public Tag",

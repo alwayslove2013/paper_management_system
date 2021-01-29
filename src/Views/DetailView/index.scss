@@ -24,6 +24,29 @@
       margin-right: 10px;
     }
   }
+  .detail-edit-tag {
+    display: flex;
+    align-items: flex-start;
+    // flex-wrap: wrap;
+    margin-top: 3px;
+    .detail-edit-title {
+      font-weight: 600;
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+  }
+  .detail-attr {
+    display: flex;
+    flex-wrap: wrap;
+    .detail-key {
+      // font-size: 12px;
+      font-weight: 600;
+      margin-right: 5px;
+    }
+    .detail-content {
+      font-size: 10px;
+    }
+  }
   .detail-attrs {
     .detail-abstract {
       display: flex;

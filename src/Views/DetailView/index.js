@@ -22,14 +22,14 @@ const DetailView = observer(() => {
 
   const editTags = [
     {
-      title: "Public Tags",
-      value: "publicTags",
-      initTags: get(paper, "publicTags", []),
-    },
-    {
       title: "Private Tags",
       value: "privateTags",
       initTags: get(paper, "privateTags", []),
+    },
+    {
+      title: "Public Tags",
+      value: "publicTags",
+      initTags: get(paper, "publicTags", []),
     },
   ];
   const handleChangeTags = (attr, value) => {
