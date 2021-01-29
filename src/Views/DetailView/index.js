@@ -7,13 +7,15 @@ import { Switch } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { Tag, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-// import { toJS } from "mobx";
+import { toJS } from "mobx";
+
+const debug = true;
 
 const DetailView = observer(() => {
   const store = useGlobalStore();
   const { currentSelectedPaper, setPaper } = store;
   const paper = currentSelectedPaper;
-  // console.log("currentSelectedPaper", toJS(currentSelectedPaper));
+  debug && console.log("currentSelectedPaper", toJS(currentSelectedPaper));
   if (!currentSelectedPaper) {
     return <div></div>;
   }

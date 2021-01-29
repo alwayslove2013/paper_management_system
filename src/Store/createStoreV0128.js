@@ -66,6 +66,15 @@ const createStore = () => {
     setPaper(doi, attr, value) {
       const paper = this.papers.find((p) => p.DOI === doi);
       paper[attr] = value;
+      // if (attr === "read") {
+      //   if (value) {
+      //     paper.privateTags.push("read");
+      //   } else {
+      //     paper.privateTags = [...paper.privateTags].filter(
+      //       (a) => a !== "read"
+      //     );
+      //   }
+      // }
       debug && console.log("==> 更新paper数据 by doi:", doi, attr, value);
       // attr === "publicTags" && setPublicTags(doi, value);
       attr2func[attr]({
@@ -175,6 +184,7 @@ const createStore = () => {
           label: "Private Tag",
           value: "privateTags",
           list: ["read"].concat(this.commonPrivateTags),
+          // list: this.commonPrivateTags,
         },
         {
           label: "Public Tag",
@@ -232,20 +242,16 @@ const createStore = () => {
     batchUpdateColors() {
       this.papers.forEach((paper) => {
         paper.colors = [];
-        for (let category in this.activeTags) {
-          const hightlightAttrs = this.activeTags[category];
-          hightlightAttrs.forEach((attr) => {
-            if (paper[category].indexOf(attr) > -1) {
-              const fullTag = `${category}---${attr}`;
-              paper.colors.push(this.tag2color[fullTag]);
-            }
-          });
-        }
+        this.updateColor(paper);
       });
     },
     doiUpdateColors(doi) {
       const paper = this.papers.find((p) => p.DOI === doi);
       paper.colors = [];
+      this.updateColor(paper);
+    },
+    updateColor(paper) {
+      const isReadTagActive = this.activeTags.privateTags.indexOf("read") > -1;
       for (let category in this.activeTags) {
         const hightlightAttrs = this.activeTags[category];
         hightlightAttrs.forEach((attr) => {
@@ -253,15 +259,24 @@ const createStore = () => {
             const fullTag = `${category}---${attr}`;
             paper.colors.push(this.tag2color[fullTag]);
           }
+          if (isReadTagActive && paper.read) {
+            paper.colors.push(this.tag2color["privateTags---read"]);
+          }
         });
       }
     },
     maxCitationCount: 200,
 
     currentSelected: "",
+    isSelected: false,
     setCurrentSelected(doi) {
       debug && console.log("==> 选中文章:", doi);
       this.currentSelected = doi;
+      this.isSelected = !!doi
+    },
+    cancelSelect() {
+      debug && console.log("==> 点击背景，取消论文选中状态");
+      this.isSelected = false;
     },
     get currentSelectedPaper() {
       return this.papers.find((paper) => paper.DOI === this.currentSelected);

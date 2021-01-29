@@ -18,7 +18,7 @@ const CircleUnit = React.memo(
     const borderOpacity = isSelect ? 1 : 0;
 
     return (
-      <g id="unit-g" onClick={() => handleClick(doi)} cursor="pointer">
+      <g id="unit-g" onClick={(e) => handleClick(e, doi)} cursor="pointer">
         <title>{title}</title>
         <g id="unit-border-g">
           <circle

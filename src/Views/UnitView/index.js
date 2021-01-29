@@ -39,6 +39,8 @@ const UnitView = observer(() => {
     controlIsActive,
     currentSelected,
     setCurrentSelected,
+    isSelected,
+    cancelSelect,
   } = store;
 
   // const svg = document.querySelector("#unit-svg");
@@ -199,14 +201,24 @@ const UnitView = observer(() => {
     };
   });
 
-  const handleClickPaper = (doi) => {
-    // console.log("click", doi);
+  const handleClickPaper = (e, doi) => {
+    // console.log("click", e, doi);
+    e.stopPropagation();
     setCurrentSelected(doi);
+  };
+
+  const handleClickBackground = () => {
+    cancelSelect();
   };
 
   return (
     <div className="unit-view">
-      <svg id="unit-svg" width="100%" height="100%">
+      <svg
+        id="unit-svg"
+        width="100%"
+        height="100%"
+        onClick={handleClickBackground}
+      >
         <g id="units">
           {r > 0 &&
             paperCircles.map((paper, i) => (
@@ -221,7 +233,7 @@ const UnitView = observer(() => {
                 colors={paper.colors}
                 opacity={paper.opacity}
                 handleClick={handleClickPaper}
-                isSelect={currentSelected === paper.doi}
+                isSelect={isSelected && currentSelected === paper.doi}
                 title={paper.title}
               />
             ))}
