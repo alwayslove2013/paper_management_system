@@ -41,6 +41,8 @@ const UnitView = observer(() => {
     setCurrentSelected,
     isSelected,
     cancelSelect,
+    currentSelectedRefSet,
+    currentSelectedCitedSet,
   } = store;
 
   // const svg = document.querySelector("#unit-svg");
@@ -137,7 +139,7 @@ const UnitView = observer(() => {
     paperCircle.BlockIndexX = unitXAttrList.indexOf(paper[unitXAttr]);
     paperCircle.BlockIndexY = unitYAttrList.indexOf(paper[unitYAttr]);
 
-    const doi = paper.DOI;
+    const doi = paper.doi;
     paperCircle.doi = doi;
 
     paperCircle.circleIndexX =
@@ -162,7 +164,7 @@ const UnitView = observer(() => {
       xAttr2blockCountX_StartPos[paperCircle.BlockIndexX] +
       (paperCircle.circleIndexX + 0.5) * r;
 
-    paperCircle.citationGrey = citeCount2grey(paper.CitationCount);
+    paperCircle.citationGrey = citeCount2grey(paper.citationCount);
     paperCircle.activeColors = paper.colors;
     paperCircle.colors =
       paperCircle.activeColors.length > 0
@@ -176,6 +178,16 @@ const UnitView = observer(() => {
       : 0.8;
 
     paperCircle.title = paper.Title;
+
+    if (isSelected) {
+      if (currentSelected === paper.doi) paperCircle.borderColor = "red";
+      if (currentSelectedRefSet.has(paper.doi)) paperCircle.borderColor = "brown";
+      if (currentSelectedCitedSet.has(paper.doi))
+        paperCircle.borderColor = "orange";
+    } else {
+      paperCircle.borderOpacity = 0;
+      paperCircle.borderColor = "red";
+    }
 
     return paperCircle;
   });
@@ -233,7 +245,9 @@ const UnitView = observer(() => {
                 colors={paper.colors}
                 opacity={paper.opacity}
                 handleClick={handleClickPaper}
-                isSelect={isSelected && currentSelected === paper.doi}
+                // isSelect={isSelected && currentSelected === paper.doi}
+                borderOpacity={paper.borderOpacity}
+                borderColor={paper.borderColor}
                 title={paper.title}
               />
             ))}

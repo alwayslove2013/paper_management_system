@@ -23,7 +23,7 @@ const ViewContainer = () => {
   const store = useGlobalStore();
   useEffect(() => {
     const fetchPapers = async () => {
-      const papers = await d3.csv("data_2021_1_31.csv");
+      const papers = await d3.csv("all_papers_data_0206.csv");
       await store.setPapers(papers);
       store.initUserId();
     };

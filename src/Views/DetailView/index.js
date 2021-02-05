@@ -20,7 +20,7 @@ const DetailView = observer(() => {
     return <div></div>;
   }
 
-  const doi = get(paper, "DOI", "");
+  const doi = get(paper, "doi", "");
 
   const editTags = [
     {
@@ -44,9 +44,9 @@ const DetailView = observer(() => {
     <div className="detail-view" key={doi}>
       {paper && (
         <>
-          <div className="detail-title">{paper.Title}</div>
+          <div className="detail-title">{paper.title}</div>
           <div className="detail-authors">
-            {get(paper, "authors", []).join("; ")} ({paper.Year})
+            {get(paper, "authors", []).join("; ")} ({paper.year})
           </div>
           <div className="detail-edit-tags">
             <div className="detail-edit-read">
@@ -71,10 +71,10 @@ const DetailView = observer(() => {
             ))}
           </div>
           <div className="detail-attrs">
-            <DetailItem paper={paper} label={"AuthorKeywords"} />
-            <DetailItem paper={paper} label={"DOI"} />
-            <DetailItem paper={paper} label={"AuthorAffiliation"} />
-            <DetailItem paper={paper} label={"Abstract"} />
+            <DetailItem paper={paper} label={"keywords"} />
+            <DetailItem paper={paper} label={"doi"} />
+            <DetailItem paper={paper} label={"affiliation"} />
+            <DetailItem paper={paper} label={"abstract"} />
           </div>
         </>
       )}

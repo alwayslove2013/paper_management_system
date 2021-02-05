@@ -24,29 +24,45 @@ const createStore = () => {
     commonCountries: [],
     commonPublicTags: [],
     commonPrivateTags: [],
-    async setPapers(papers, compareAttr = "CitationCount") {
+    async setPapers(papers, compareAttr = "citationCount") {
       debug && console.log("==> 初始化Papers");
-      papers.forEach((paper, i) => {
+      const doi2paper = {};
+      papers.forEach((paper) => {
         // 初始化，一些特殊处理，比如如果没有doi或者引用量，就安排一个
-        if (paper.DOI === "#") paper.DOI = `tmp-${i}`;
-        if (paper.CitationCount === "") paper.CitationCount = 0;
-        if (paper.Countries === "#" || paper.Countries === "###")
-          paper.Countries = "";
+        // if (paper.doi === "#") paper.doi = `tmp-${i}`;
+        // if (paper.CitationCount === "") paper.CitationCount = 0;
+        // if (paper.Countries === "#" || paper.Countries === "###")
+        //   paper.Countries = "";
         paper.privateTags = [];
         paper.read = false;
         paper.publicTags = [];
         paper.colors = [];
+        paper.internalRefList = [];
+        paper.internalCitedList = [];
+        paper.refList = paper.refList.split(";").map((a) => a.trim());
+        doi2paper[paper.doi] = paper;
 
         // 提取authors
-        paper.authors = paper.AuthorNames.split(";").map((a) => a.trim());
+        paper.authors = paper.authors.split(";").map((a) => a.trim());
 
         // 提取countries
-        paper.countries = paper.Countries.split(";")
+        paper.countries = paper.countries
+          .split(";")
           .map((s) => {
             const part = s.trim().split(" ");
             return part.length === 0 ? "" : part[part.length - 1].trim();
           })
           .filter((a) => a);
+      });
+
+      papers.forEach((paper) => {
+        paper.refList.forEach((ref) => {
+          if (ref in doi2paper) {
+            const refPaper = doi2paper[ref];
+            refPaper.internalCitedList.push(paper.doi);
+            paper.internalRefList.push(ref);
+          }
+        });
       });
 
       this.commonAuthors = mostCommon(papers.map((paper) => paper.authors));
@@ -64,7 +80,7 @@ const createStore = () => {
       });
     },
     setPaper(doi, attr, value) {
-      const paper = this.papers.find((p) => p.DOI === doi);
+      const paper = this.papers.find((p) => p.doi === doi);
       paper[attr] = value;
       // if (attr === "read") {
       //   if (value) {
@@ -84,7 +100,7 @@ const createStore = () => {
       });
       this.doiUpdateColors(doi);
     },
-    unitXAttr: "Year",
+    unitXAttr: "year",
     get unitXAttrList() {
       const xAttrSet = new Set();
       this.papers.forEach((paper) => {
@@ -94,9 +110,9 @@ const createStore = () => {
       xAttrList.sort((a, b) => b - a);
       return xAttrList;
     },
-    unitYAttr: "Conference",
+    unitYAttr: "conferenceName",
     get unitYAttrList() {
-      return ["SciVis", "InfoVis", "VAST", "PacificVis"];
+      return ["SciVis", "InfoVis", "EuroVis", "VAST", "PacificVis"];
       // const yAttrSet = new Set();
       // this.papers.forEach((paper) => {
       //   yAttrSet.add(paper[this.unitYAttr]);
@@ -126,8 +142,8 @@ const createStore = () => {
     async initPublicTags(papers) {
       const publicTags = await getPublicTags();
       papers.forEach((paper) => {
-        if (paper.DOI in publicTags) {
-          paper.publicTags = publicTags[paper.DOI].filter((a) => a);
+        if (paper.doi in publicTags) {
+          paper.publicTags = publicTags[paper.doi].filter((a) => a);
         }
       });
       runInAction(() => {
@@ -139,13 +155,13 @@ const createStore = () => {
 
       runInAction(() => {
         this.papers.forEach((paper) => {
-          if (paper.DOI in privateTags) {
-            const readIndex = privateTags[paper.DOI].indexOf("read");
+          if (paper.doi in privateTags) {
+            const readIndex = privateTags[paper.doi].indexOf("read");
             if (readIndex > -1) {
               paper.read = true;
-              privateTags[paper.DOI].splice(readIndex, 1);
+              privateTags[paper.doi].splice(readIndex, 1);
             }
-            paper.privateTags = privateTags[paper.DOI].filter((a) => a);
+            paper.privateTags = privateTags[paper.doi].filter((a) => a);
           }
         });
         this.commonPrivateTags = mostCommon(Object.values(privateTags));
@@ -183,8 +199,8 @@ const createStore = () => {
         {
           label: "Private Tag",
           value: "privateTags",
-          list: ["read"].concat(this.commonPrivateTags),
-          // list: this.commonPrivateTags,
+          // list: ["read"].concat(this.commonPrivateTags),
+          list: this.commonPrivateTags,
         },
         {
           label: "Public Tag",
@@ -246,7 +262,7 @@ const createStore = () => {
       });
     },
     doiUpdateColors(doi) {
-      const paper = this.papers.find((p) => p.DOI === doi);
+      const paper = this.papers.find((p) => p.doi === doi);
       paper.colors = [];
       this.updateColor(paper);
     },
@@ -268,18 +284,24 @@ const createStore = () => {
     maxCitationCount: 200,
 
     currentSelected: "",
+    currentSelectedRefSet: new Set(),
+    currentSelectedCitedSet: new Set(),
     isSelected: false,
     setCurrentSelected(doi) {
       debug && console.log("==> 选中文章:", doi);
       this.currentSelected = doi;
-      this.isSelected = !!doi
+      this.isSelected = !!doi;
+
+      const paper = this.papers.find((paper) => paper.doi === doi)
+      this.currentSelectedRefSet = new Set(paper.internalRefList);
+      this.currentSelectedCitedSet = new Set(paper.internalCitedList);
     },
     cancelSelect() {
       debug && console.log("==> 点击背景，取消论文选中状态");
       this.isSelected = false;
     },
     get currentSelectedPaper() {
-      return this.papers.find((paper) => paper.DOI === this.currentSelected);
+      return this.papers.find((paper) => paper.doi === this.currentSelected);
     },
   };
 };

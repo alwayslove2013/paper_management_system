@@ -4,7 +4,7 @@ import React from "react";
 // import { observer } from "mobx-react-lite";
 
 const CircleUnit = React.memo(
-  ({ cx, cy, r, colors, opacity, doi, handleClick, isSelect, title }) => {
+  ({ cx, cy, r, colors, opacity, doi, handleClick, borderColor, borderOpacity, title }) => {
     const stepAngle = (2 * Math.PI) / colors.length;
     const polarX = (angle) => cx + Math.sin(angle) * r;
     const polarY = (angle) => cy + Math.cos(angle) * r;
@@ -15,7 +15,7 @@ const CircleUnit = React.memo(
       endY: polarY(stepAngle * (i + 1)),
     }));
 
-    const borderOpacity = isSelect ? 1 : 0;
+    // const borderOpacity = isSelect ? 1 : 0;
 
     return (
       <g id="unit-g" onClick={(e) => handleClick(e, doi)} cursor="pointer">
@@ -26,7 +26,7 @@ const CircleUnit = React.memo(
             cy={cy}
             r={1.4 * r}
             fill="none"
-            stroke="red"
+            stroke={borderColor}
             strokeWidth={0.6 * r}
             opacity={borderOpacity}
           />
