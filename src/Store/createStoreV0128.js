@@ -39,7 +39,10 @@ const createStore = () => {
         paper.colors = [];
         paper.internalRefList = [];
         paper.internalCitedList = [];
-        paper.refList = paper.refList.split(";").map((a) => a.trim());
+        paper.refList = paper.refList
+          .toLowerCase()
+          .split(";")
+          .map((a) => a.trim());
         doi2paper[paper.doi] = paper;
 
         // 提取authors
@@ -51,8 +54,16 @@ const createStore = () => {
         paper.countries = paper.countries
           .split(";")
           .map((s) => {
-            const part = s.trim().split(" ");
-            return part.length === 0 ? "" : part[part.length - 1].trim();
+            const part = s
+              .trim()
+              .split(" ")
+              .map((a) => a.trim())
+              .filter((a) => a);
+            if (part.length === 0) return "";
+            let country = part[part.length - 1].toLowerCase().replace(/^\w/, (s) =>
+              s.toUpperCase()
+            );
+            return country;
           })
           .filter((a) => a);
       });

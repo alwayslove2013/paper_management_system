@@ -180,13 +180,13 @@ const UnitView = observer(() => {
     paperCircle.title = paper.Title;
 
     if (isSelected) {
-      if (currentSelected === paper.doi) paperCircle.borderColor = "red";
-      if (currentSelectedRefSet.has(paper.doi)) paperCircle.borderColor = "brown";
+      if (currentSelected === paper.doi) paperCircle.borderColor = "#d95f02";
+      if (currentSelectedRefSet.has(paper.doi)) paperCircle.borderColor = "#1b9e77";
       if (currentSelectedCitedSet.has(paper.doi))
-        paperCircle.borderColor = "orange";
+        paperCircle.borderColor = "#7570b3";
     } else {
       paperCircle.borderOpacity = 0;
-      paperCircle.borderColor = "red";
+      paperCircle.borderColor = "#d95f02";
     }
 
     return paperCircle;
