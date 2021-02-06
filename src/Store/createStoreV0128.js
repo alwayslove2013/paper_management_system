@@ -268,15 +268,16 @@ const createStore = () => {
     },
     updateColor(paper) {
       const isReadTagActive = this.activeTags.privateTags.indexOf("read") > -1;
+      if (isReadTagActive && paper.read) {
+        paper.colors.push(this.tag2color["privateTags---read"]);
+      }
+
       for (let category in this.activeTags) {
         const hightlightAttrs = this.activeTags[category];
         hightlightAttrs.forEach((attr) => {
           if (paper[category].indexOf(attr) > -1) {
             const fullTag = `${category}---${attr}`;
             paper.colors.push(this.tag2color[fullTag]);
-          }
-          if (isReadTagActive && paper.read) {
-            paper.colors.push(this.tag2color["privateTags---read"]);
           }
         });
       }
@@ -292,7 +293,7 @@ const createStore = () => {
       this.currentSelected = doi;
       this.isSelected = !!doi;
 
-      const paper = this.papers.find((paper) => paper.doi === doi)
+      const paper = this.papers.find((paper) => paper.doi === doi);
       this.currentSelectedRefSet = new Set(paper.internalRefList);
       this.currentSelectedCitedSet = new Set(paper.internalCitedList);
     },
