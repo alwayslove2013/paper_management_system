@@ -43,7 +43,9 @@ const createStore = () => {
         doi2paper[paper.doi] = paper;
 
         // 提取authors
-        paper.authors = paper.authors.split(";").map((a) => a.trim());
+        paper.authors = paper.authors
+          .split(";")
+          .map((a) => a.trim().replace(/\{(.*)\}/, "$1"));
 
         // 提取countries
         paper.countries = paper.countries
