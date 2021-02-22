@@ -28,13 +28,12 @@ const ControlItem = observer(({ tagData }) => {
     const index = currentTags.indexOf(value);
     if (index > -1) {
       currentTags.splice(index, 1);
-      store.setTagColor(value, tagData.value);
       setTags(currentTags);
     } else {
       currentTags.push(value);
-      store.setTagColor(value, tagData.value);
       setTags(currentTags);
     }
+    store.setTagColor(value, tagData.value);
   };
 
   return (

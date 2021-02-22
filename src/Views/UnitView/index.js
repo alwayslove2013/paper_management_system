@@ -37,6 +37,7 @@ const UnitView = observer(() => {
     // doi2comments,
     // doi2colors,
     controlIsActive,
+    isUnitOuterHighlight,
     currentSelected,
     setCurrentSelected,
     isSelected,
@@ -165,11 +166,31 @@ const UnitView = observer(() => {
       (paperCircle.circleIndexX + 0.5) * r;
 
     paperCircle.citationGrey = citeCount2grey(paper.citationCount);
-    paperCircle.activeColors = paper.colors;
+    paperCircle.activeColors = paper.innerColors;
     paperCircle.colors =
       paperCircle.activeColors.length > 0
         ? paperCircle.activeColors
         : [paperCircle.citationGrey];
+    paperCircle.innerColors =
+      paperCircle.activeColors.length > 0
+        ? paperCircle.activeColors
+        : [paperCircle.citationGrey];
+    // paperCircle.outerColors
+    paperCircle.outerColors = ["none"];
+    if (isUnitOuterHighlight) {
+      paperCircle.outerColors = paper.outerColors;
+    } else {
+      if (isSelected) {
+        if (currentSelected === paper.doi)
+          paperCircle.outerColors = ["#d95f02"];
+        if (currentSelectedRefSet.has(paper.doi))
+          paperCircle.outerColors = ["#1b9e77"];
+        if (currentSelectedCitedSet.has(paper.doi))
+          paperCircle.outerColors = ["#7570b3"];
+      } else {
+        paperCircle.outerColors = ["none"];
+      }
+    }
 
     paperCircle.opacity = controlIsActive
       ? paperCircle.activeColors.length > 0
@@ -181,12 +202,12 @@ const UnitView = observer(() => {
 
     if (isSelected) {
       if (currentSelected === paper.doi) paperCircle.borderColor = "#d95f02";
-      if (currentSelectedRefSet.has(paper.doi)) paperCircle.borderColor = "#1b9e77";
+      if (currentSelectedRefSet.has(paper.doi))
+        paperCircle.borderColor = "#1b9e77";
       if (currentSelectedCitedSet.has(paper.doi))
         paperCircle.borderColor = "#7570b3";
     } else {
-      paperCircle.borderOpacity = 0;
-      paperCircle.borderColor = "#d95f02";
+      paperCircle.borderColor = "none";
     }
 
     return paperCircle;
@@ -244,6 +265,8 @@ const UnitView = observer(() => {
                 doi={paper.doi}
                 colors={paper.colors}
                 opacity={paper.opacity}
+                innerColors={paper.innerColors}
+                outerColors={paper.outerColors}
                 handleClick={handleClickPaper}
                 // isSelect={isSelected && currentSelected === paper.doi}
                 borderOpacity={paper.borderOpacity}

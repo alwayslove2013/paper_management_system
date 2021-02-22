@@ -37,6 +37,8 @@ const createStore = () => {
         paper.read = false;
         paper.publicTags = [];
         paper.colors = [];
+        paper.innerColors = [];
+        paper.outerColors = [];
         paper.internalRefList = [];
         paper.internalCitedList = [];
         paper.refList = paper.refList
@@ -60,9 +62,9 @@ const createStore = () => {
               .map((a) => a.trim())
               .filter((a) => a);
             if (part.length === 0) return "";
-            let country = part[part.length - 1].toLowerCase().replace(/^\w/, (s) =>
-              s.toUpperCase()
-            );
+            let country = part[part.length - 1]
+              .toLowerCase()
+              .replace(/^\w/, (s) => s.toUpperCase());
             return country;
           })
           .filter((a) => a);
@@ -203,24 +205,35 @@ const createStore = () => {
           label: "Country",
           value: "countries",
           list: this.commonCountries.slice(0, 8).concat(["Japan", "Korea"]),
+          highlightType: "outer",
         },
         {
           label: "Author",
           value: "authors",
           list: this.commonAuthors,
+          highlightType: "inner",
         },
         {
           label: "Private Tag",
           value: "privateTags",
           // list: ["read"].concat(this.commonPrivateTags),
           list: this.commonPrivateTags,
+          highlightType: "inner",
         },
         {
           label: "Public Tag",
           value: "publicTags",
           list: this.commonPublicTags,
+          highlightType: "inner",
         },
       ];
+    },
+    get category2highlightType() {
+      const category2highlightType = {};
+      this.controlTagNameList.forEach((category) => {
+        category2highlightType[category.value] = category.highlightType;
+      });
+      return category2highlightType;
     },
     activeTags: {
       countries: [],
@@ -237,6 +250,19 @@ const createStore = () => {
         }
       }
       return ans;
+    },
+    // 判断 至少有一个outer被激活
+    get isUnitOuterHighlight() {
+      const outerCategories = this.controlTagNameList
+        .filter((category) => category.highlightType === "outer")
+        .map((category) => category.value);
+      console.log("outerCategories", outerCategories);
+      let isUnitOuterHighlight = false;
+      outerCategories.forEach((outerCategory) => {
+        if (this.activeTags[outerCategory].length > 0)
+          isUnitOuterHighlight = true;
+      });
+      return isUnitOuterHighlight;
     },
     tag2color: {},
     colorUse: {},
@@ -271,22 +297,42 @@ const createStore = () => {
     batchUpdateColors() {
       this.papers.forEach((paper) => {
         paper.colors = [];
+        paper.innerColors = [];
+        paper.outerColors = [];
         this.updateColor(paper);
       });
     },
     doiUpdateColors(doi) {
       const paper = this.papers.find((p) => p.doi === doi);
       paper.colors = [];
+      paper.innerColors = [];
+      paper.outerColors = [];
       this.updateColor(paper);
     },
     updateColor(paper) {
       const isReadTagActive = this.activeTags.privateTags.indexOf("read") > -1;
       if (isReadTagActive && paper.read) {
         paper.colors.push(this.tag2color["privateTags---read"]);
+        paper.innerColors.push(this.tag2color["privateTags---read"]);
       }
 
       for (let category in this.activeTags) {
         const hightlightAttrs = this.activeTags[category];
+        if (this.category2highlightType[category] === "inner") {
+          hightlightAttrs.forEach((attr) => {
+            if (paper[category].indexOf(attr) > -1) {
+              const fullTag = `${category}---${attr}`;
+              paper.innerColors.push(this.tag2color[fullTag]);
+            }
+          });
+        } else {
+          hightlightAttrs.forEach((attr) => {
+            if (paper[category].indexOf(attr) > -1) {
+              const fullTag = `${category}---${attr}`;
+              paper.outerColors.push(this.tag2color[fullTag]);
+            }
+          });
+        }
         hightlightAttrs.forEach((attr) => {
           if (paper[category].indexOf(attr) > -1) {
             const fullTag = `${category}---${attr}`;
