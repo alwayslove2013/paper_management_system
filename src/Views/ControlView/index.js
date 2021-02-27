@@ -62,9 +62,10 @@ const ControlOption = ({ value, clickOption, isSelect }) => {
   const style = isSelect
     ? { background: isSelect, border: `1px solid ${isSelect}` }
     : {};
+  const value_format = value === "Usa" ? "USA" : value;
   return (
     <div className={className} onClick={() => clickOption(value)} style={style}>
-      {value}
+      {value_format}
     </div>
   );
 };
