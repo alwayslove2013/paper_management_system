@@ -2,6 +2,7 @@ $header-height: 30px;
 $control-view-width: 0;
 $control-view-height: 75px;
 $detail-view-width: 240px;
+$info-view-height: 30px;
 .view-container {
   position: absolute;
   left: 0;
@@ -33,6 +34,18 @@ $detail-view-width: 240px;
         width: 100%;
         height: $control-view-height;
         // background: red;
+      }
+      .info-view-container {
+        width: 100%;
+        height: $info-view-height;
+        // box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        display: flex;
+        .search-view-container {
+          height: 100%;
+          width: 200px;
+          
+          // box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
       }
       .unit-view-container {
         width: 100%;

@@ -80,7 +80,17 @@ const createStore = () => {
         });
       });
 
-      this.commonAuthors = mostCommon(papers.map((paper) => paper.authors));
+      this.commonAuthors = mostCommon(
+        papers.map((paper) => paper.authors),
+        7
+      ).concat(["Xiaoru Yuan"]);
+      // console.log(
+      //   "Authors Tags: ",
+      //   mostCommon(
+      //     papers.map((paper) => paper.authors),
+      //     100
+      //   )
+      // );
       this.commonCountries = mostCommon(papers.map((paper) => paper.countries));
 
       // 先按引用量排序，再去统计分组的排序，这个时间消耗其实还挺大的。
@@ -256,7 +266,6 @@ const createStore = () => {
       const outerCategories = this.controlTagNameList
         .filter((category) => category.highlightType === "outer")
         .map((category) => category.value);
-      console.log("outerCategories", outerCategories);
       let isUnitOuterHighlight = false;
       outerCategories.forEach((outerCategory) => {
         if (this.activeTags[outerCategory].length > 0)
