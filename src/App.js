@@ -7,7 +7,6 @@ import ControlView from "./Views/ControlView";
 import UnitView from "./Views/UnitView";
 import DetailView from "./Views/DetailView";
 import Header from "./Views/Header";
-import SearchView from "./Views/SearchView";
 
 function App() {
   return (
@@ -40,11 +39,6 @@ const ViewContainer = () => {
           <div className="control-view-container">
             <ControlView />
           </div>
-          {/* <div className="info-view-container">
-            <div className="search-view-container">
-              <SearchView searchAttr={'title'} />
-            </div>
-          </div> */}
           <div className="unit-view-container">
             <UnitView />
           </div>

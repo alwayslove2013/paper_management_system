@@ -3,12 +3,20 @@ import "./index.scss";
 import { useGlobalStore } from "../../Store";
 import { observer } from "mobx-react-lite";
 // import { toJS } from "mobx";
+import SearchView from "../SearchView";
 
 const ControlView = observer(() => {
   const store = useGlobalStore();
   const { controlTagNameList } = store;
   return (
     <div className="control-view">
+      <div className="control-item">
+        <div className="control-item-title">Search</div>
+        <div className="control-item-options">
+          <SearchView searchAttr={"title"} />
+        </div>
+      </div>
+
       {controlTagNameList.map((tag) => (
         <ControlItem key={tag.label} tagData={tag} />
       ))}
