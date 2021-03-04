@@ -19,6 +19,19 @@ const attr2func = {
 
 const createStore = () => {
   return {
+    titleSearch: "",
+    setTitleSearch(text) {
+      this.titleSearch = text;
+    },
+    get searchPaperDoiSet() {
+      const searchPaperDois = this.titleSearch
+        ? this.papers
+            .filter((paper) => paper.title.indexOf(this.titleSearch) > -1)
+            .map((paper) => paper.doi)
+        : [];
+      const searchPaperDoiSet = new Set(searchPaperDois);
+      return searchPaperDoiSet;
+    },
     papers: [],
     commonAuthors: [],
     commonCountries: [],
