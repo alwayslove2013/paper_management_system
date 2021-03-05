@@ -46,8 +46,9 @@ const CircleUnit = React.memo(
     return (
       <g id="unit-g" onClick={(e) => handleClick(e, doi)} cursor="pointer">
         <title>{title}</title>
-        <g id="unit-background-g">
-          {isBackgroundActive && (
+
+        {isBackgroundActive && (
+          <g id="unit-background-g">
             <rect
               x={cx - 1.6 * r}
               y={cy - 1.6 * r}
@@ -57,8 +58,14 @@ const CircleUnit = React.memo(
               rx={r * 0.4}
               ry={r * 0.4}
             />
-          )}
-        </g>
+            <circle
+              cx={cx}
+              cy={cy}
+              r={1.4 * r}
+              fill="#eee"
+            />
+          </g>
+        )}
         <g id="unit-border-g">
           {/* <circle
             cx={cx}
