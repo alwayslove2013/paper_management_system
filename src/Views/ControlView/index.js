@@ -11,7 +11,7 @@ const ControlView = observer(() => {
   return (
     <div className="control-view">
       <div className="control-item">
-        <div className="control-item-title">Search</div>
+        <div className="control-item-title">Title Search</div>
         <div className="control-item-options">
           <SearchView searchAttr={"title"} />
         </div>

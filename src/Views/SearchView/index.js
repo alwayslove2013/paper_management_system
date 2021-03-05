@@ -10,7 +10,7 @@ const SearchView = () => {
   // const { searchPaperDoiSet } = store;
   // console.log("=====> searchPaperDoiSet", searchPaperDoiSet);
   const handleInput = debounce((e) => {
-    console.log("===>", e.target.value);
+    // console.log("===>", e.target.value);
     store.setTitleSearch(e.target.value);
   }, 200);
   return (

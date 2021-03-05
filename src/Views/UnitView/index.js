@@ -44,6 +44,7 @@ const UnitView = observer(() => {
     cancelSelect,
     currentSelectedRefSet,
     currentSelectedCitedSet,
+    searchPaperDoiSet,
   } = store;
 
   // const svg = document.querySelector("#unit-svg");
@@ -159,10 +160,10 @@ const UnitView = observer(() => {
       paperCircle.BlockIndexY *
         (unitBlockHeight + unitBlockPadding.top + unitBlockPadding.bottom) +
       (paperCircle.circleIndexY + 0.5) * r;
-    
+
     // 外挂逻辑
-    if (paper['year'] == 2004 && paperCircle.BlockIndexY > 0) {
-      paperCircle.cy += 50 - paperCircle.BlockIndexY * 10
+    if (paper["year"] == 2004 && paperCircle.BlockIndexY > 0) {
+      paperCircle.cy += 50 - paperCircle.BlockIndexY * 10;
     }
 
     paperCircle.cx =
@@ -214,6 +215,8 @@ const UnitView = observer(() => {
     } else {
       paperCircle.borderColor = "none";
     }
+
+    paperCircle.isBackgroundActive = searchPaperDoiSet.has(paper.doi);
 
     return paperCircle;
   });
@@ -277,6 +280,7 @@ const UnitView = observer(() => {
                 borderOpacity={paper.borderOpacity}
                 borderColor={paper.borderColor}
                 title={paper.title}
+                isBackgroundActive={paper.isBackgroundActive}
               />
             ))}
         </g>

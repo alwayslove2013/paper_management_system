@@ -8,15 +8,16 @@ const CircleUnit = React.memo(
     cx,
     cy,
     r,
-    colors,
+    // colors,
     opacity,
     doi,
     handleClick,
-    borderColor,
-    borderOpacity,
+    // borderColor,
+    // borderOpacity,
     title,
     innerColors,
     outerColors,
+    isBackgroundActive,
   }) => {
     const polarX = (angle) => cx + Math.sin(angle) * r;
     const polarY = (angle) => cy + Math.cos(angle) * r;
@@ -40,12 +41,24 @@ const CircleUnit = React.memo(
       endY: outerPolarY(outerStepAngle * (i + 1)),
     }));
 
-
     // const borderOpacity = isSelect ? 1 : 0;
 
     return (
       <g id="unit-g" onClick={(e) => handleClick(e, doi)} cursor="pointer">
         <title>{title}</title>
+        <g id="unit-background-g">
+          {isBackgroundActive && (
+            <rect
+              x={cx - 1.6 * r}
+              y={cy - 1.6 * r}
+              width={r * 3.2}
+              height={r * 3.2}
+              fill="#fc8d62"
+              rx={r * 0.4}
+              ry={r * 0.4}
+            />
+          )}
+        </g>
         <g id="unit-border-g">
           {/* <circle
             cx={cx}
@@ -76,7 +89,7 @@ const CircleUnit = React.memo(
               cx={cx}
               cy={cy}
               r={outerR}
-              fill={outerColors.length > 0 ? outerColors[0] : 'none'}
+              fill={outerColors.length > 0 ? outerColors[0] : "none"}
               // stroke="red"
               // strokeWidth={0.15 * r}
             />

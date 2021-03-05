@@ -21,12 +21,12 @@ const createStore = () => {
   return {
     titleSearch: "",
     setTitleSearch(text) {
-      this.titleSearch = text;
+      this.titleSearch = text.toLocaleLowerCase();
     },
     get searchPaperDoiSet() {
       const searchPaperDois = this.titleSearch
         ? this.papers
-            .filter((paper) => paper.title.indexOf(this.titleSearch) > -1)
+            .filter((paper) => paper.title.toLocaleLowerCase().indexOf(this.titleSearch) > -1)
             .map((paper) => paper.doi)
         : [];
       const searchPaperDoiSet = new Set(searchPaperDois);
