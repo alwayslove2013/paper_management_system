@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./index.scss";
 import CircleUnit from "./CircleUnit";
+import PaperTooltip from "./PaperTooltip";
 import { useGlobalStore } from "../../Store";
 import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
@@ -45,6 +46,9 @@ const UnitView = observer(() => {
     currentSelectedRefSet,
     currentSelectedCitedSet,
     searchPaperDoiSet,
+    setTooltipPos,
+    tooltipX,
+    tooltipY,
   } = store;
 
   // const svg = document.querySelector("#unit-svg");
@@ -252,6 +256,23 @@ const UnitView = observer(() => {
     cancelSelect();
   };
 
+  const [hoverDoi, setHoverDoi] = useState("");
+  const hoverPaper =
+    hoverDoi.length > 0 ? papers.find((paper) => paper.doi === hoverDoi) : {};
+  const hoverPaperCircle =
+    hoverDoi.length > 0
+      ? paperCircles.find((paper) => paper.doi === hoverDoi)
+      : {};
+
+  const handleHover = (doi) => {
+    console.log("===> hover", doi);
+    setHoverDoi(doi);
+  };
+  const handleHoverOut = () => {
+    console.log("===> mouse leave");
+    setHoverDoi("");
+  };
+
   return (
     <div className="unit-view">
       <svg
@@ -281,6 +302,8 @@ const UnitView = observer(() => {
                 borderColor={paper.borderColor}
                 title={paper.title}
                 isBackgroundActive={paper.isBackgroundActive}
+                handleHover={handleHover}
+                handleHoverOut={handleHoverOut}
               />
             ))}
         </g>
@@ -316,6 +339,11 @@ const UnitView = observer(() => {
             ))}
         </g>
       </svg>
+      <PaperTooltip
+        isShow={hoverDoi.length > 0}
+        paper={hoverPaper}
+        paperCircle={hoverPaperCircle}
+      />
     </div>
   );
 });

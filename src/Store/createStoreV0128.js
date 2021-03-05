@@ -19,6 +19,12 @@ const attr2func = {
 
 const createStore = () => {
   return {
+    tooltipX: 500,
+    tooltipY: 500,
+    setTooltipPos(x = -1, y = -1) {
+      this.tooltipX = x
+      this.tooltipY = y
+    },
     titleSearch: "",
     setTitleSearch(text) {
       this.titleSearch = text.toLocaleLowerCase();
