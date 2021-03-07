@@ -342,6 +342,8 @@ const UnitView = observer(() => {
       <PaperTooltip
         isShow={hoverDoi.length > 0}
         paper={hoverPaper}
+        containerWidth={svgWidth}
+        containerHeight={svgHeight}
         paperCircle={hoverPaperCircle}
       />
     </div>

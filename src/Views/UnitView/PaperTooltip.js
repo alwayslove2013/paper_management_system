@@ -1,9 +1,23 @@
 import React from "react";
 import { get } from "lodash";
 
-const PaperTooltip = ({ isShow, paper, paperCircle }) => {
+const tooltipWidthRatio = 0.25;
+
+const PaperTooltip = ({
+  isShow,
+  paper,
+  paperCircle,
+  containerWidth,
+  containerHeight,
+}) => {
+  const xRatio = paperCircle.cx / containerWidth;
+  const tooltipWidth = containerWidth * tooltipWidthRatio;
+  const tooltipX = paperCircle.cx - tooltipWidth * xRatio;
+  const tooltipY = paperCircle.cy + 15;
+  const bottomStyle =
+    paperCircle.cy + 200 > containerHeight ? "translateY(-150%)" : "";
   const style = {
-    transform: `translate(${paperCircle.cx}px,${paperCircle.cy}px)`,
+    transform: `translate(${tooltipX}px,${tooltipY}px) ${bottomStyle}`,
     opacity: isShow ? 1 : 0,
   };
   return (
