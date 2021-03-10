@@ -62,7 +62,8 @@ const createStore = () => {
         paper.internalCitedList = [];
         paper.refList = paper.refList
           .toLowerCase()
-          .split(";")
+          // .split(";")
+          .split(/[,;]/)
           .map((a) => a.trim());
         doi2paper[paper.doi] = paper;
 

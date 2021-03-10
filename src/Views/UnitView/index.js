@@ -46,9 +46,9 @@ const UnitView = observer(() => {
     currentSelectedRefSet,
     currentSelectedCitedSet,
     searchPaperDoiSet,
-    setTooltipPos,
-    tooltipX,
-    tooltipY,
+    // setTooltipPos,
+    // tooltipX,
+    // tooltipY,
   } = store;
 
   // const svg = document.querySelector("#unit-svg");
@@ -166,7 +166,7 @@ const UnitView = observer(() => {
       (paperCircle.circleIndexY + 0.5) * r;
 
     // 外挂逻辑
-    if (paper["year"] == 2004 && paperCircle.BlockIndexY > 0) {
+    if (paper["year"] === '2004' && paperCircle.BlockIndexY > 0) {
       paperCircle.cy += 50 - paperCircle.BlockIndexY * 10;
     }
 
