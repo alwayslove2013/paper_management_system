@@ -1,6 +1,8 @@
 import qs from "qs";
 
 const baseUrl = "http://vis.pku.edu.cn/vis4vis/";
+// const baseUrl = "http://127.0.0.1:12357/";
+
 const fetchData = (url, params = "") => {
   const getUrl =
     baseUrl + url + (url.includes("?") ? "&" : "?") + qs.stringify(params);
@@ -11,6 +13,10 @@ const fetchData = (url, params = "") => {
       .catch((err) => reject(err));
   });
 };
+
+export const getPapers = async () => {
+  return await fetchData("get_papers");
+}
 
 export const getPublicTags = async () => {
   return await fetchData("get_public_tags");

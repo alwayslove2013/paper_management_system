@@ -2,11 +2,12 @@ import "./App.scss";
 import { StoreProvider, useGlobalStore } from "./Store";
 // import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import * as d3 from "d3";
+// import * as d3 from "d3";
 import ControlView from "./Views/ControlView";
 import UnitView from "./Views/UnitView";
 import DetailView from "./Views/DetailView";
 import Header from "./Views/Header";
+import { getPapers } from "./Server";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ const ViewContainer = () => {
   const store = useGlobalStore();
   useEffect(() => {
     const fetchPapers = async () => {
-      const papers = await d3.csv("all_papers_data_0302.csv");
+      // const papers = await d3.csv("all_papers_data_0302.csv");
+      const papers = await getPapers();
       await store.setPapers(papers);
       store.initUserId();
     };

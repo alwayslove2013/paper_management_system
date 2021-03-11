@@ -66,7 +66,7 @@ const CircleUnit = React.memo(
               rx={r * 0.4}
               ry={r * 0.4}
             />
-            <circle cx={cx} cy={cy} r={1.4 * r} fill="#eee" />
+            <circle cx={cx} cy={cy} r={1.3 * r} fill="#eee" />
           </g>
         )}
         <g id="unit-border-g">
