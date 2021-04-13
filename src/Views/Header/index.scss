@@ -9,4 +9,10 @@
   .title {
     padding: 0 10px;
   }
+  .user-selector {
+    display: flex;
+    .add-data {
+      margin-left: 15px;
+    }
+  }
 }
