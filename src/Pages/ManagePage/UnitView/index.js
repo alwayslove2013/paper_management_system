@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./index.scss";
 import CircleUnit from "./CircleUnit";
 import PaperTooltip from "./PaperTooltip";
-import { useGlobalStore } from "../../Store";
+import { useGlobalStore } from "../../../Store";
 import { observer } from "mobx-react-lite";
 import { toJS } from "mobx";
 import { get } from "lodash";

@@ -19,11 +19,16 @@ const attr2func = {
 
 const createStore = () => {
   return {
+    currentPage: "Management",
+    setCurrentPage() {
+      this.currentPage =
+        window.location.pathname === "/analysis" ? "Analysis" : "Management";
+    },
     tooltipX: 500,
     tooltipY: 500,
     setTooltipPos(x = -1, y = -1) {
-      this.tooltipX = x
-      this.tooltipY = y
+      this.tooltipX = x;
+      this.tooltipY = y;
     },
     titleSearch: "",
     setTitleSearch(text) {
@@ -32,7 +37,10 @@ const createStore = () => {
     get searchPaperDoiSet() {
       const searchPaperDois = this.titleSearch
         ? this.papers
-            .filter((paper) => paper.title.toLocaleLowerCase().indexOf(this.titleSearch) > -1)
+            .filter(
+              (paper) =>
+                paper.title.toLocaleLowerCase().indexOf(this.titleSearch) > -1
+            )
             .map((paper) => paper.doi)
         : [];
       const searchPaperDoiSet = new Set(searchPaperDois);

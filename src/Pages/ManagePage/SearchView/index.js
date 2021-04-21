@@ -1,6 +1,6 @@
 import React from "react";
 import "./index.scss";
-import { useGlobalStore } from "../../Store";
+import { useGlobalStore } from "../../../Store";
 import { debounce } from "lodash";
 import { SearchOutlined } from "@ant-design/icons";
 // import {observer} from "mobx-react-lite";
