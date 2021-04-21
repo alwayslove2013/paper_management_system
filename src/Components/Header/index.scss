@@ -9,4 +9,15 @@
   .title {
     padding: 0 10px;
   }
+  .switch-button {
+    margin-left: 15px;
+    background: #fff;
+    border-radius: 3px;
+    padding: 0 5px;
+    color: #666;
+    :hover {
+      color: rgb(88, 173, 230);
+      font-weight: 800;
+    }
+  }
 }

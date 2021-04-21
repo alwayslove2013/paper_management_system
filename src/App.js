@@ -1,54 +1,28 @@
+import React from "react";
 import "./App.scss";
-import { StoreProvider, useGlobalStore } from "./Store";
-// import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
-// import * as d3 from "d3";
-import ControlView from "./Views/ControlView";
-import UnitView from "./Views/UnitView";
-import DetailView from "./Views/DetailView";
-import Header from "./Views/Header";
-import { getPapers } from "./Server";
+import { StoreProvider } from "./Store";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import ManagePage from "./ManagePage";
+import Analysis from "./AnalysisPage";
+import Header from "./Components/Header";
 
-function App() {
+const App = () => {
   return (
     <StoreProvider>
-      <ViewContainer />
+      <Router>
+        <div className="view-container">
+          <div className="header-container">
+            <Header />
+          </div>
+          <Switch>
+            <Route path="/management" component={ManagePage} />
+            <Route path="/analysis" component={Analysis} />
+            <Route path="/" component={ManagePage} />
+          </Switch>
+        </div>
+      </Router>
     </StoreProvider>
   );
-}
+};
 
 export default App;
-
-// init data
-const ViewContainer = () => {
-  const store = useGlobalStore();
-  useEffect(() => {
-    const fetchPapers = async () => {
-      // const papers = await d3.csv("all_papers_data_0302.csv");
-      const papers = await getPapers();
-      await store.setPapers(papers);
-      store.initUserId();
-    };
-    fetchPapers();
-  }, [store]);
-  return (
-    <div className="view-container">
-      <div className="header-container">
-        <Header />
-      </div>
-      <div className="main-container">
-        <div className="control-main-container">
-          <div className="control-view-container">
-            <ControlView />
-          </div>
-          <div className="unit-view-container">
-            <UnitView />
-          </div>
-        </div>
-        <div className="detail-view-container">
-          <DetailView />
-        </div>
-      </div>
-    </div>
-  );
-};
