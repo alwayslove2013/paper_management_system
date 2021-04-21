@@ -2,8 +2,8 @@ import React from "react";
 import "./App.scss";
 import { StoreProvider } from "./Store";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import ManagePage from "./ManagePage";
-import Analysis from "./AnalysisPage";
+import ManagePage from "./Pages/ManagePage";
+import Analysis from "./Pages/AnalysisPage";
 import Header from "./Components/Header";
 
 const App = () => {

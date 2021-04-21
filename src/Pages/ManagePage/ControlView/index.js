@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./index.scss";
-import { useGlobalStore } from "../../Store";
+import { useGlobalStore } from "../../../Store";
 import { observer } from "mobx-react-lite";
 // import { toJS } from "mobx";
 import SearchView from "../SearchView";
