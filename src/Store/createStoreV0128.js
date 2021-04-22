@@ -400,6 +400,15 @@ const createStore = () => {
     get currentSelectedPaper() {
       return this.papers.find((paper) => paper.doi === this.currentSelected);
     },
+
+    get analysisPapers() {
+      return this.controlIsActive
+        ? this.papers.filter(
+            (paper) =>
+              paper.innerColors.length > 0 || paper.outerColors.length > 0
+          )
+        : this.papers;
+    },
   };
 };
 

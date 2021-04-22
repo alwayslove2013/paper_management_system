@@ -177,10 +177,10 @@ const UnitView = observer(() => {
 
     paperCircle.citationGrey = citeCount2grey(paper.citationCount);
     paperCircle.activeColors = paper.innerColors;
-    paperCircle.colors =
-      paperCircle.activeColors.length > 0
-        ? paperCircle.activeColors
-        : [paperCircle.citationGrey];
+    // paperCircle.colors =
+    //   paperCircle.activeColors.length > 0
+    //     ? paperCircle.activeColors
+    //     : [paperCircle.citationGrey];
     paperCircle.innerColors =
       paperCircle.activeColors.length > 0
         ? paperCircle.activeColors
@@ -203,7 +203,7 @@ const UnitView = observer(() => {
     }
 
     paperCircle.opacity = controlIsActive
-      ? paperCircle.activeColors.length > 0
+      ? (paper.innerColors.length + paper.outerColors.length)  > 0
         ? 0.8
         : 0.4
       : 0.8;
