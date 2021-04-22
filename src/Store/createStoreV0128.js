@@ -233,8 +233,10 @@ const createStore = () => {
       }
     },
     initUserId() {
-      const userId = localStorage.getItem("paper-management-system-userId");
-      userId && this.setUserId(userId);
+      if (this.userId.length === 0) {
+        const userId = localStorage.getItem("paper-management-system-userId");
+        userId && this.setUserId(userId);
+      }
     },
 
     get controlTagNameList() {

@@ -7,13 +7,14 @@ const AnalysisPage = observer(() => {
   const store = useGlobalStore();
   const { analysisPapers } = store;
   useEffect(() => {
+    store.initUserId();
     store.setCurrentPage();
   }, []);
   return (
     <div className="analysis-container">
-      {analysisPapers.map((paper) => (
-        <div key={paper.doi}>{paper.doi}</div>
-      ))}
+      <div className="left-container"></div>
+      <div className="middle-container"></div>
+      <div className="right-container"></div>
     </div>
   );
 });
