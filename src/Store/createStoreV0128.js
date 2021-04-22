@@ -6,7 +6,7 @@ import {
   getPublicTags,
   getPrivateTags,
 } from "../Server";
-// import { get } from "lodash";
+import { get } from "lodash";
 import mostCommon from "../Common/Counter";
 
 const debug = true;
@@ -410,6 +410,16 @@ const createStore = () => {
               paper.innerColors.length > 0 || paper.outerColors.length > 0
           )
         : this.papers;
+    },
+    anaHighCate: "",
+    anaHighTag: "",
+    get anaHighPapers() {
+      if (this.anaHighCate && this.anaHighTag) {
+        return this.analysisPapers.filter(
+          (paper) =>
+            get(paper, this.anaHighCate, []).indexof(this.anaHighTag) > -1
+        );
+      } else return [];
     },
   };
 };
