@@ -14,7 +14,7 @@ const Header = observer(() => {
   };
   const { currentPage } = store;
   const title = `Literature ${currentPage} System`;
-  const switchPage = currentPage === "Analysis" ? "management" : "analysis";
+  const switchPage = currentPage === "Analysis" ? "Manage" : "Analyze";
   const SwitchButton = () => (
     <Link to={switchPage} className="switch-button">
       {switchPage}
