@@ -428,6 +428,20 @@ const createStore = () => {
         );
       } else return [];
     },
+    get timeData() {
+      const timeList = this.unitXAttrList.map((a) => +a).sort();
+      return timeList.map((year) => ({
+        x: year,
+        all: this.analysisPapers.filter((paper) => +paper.year === year).length,
+        highligh: this.anaHighPapers.filter((paper) => +paper.year === year).length,
+      }))
+    },
+
+
+    clearBrushTrigger: () => {},
+    setClearBrushTrigger(fn) {
+      this.clearBrushTrigger = fn;
+    },
   };
 };
 

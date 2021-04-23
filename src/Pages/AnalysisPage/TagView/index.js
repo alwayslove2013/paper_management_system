@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import "./index.scss";
 import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "../../../Store";
@@ -10,18 +10,29 @@ const TagView = observer(() => {
   const {
     controlTagNameList,
     // unitXAttr,
-    unitXAttrList,
-    analysisPapers,
-    anaHighPapers,
+    // unitXAttrList,
+    // analysisPapers,
+    // anaHighPapers,
+    // clearBrushTrigger,
+    setClearBrushTrigger,
+    timeData,
   } = store;
-  const timeList = unitXAttrList.map((a) => +a).sort();
-  const timeData = timeList.map((year) => ({
-    x: year,
-    all: analysisPapers.filter((paper) => +paper.year === year).length,
-    highligh: anaHighPapers.filter((paper) => +paper.year === year).length,
-  }));
-  // console.log("===>controlTagNameList", controlTagNameList, timeList, timeData);
+  // const timeList = unitXAttrList.map((a) => +a).sort();
+  // const timeData = useMemo(
+  //   () =>
+  //     timeList.map((year) => ({
+  //       x: year,
+  //       all: analysisPapers.filter((paper) => +paper.year === year).length,
+  //       highligh: anaHighPapers.filter((paper) => +paper.year === year).length,
+  //     })),
+  //   [analysisPapers, anaHighPapers]
+  // );
+  // console.log("===>controlTagNameList", controlTagNameList, timeData);
   // const
+  // const [clearBrushTrigger, setClearBrushTrigger] = useState(false);
+  // console.log("ClearBrushTrigger", clearBrushTrigger);
+  const [yearSelecting, setYearSelecting] = useState([0, 0]);
+  const [yearSelected, setYearSelected] = useState([0, 0]);
   return (
     <div className="tag-view-container">
       <>
@@ -31,7 +42,15 @@ const TagView = observer(() => {
           </div>
         ))}
         <div className="tag-filter-container">
-          <TimeLine data={timeData}/>
+          <div className="year-seleted-text">{yearSelecting.join("-")}</div>
+          <div className="time-line-div">
+            <TimeLine
+              data={timeData}
+              onInput={setYearSelecting}
+              onChange={setYearSelected}
+              setClearBrushTrigger={setClearBrushTrigger}
+            />
+          </div>
         </div>
       </>
     </div>
