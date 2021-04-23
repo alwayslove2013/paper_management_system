@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.scss";
 import { useGlobalStore } from "../../../Store";
 import { observer } from "mobx-react-lite";
@@ -31,6 +31,14 @@ const ControlItem = observer(({ tagData }) => {
   const { tag2color } = store;
 
   const [tags, setTags] = useState([]);
+  // 又是一个外挂逻辑，从ana界面切回来以后，需要初始化tag item，理论上这个应该放在store统一处理
+  useEffect(() => {
+    const initTags = Object.keys(tag2color)
+      .filter((tag) => tag.split("---")[0] === tagData.value)
+      .map((tag) => tag.split("---")[1])
+      .filter((tag) => tagData.list.indexOf(tag) > -1);
+    setTags(initTags);
+  }, []);
   const handleClickOption = (value) => {
     const currentTags = [...tags];
     const index = currentTags.indexOf(value);
