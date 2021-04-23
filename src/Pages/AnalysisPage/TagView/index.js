@@ -9,7 +9,7 @@ const TagView = observer(() => {
   const store = useGlobalStore();
   const {
     controlTagNameList,
-    unitXAttr,
+    // unitXAttr,
     unitXAttrList,
     analysisPapers,
     anaHighPapers,
@@ -17,10 +17,10 @@ const TagView = observer(() => {
   const timeList = unitXAttrList.map((a) => +a).sort();
   const timeData = timeList.map((year) => ({
     x: year,
-    all: analysisPapers.filter((paper) => paper.year == year).length,
-    highligh: anaHighPapers.filter((paper) => paper.year == year).length,
+    all: analysisPapers.filter((paper) => +paper.year === year).length,
+    highligh: anaHighPapers.filter((paper) => +paper.year === year).length,
   }));
-  console.log("===>controlTagNameList", controlTagNameList, timeList, timeData);
+  // console.log("===>controlTagNameList", controlTagNameList, timeList, timeData);
   // const
   return (
     <div className="tag-view-container">
