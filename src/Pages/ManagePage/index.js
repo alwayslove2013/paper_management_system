@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useGlobalStore } from "../../Store";
-import { getPapers } from "../../Server";
+// import { getPapers } from "../../Server";
 
 import ControlView from "./ControlView";
 import UnitView from "./UnitView";
@@ -9,16 +9,10 @@ import DetailView from "./DetailView";
 const ManagePage = () => {
   const store = useGlobalStore();
   useEffect(() => {
-    const fetchPapers = async () => {
-      // const papers = await d3.csv("all_papers_data_0302.csv");
-      const papers = await getPapers();
-      await store.setPapers(papers);
-
-      store.initUserId();
-    };
     store.setCurrentPage();
-    fetchPapers();
-  }, [store]);
+    store.initUserId();
+    store.initPapers();
+  }, []);
   return (
     <div className="main-container">
       <div className="control-main-container">

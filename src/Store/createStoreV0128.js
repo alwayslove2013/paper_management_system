@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { toJS, runInAction } from "mobx";
 import {
+  getPapers,
   setPublicTags,
   setPrivateTags,
   getPublicTags,
@@ -51,6 +52,12 @@ const createStore = () => {
     commonCountries: [],
     commonPublicTags: [],
     commonPrivateTags: [],
+    async initPapers() {
+      if (this.papers.length === 0) {
+        const papers = await getPapers();
+        this.setPapers(papers);
+      }
+    },
     async setPapers(papers, compareAttr = "citationCount") {
       debug && console.log("==> 初始化Papers");
       const doi2paper = {};

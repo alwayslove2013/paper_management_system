@@ -13,6 +13,7 @@ const AnalysisPage = () => {
   useEffect(() => {
     store.initUserId();
     store.setCurrentPage();
+    store.initPapers();
   }, []);
   return (
     <div className="analysis-container">
