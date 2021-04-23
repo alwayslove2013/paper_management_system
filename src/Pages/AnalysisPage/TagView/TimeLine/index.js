@@ -95,15 +95,22 @@ const TimeLine = React.memo(
           : onInput(initYearRange);
       };
       const brushEnd = ({ selection }) => {
-        const brushYear = data
-          .filter(
-            (d) =>
-              d.rectX + x.bandwidth() > selection[0] && d.rectX < selection[1]
-          )
-          .map((d) => d.x);
-        brushYear.length >= 1
-          ? onChange([brushYear[0], brushYear[brushYear.length - 1]])
-          : onChange(initYearRange);
+        console.log("selection", selection);
+        if (selection) {
+          const brushYear = data
+            .filter(
+              (d) =>
+                d.rectX + x.bandwidth() > selection[0] && d.rectX < selection[1]
+            )
+            .map((d) => d.x);
+          brushYear.length >= 1
+            ? onChange([brushYear[0], brushYear[brushYear.length - 1]])
+            : onChange(initYearRange);
+        } else {
+          bars.classed("active", false);
+          onInput(initYearRange);
+          onChange(initYearRange);
+        }
       };
       const brush = d3
         .brushX()
