@@ -43,4 +43,12 @@ $container-border: 2px solid #ccc;
       flex: 1;
     }
   }
+
+
+  .non-active-bars {
+    fill: #aaa;
+  }
+  .active-bars {
+    fill: rgb(23, 123, 163);
+  }
 }

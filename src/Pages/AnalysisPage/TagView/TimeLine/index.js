@@ -52,7 +52,7 @@ const TimeLine = React.memo(
 
       const svg = d3.select("#ana-time-line-svg");
       // svg.selectAll("*").remove();
-      const barsG = svg.append("g").attr("class", "bars").attr("fill", "#888");
+      const barsG = svg.append("g").classed("non-active-bars", true);
       const bars = barsG
         .selectAll("rect")
         .data(data)
@@ -62,10 +62,7 @@ const TimeLine = React.memo(
         .attr("height", (d) => y(0) - y(d.all))
         .attr("width", x.bandwidth());
 
-      const highlightBarsG = svg
-        .append("g")
-        .attr("class", "highlight-bars")
-        .attr("fill", "red");
+      const highlightBarsG = svg.append("g").classed("active-bars", true);
 
       svg.append("g").attr("class", "x-axis").call(xAxis);
 
@@ -77,7 +74,7 @@ const TimeLine = React.memo(
 
       const brushing = ({ selection }) => {
         bars.classed(
-          "active",
+          "active-bars",
           (bar) =>
             bar.rectX + x.bandwidth() > selection[0] && bar.rectX < selection[1]
         );
@@ -103,9 +100,10 @@ const TimeLine = React.memo(
             ? onChange([brushYear[0], brushYear[brushYear.length - 1]])
             : onChange(initYearRange);
         } else {
-          bars.classed("active", false);
+          bars.classed("active-bars", false);
           onInput(initYearRange);
           onChange(initYearRange);
+          setAnaFilterType("year");
         }
       };
       const brush = d3
@@ -122,7 +120,7 @@ const TimeLine = React.memo(
 
       setClearBrushTrigger(() => {
         d3.brush().move(svg);
-        bars.classed("active", false);
+        bars.classed("active-bars", false);
       });
       // console.log("brush_go", brush_go);
     }, [clientRect]);

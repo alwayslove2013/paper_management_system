@@ -15,9 +15,10 @@ const TagFilter = React.memo(
     const padding = anaSvgPadding;
     useEffect(() => {}, []);
     useEffect(() => {
-      // data = data.filter((d) => d.all > 0);
-      data = d3.sort(data, (a, b) => a.all - b.all);
       if (data.length === 0 || width === 0 || height === 0) return;
+      svg.selectAll("*").remove();
+      data = data.filter((d) => d.all > 0);
+      data = d3.sort(data, (a, b) => a.all - b.all);
       const x = d3
         .scaleBand()
         .domain(data.map((d) => d.label))
@@ -44,14 +45,25 @@ const TagFilter = React.memo(
 
       svg
         .append("g")
-        .attr("class", "bars")
-        .attr("fill", "#888")
+        .classed("non-active-bars", true)
         .selectAll("rect")
         .data(data)
         .join("rect")
         .attr("x", (d) => x(d.label))
         .attr("y", (d) => y(d.all))
         .attr("height", (d) => y(0) - y(d.all))
+        .attr("width", x.bandwidth());
+
+      console.log("data", data);
+      svg
+        .append("g")
+        .classed("active-bars", true)
+        .selectAll("rect")
+        .data(data)
+        .join("rect")
+        .attr("x", (d) => x(d.label))
+        .attr("y", (d) => y(d.highlight))
+        .attr("height", (d) => y(0) - y(d.highlight))
         .attr("width", x.bandwidth());
 
       svg.append("g").attr("class", "x-axis").call(xAxis);
