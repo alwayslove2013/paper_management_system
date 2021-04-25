@@ -42,8 +42,10 @@ const TagFilter = React.memo(
           .call(d3.axisRight(y))
           .call((g) => g.select(".domain").remove());
 
-      const barsG = svg.append("g").attr("class", "bars").attr("fill", "#888");
-      const bars = barsG
+      svg
+        .append("g")
+        .attr("class", "bars")
+        .attr("fill", "#888")
         .selectAll("rect")
         .data(data)
         .join("rect")
