@@ -6,16 +6,16 @@ import { anaSvgPadding } from "Common";
 
 const TagFilter = React.memo(
   ({ title = "title", data = [], setHighTag = () => {} }) => {
-    const svgId = `ana-tag-filter-svg-${title}`;
+    const svgId = `ana-tag-filter-svg-${title.replaceAll(/\W/g, "")}`;
     const svg = d3.select(`#${svgId}`);
     const clientRect = useClientRect({
-      svgId: "ana-time-line-svg",
+      svgId,
     });
     const { width, height } = clientRect;
     const padding = anaSvgPadding;
     useEffect(() => {}, []);
     useEffect(() => {
-      data = data.filter((d) => d.all > 0);
+      // data = data.filter((d) => d.all > 0);
       data = d3.sort(data, (a, b) => a.all - b.all);
       if (data.length === 0 || width === 0 || height === 0) return;
       const x = d3

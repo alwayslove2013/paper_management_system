@@ -8,7 +8,7 @@ import {
   getPrivateTags,
 } from "Server";
 import { get } from "lodash";
-import mostCommon from "Common/Counter";
+import { mostCommon, mustInclude } from "Common";
 
 const debug = true;
 
@@ -250,31 +250,20 @@ const createStore = () => {
     },
 
     get controlTagNameList() {
-      return this.generate_category(12);
+      return this.generateCategory(12);
     },
     get anaCategories() {
-      return this.generate_category(30);
+      return this.generateCategory(30, true);
     },
-    generate_category(count) {
-      const must_include_countries = ["Japan", "Korea"];
-      const countries = this.commonCountries.slice(0, count);
-      must_include_countries.forEach((country) => {
-        if (!countries.includes(country)) {
-          let i = countries.length - 1;
-          while (must_include_countries.includes(countries[i])) i -= 1;
-          countries[i] = country;
-        }
-      });
-
-      const must_include_authors = ["Xiaoru Yuan"];
-      const authors = this.commonAuthors.slice(0, count);
-      must_include_authors.forEach((author) => {
-        if (!authors.includes(author)) {
-          let i = authors.length - 1;
-          while (must_include_authors.includes(authors[i])) i -= 1;
-          authors[i] = author;
-        }
-      });
+    generateCategory(count, have_read = false) {
+      const countries = mustInclude(
+        this.commonCountries,
+        ["Japan", "Korea"],
+        count
+      );
+      const authors = mustInclude(this.commonAuthors, ["Xiaoru Yuan"], count);
+      const privateTags = mustInclude(this.commonPrivateTags, ["read"], count);
+      const publicTags = this.commonPublicTags;
       return [
         {
           label: "Country",
@@ -291,13 +280,13 @@ const createStore = () => {
         {
           label: "Private Tag",
           value: "privateTags",
-          list: this.commonPrivateTags,
+          list: privateTags,
           highlightType: "inner",
         },
         {
           label: "Public Tag",
           value: "publicTags",
-          list: this.commonPublicTags,
+          list: publicTags,
           highlightType: "inner",
         },
       ];
@@ -468,15 +457,24 @@ const createStore = () => {
     get anaTagViewData() {
       return this.anaCategories.map((category) => {
         const title = category.label;
-        const data = category.list.map((tag) => ({
-          label: tag,
-          all: this.analysisPapers.filter(
-            (paper) => paper[category.value].indexOf(tag) > -1
-          ).length,
-          highlight: this.anaHighPapers.filter(
-            (paper) => paper[category.value].indexOf(tag) > -1
-          ).length,
-        }));
+        const data = category.list.map((tag) =>
+          tag === "read"
+            ? {
+                label: "read",
+                all: this.analysisPapers.filter((paper) => paper.read).length,
+                highlight: this.anaHighPapers.filter((paper) => paper.read)
+                  .length,
+              }
+            : {
+                label: tag,
+                all: this.analysisPapers.filter((paper) =>
+                  paper[category.value].includes(tag)
+                ).length,
+                highlight: this.anaHighPapers.filter((paper) =>
+                  paper[category.value].includes(tag)
+                ).length,
+              }
+        );
         return {
           title,
           data,
@@ -487,6 +485,12 @@ const createStore = () => {
     clearBrushTrigger: () => {},
     setClearBrushTrigger(fn) {
       this.clearBrushTrigger = fn;
+    },
+
+    setAnaHighPapersByYear([yearStart, yearEnd]) {
+      this.anaHighPapers = this.analysisPapers.filter(
+        (paper) => +paper.year >= yearStart && +paper.year <= yearEnd
+      );
     },
   };
 };
