@@ -5,7 +5,7 @@ import {
   setPrivateTags,
   getPublicTags,
   getPrivateTags,
-} from "../Server";
+} from "Server";
 import { get } from "lodash";
 import mostCommon from "../Common/Counter";
 

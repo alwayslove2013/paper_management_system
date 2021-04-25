@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { useGlobalStore } from "../../Store";
-// import { getPapers } from "../../Server";
+import { useGlobalStore } from "Store";
 
 import ControlView from "./ControlView";
 import UnitView from "./UnitView";

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./index.scss";
 import * as d3 from "d3";
-import { useClientRect } from "../../../../Hooks";
+import { useClientRect } from "Hooks";
 
 const padding = {
   left: 5,

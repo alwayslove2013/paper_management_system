@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import "./index.scss";
 import { observer } from "mobx-react-lite";
-import { useGlobalStore } from "../../../Store";
+import { useGlobalStore } from "Store";
 import TagFilter from "./TagFilter";
 import TimeLine from "./TimeLine";
 // import { toJS } from "mobx";
