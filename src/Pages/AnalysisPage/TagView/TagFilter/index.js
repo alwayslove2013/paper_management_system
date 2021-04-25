@@ -5,7 +5,14 @@ import { useClientRect } from "Hooks";
 import { anaSvgPadding } from "Common";
 
 const TagFilter = React.memo(
-  ({ label = "label", data = [], setHighTag = () => {}, anaFilterType }) => {
+  ({
+    label = "label",
+    value = "",
+    data = [],
+    setAnaHighPapersByTag = () => {},
+    anaFilterType,
+    setAnaFilterType = () => {},
+  }) => {
     const svgId = `ana-tag-filter-svg-${label.replaceAll(/\W/g, "")}`;
     const svg = d3.select(`#${svgId}`);
     const clientRect = useClientRect({
@@ -52,7 +59,12 @@ const TagFilter = React.memo(
         .attr("x", (d) => x(d.label))
         .attr("y", (d) => y(d.all))
         .attr("height", (d) => y(0) - y(d.all))
-        .attr("width", x.bandwidth());
+        .attr("width", x.bandwidth())
+        .style("cursor", "pointer")
+        .on("click", (e, d) => {
+          setAnaFilterType("tag");
+          setAnaHighPapersByTag({ anaHighCate: value, anaHighTag: d.label });
+        });
 
       if (anaFilterType !== "none") {
         svg
@@ -64,7 +76,8 @@ const TagFilter = React.memo(
           .attr("x", (d) => x(d.label))
           .attr("y", (d) => y(d.highlight))
           .attr("height", (d) => y(0) - y(d.highlight))
-          .attr("width", x.bandwidth());
+          .attr("width", x.bandwidth())
+          .style("pointer-events", "none");
       }
 
       svg.append("g").attr("class", "x-axis").call(xAxis);

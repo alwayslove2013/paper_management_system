@@ -62,7 +62,10 @@ const TimeLine = React.memo(
         .attr("height", (d) => y(0) - y(d.all))
         .attr("width", x.bandwidth());
 
-      const highlightBarsG = svg.append("g").classed("active-bars", true);
+      const highlightBarsG = svg
+        .append("g")
+        .classed("active-bars", true)
+        .classed("highlight-bars", true);
 
       svg.append("g").attr("class", "x-axis").call(xAxis);
 

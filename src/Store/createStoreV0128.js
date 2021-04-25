@@ -253,7 +253,7 @@ const createStore = () => {
       return this.generateCategory(12);
     },
     get anaCategories() {
-      return this.generateCategory(30, true);
+      return this.generateCategory(20, true);
     },
     generateCategory(count, have_read = false) {
       const countries = mustInclude(
@@ -475,7 +475,7 @@ const createStore = () => {
 
     anaFilterType: "none", // "none", "year", "tag", "topic", "lasso"
     setAnaFilterType(type) {
-      debug && console.log('setAnaFilterType', type)
+      debug && console.log("setAnaFilterType", type);
       this.anaFilterType = type;
     },
     clearBrushTrigger: () => {},
@@ -487,16 +487,17 @@ const createStore = () => {
     anaHighTag: "",
     anaHighPapers: [],
     setAnaHighPapersByTag({ anaHighCate, anaHighTag }) {
+      debug && console.log("setAnaHighPapersByTag", anaHighCate, anaHighTag);
       this.clearBrushTrigger();
       this.anaHighCate = anaHighCate;
       this.anaHighTag = anaHighTag;
       this.anaHighPapers = this.analysisPapers.filter(
         (paper) =>
-          get(paper, this.anaHighCate, []).indexof(this.anaHighTag) > -1
+          get(paper, anaHighCate, []).includes(anaHighTag)
       );
     },
     setAnaHighPapersByYear(yearRange) {
-      console.log("[yearStart, yearEnd]", yearRange);
+      debug && console.log("setAnaHighPapersByYear", yearRange);
       const [yearStart, yearEnd] = yearRange;
       this.anaHighPapers = this.analysisPapers.filter(
         (paper) => +paper.year >= yearStart && +paper.year <= yearEnd

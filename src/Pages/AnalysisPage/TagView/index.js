@@ -40,6 +40,7 @@ const TagView = observer(() => {
                   value={tagViewData.value}
                   data={tagViewData.data}
                   setAnaFilterType={setAnaFilterType}
+                  setAnaHighPapersByTag={setAnaHighPapersByTag}
                   anaFilterType={anaFilterType}
                 />
               )}
