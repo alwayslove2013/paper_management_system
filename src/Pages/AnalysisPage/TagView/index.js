@@ -4,17 +4,17 @@ import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
 import TagFilter from "./TagFilter";
 import TimeLine from "./TimeLine";
-import { toJS } from "mobx";
+// import { toJS } from "mobx";
 
 const TagView = observer(() => {
   const store = useGlobalStore();
   const {
-    controlTagNameList,
+    // controlTagNameList,
     // unitXAttr,
     // unitXAttrList,
     // analysisPapers,
     // anaHighPapers,
-    clearBrushTrigger,
+    // clearBrushTrigger,
     setClearBrushTrigger,
     anaTimeData,
     anaTagViewData,
