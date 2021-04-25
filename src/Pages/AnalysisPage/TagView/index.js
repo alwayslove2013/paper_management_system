@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import "./index.scss";
 import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
@@ -18,19 +18,6 @@ const TagView = observer(() => {
     setClearBrushTrigger,
     anaTimeData,
   } = store;
-  // const timeList = unitXAttrList.map((a) => +a).sort();
-  // const timeData = useMemo(
-  //   () =>
-  //     timeList.map((year) => ({
-  //       x: year,
-  //       all: analysisPapers.filter((paper) => +paper.year === year).length,
-  //       highligh: anaHighPapers.filter((paper) => +paper.year === year).length,
-  //     })),
-  //   [analysisPapers, anaHighPapers]
-  // );
-  // console.log("===>controlTagNameList", toJS(controlTagNameList), anaTimeData);
-  // const
-  // const [clearBrushTrigger, setClearBrushTrigger] = useState(false);
   // console.log("ClearBrushTrigger", clearBrushTrigger);
   const [yearSelecting, setYearSelecting] = useState([0, 0]);
   const [yearSelected, setYearSelected] = useState([0, 0]);

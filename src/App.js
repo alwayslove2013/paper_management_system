@@ -1,10 +1,10 @@
 import React from "react";
 import "./App.scss";
-import { StoreProvider } from "./Store";
+import { StoreProvider } from "Store";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import ManagePage from "./Pages/ManagePage";
-import Analysis from "./Pages/AnalysisPage";
-import Header from "./Components/Header";
+import ManagePage from "Pages/ManagePage";
+import Analysis from "Pages/AnalysisPage";
+import Header from "Components/Header";
 
 const App = () => {
   return (

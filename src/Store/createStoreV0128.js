@@ -8,7 +8,7 @@ import {
   getPrivateTags,
 } from "Server";
 import { get } from "lodash";
-import mostCommon from "../Common/Counter";
+import mostCommon from "Common/Counter";
 
 const debug = true;
 
