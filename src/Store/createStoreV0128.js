@@ -117,8 +117,8 @@ const createStore = () => {
 
       this.commonAuthors = mostCommon(
         papers.map((paper) => paper.authors),
-        7
-      ).concat(["Xiaoru Yuan"]);
+        30
+      );
       // console.log(
       //   "Authors Tags: ",
       //   mostCommon(
@@ -126,7 +126,10 @@ const createStore = () => {
       //     100
       //   )
       // );
-      this.commonCountries = mostCommon(papers.map((paper) => paper.countries));
+      this.commonCountries = mostCommon(
+        papers.map((paper) => paper.countries),
+        30
+      );
 
       // 先按引用量排序，再去统计分组的排序，这个时间消耗其实还挺大的。
       papers.sort((a, b) => b[compareAttr] - a[compareAttr]);
@@ -207,7 +210,7 @@ const createStore = () => {
         }
       });
       runInAction(() => {
-        this.commonPublicTags = mostCommon(Object.values(publicTags));
+        this.commonPublicTags = mostCommon(Object.values(publicTags), 30);
       });
     },
     async initPrivateTags() {
@@ -224,7 +227,7 @@ const createStore = () => {
             paper.privateTags = privateTags[paper.doi].filter((a) => a);
           }
         });
-        this.commonPrivateTags = mostCommon(Object.values(privateTags));
+        this.commonPrivateTags = mostCommon(Object.values(privateTags), 30);
       });
 
       this.batchUpdateColors();
@@ -247,23 +250,47 @@ const createStore = () => {
     },
 
     get controlTagNameList() {
+      return this.generate_category(12);
+    },
+    get anaCategories() {
+      return this.generate_category(30);
+    },
+    generate_category(count) {
+      const must_include_countries = ["Japan", "Korea"];
+      const countries = this.commonCountries.slice(0, count);
+      must_include_countries.forEach((country) => {
+        if (!countries.includes(country)) {
+          let i = countries.length - 1;
+          while (must_include_countries.includes(countries[i])) i -= 1;
+          countries[i] = country;
+        }
+      });
+
+      const must_include_authors = ["Xiaoru Yuan"];
+      const authors = this.commonAuthors.slice(0, count);
+      must_include_authors.forEach((author) => {
+        if (!authors.includes(author)) {
+          let i = authors.length - 1;
+          while (must_include_authors.includes(authors[i])) i -= 1;
+          authors[i] = author;
+        }
+      });
       return [
         {
           label: "Country",
           value: "countries",
-          list: this.commonCountries.slice(0, 8).concat(["Japan", "Korea"]),
+          list: countries,
           highlightType: "outer",
         },
         {
           label: "Author",
           value: "authors",
-          list: this.commonAuthors,
+          list: authors,
           highlightType: "inner",
         },
         {
           label: "Private Tag",
           value: "privateTags",
-          // list: ["read"].concat(this.commonPrivateTags),
           list: this.commonPrivateTags,
           highlightType: "inner",
         },
@@ -433,14 +460,29 @@ const createStore = () => {
       return timeList.map((year) => ({
         x: year,
         all: this.analysisPapers.filter((paper) => +paper.year === year).length,
-        highligh: this.anaHighPapers.filter((paper) => +paper.year === year).length,
-      }))
+        highlight: this.anaHighPapers.filter((paper) => +paper.year === year)
+          .length,
+      }));
     },
 
     get anaTagViewData() {
-
+      return this.anaCategories.map((category) => {
+        const title = category.label;
+        const data = category.list.map((tag) => ({
+          label: tag,
+          all: this.analysisPapers.filter(
+            (paper) => paper[category.value].indexOf(tag) > -1
+          ).length,
+          highlight: this.anaHighPapers.filter(
+            (paper) => paper[category.value].indexOf(tag) > -1
+          ).length,
+        }));
+        return {
+          title,
+          data,
+        };
+      });
     },
-
 
     clearBrushTrigger: () => {},
     setClearBrushTrigger(fn) {

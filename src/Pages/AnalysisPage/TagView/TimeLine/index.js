@@ -2,13 +2,7 @@ import React, { useEffect } from "react";
 import "./index.scss";
 import * as d3 from "d3";
 import { useClientRect } from "Hooks";
-
-const padding = {
-  left: 5,
-  right: 25,
-  top: 8,
-  bottom: 20,
-};
+import { anaSvgPadding } from "Common";
 
 const TimeLine = React.memo(
   ({
@@ -17,6 +11,7 @@ const TimeLine = React.memo(
     onChange = () => {},
     setClearBrushTrigger = () => {},
   }) => {
+    const padding = anaSvgPadding;
     const clientRect = useClientRect({
       svgId: "ana-time-line-svg",
     });
@@ -33,7 +28,7 @@ const TimeLine = React.memo(
         .scaleBand()
         .domain(data.map((d) => d.x))
         .range([padding.left, width - padding.right])
-        .padding(0.1);
+        .padding(0.2);
       const y = d3
         .scaleLinear()
         .domain([0, d3.max(data, (d) => d.all)])
