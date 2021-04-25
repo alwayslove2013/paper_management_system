@@ -10,6 +10,8 @@ const TimeLine = React.memo(
     onInput = () => {},
     onChange = () => {},
     setClearBrushTrigger = () => {},
+    anaFilterType,
+    setAnaFilterType = () => {},
   }) => {
     const padding = anaSvgPadding;
     const clientRect = useClientRect({
@@ -49,6 +51,7 @@ const TimeLine = React.memo(
           .call((g) => g.select(".domain").remove());
 
       const svg = d3.select("#ana-time-line-svg");
+      // svg.selectAll("*").remove();
       const barsG = svg.append("g").attr("class", "bars").attr("fill", "#888");
       const bars = barsG
         .selectAll("rect")
@@ -59,16 +62,17 @@ const TimeLine = React.memo(
         .attr("height", (d) => y(0) - y(d.all))
         .attr("width", x.bandwidth());
 
+      const highlightBarsG = svg
+        .append("g")
+        .attr("class", "highlight-bars")
+        .attr("fill", "red");
+
       svg.append("g").attr("class", "x-axis").call(xAxis);
 
       svg.append("g").attr("class", "y-axis").call(yAxis);
 
       const brushStart = () => {
-        // const brush_go = () => {
-        //   d3.brush().move(svg);
-        //   bars.classed("active", false);
-        // };
-        // setClearBrushTrigger(brush_go);
+        setAnaFilterType("year");
       };
 
       const brushing = ({ selection }) => {
@@ -121,7 +125,37 @@ const TimeLine = React.memo(
         bars.classed("active", false);
       });
       // console.log("brush_go", brush_go);
-    });
+    }, [clientRect]);
+
+    useEffect(() => {
+      if (
+        width === 0 ||
+        height === 0 ||
+        anaFilterType === "year" ||
+        anaFilterType === "none"
+      )
+        return;
+      const svg = d3.select("#ana-time-line-svg");
+      const highlightBarsG = svg.select(".highlight-bars");
+      const x = d3
+        .scaleBand()
+        .domain(data.map((d) => d.x))
+        .range([padding.left, width - padding.right])
+        .padding(0.2);
+      const y = d3
+        .scaleLinear()
+        .domain([0, d3.max(data, (d) => d.all)])
+        .nice()
+        .range([height - padding.bottom, padding.top]);
+      const highlightBars = highlightBarsG
+        .selectAll("rect")
+        .data(data)
+        .join("rect")
+        .attr("x", (d) => x(d.x))
+        .attr("y", (d) => y(d.highlight))
+        .attr("height", (d) => y(0) - y(d.highlight))
+        .attr("width", x.bandwidth());
+    }, [data, anaFilterType]);
     return <svg id="ana-time-line-svg" width="100%" height="100%" />;
   }
 );

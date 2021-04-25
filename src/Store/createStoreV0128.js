@@ -434,16 +434,6 @@ const createStore = () => {
           )
         : this.papers;
     },
-    anaHighCate: "",
-    anaHighTag: "",
-    get anaHighPapers() {
-      if (this.anaHighCate && this.anaHighTag) {
-        return this.analysisPapers.filter(
-          (paper) =>
-            get(paper, this.anaHighCate, []).indexof(this.anaHighTag) > -1
-        );
-      } else return [];
-    },
     get anaTimeData() {
       const timeList = this.unitXAttrList.map((a) => +a).sort();
       return timeList.map((year) => ({
@@ -482,12 +472,29 @@ const createStore = () => {
       });
     },
 
+    anaFilterType: "none", // "none", "year", "tag", "topic", "lasso"
+    setAnaFilterType(type) {
+      this.anaFilterType = type;
+    },
     clearBrushTrigger: () => {},
     setClearBrushTrigger(fn) {
       this.clearBrushTrigger = fn;
     },
 
-    setAnaHighPapersByYear([yearStart, yearEnd]) {
+    anaHighCate: "",
+    anaHighTag: "",
+    anaHighPapers: [],
+    setAnaHighPapersByTag({ anaHighCate, anaHighTag }) {
+      this.anaHighCate = anaHighCate;
+      this.anaHighTag = anaHighTag;
+      this.anaHighPapers = this.analysisPapers.filter(
+        (paper) =>
+          get(paper, this.anaHighCate, []).indexof(this.anaHighTag) > -1
+      );
+    },
+    setAnaHighPapersByYear(yearRange) {
+      console.log("[yearStart, yearEnd]", yearRange);
+      const [yearStart, yearEnd] = yearRange;
       this.anaHighPapers = this.analysisPapers.filter(
         (paper) => +paper.year >= yearStart && +paper.year <= yearEnd
       );

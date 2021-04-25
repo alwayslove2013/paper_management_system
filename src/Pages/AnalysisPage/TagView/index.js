@@ -18,11 +18,14 @@ const TagView = observer(() => {
     setClearBrushTrigger,
     anaTimeData,
     anaTagViewData,
+    setAnaHighPapersByYear,
+    anaFilterType,
+    setAnaFilterType,
   } = store;
   // console.log("anaTagViewData", toJS(anaTagViewData));
   // console.log("ClearBrushTrigger", clearBrushTrigger);
   const [yearSelecting, setYearSelecting] = useState([0, 0]);
-  const [yearSelected, setYearSelected] = useState([0, 0]);
+  // const [yearSelected, setYearSelected] = useState([0, 0]);
   return (
     <div className="tag-view-container">
       <>
@@ -37,12 +40,14 @@ const TagView = observer(() => {
         <div className="tag-filter-container">
           <div className="year-seleted-text">{yearSelecting.join("-")}</div>
           <div className="time-line-div">
-            <TimeLine
+            {anaTimeData.length > 0 && <TimeLine
               data={anaTimeData}
               onInput={setYearSelecting}
-              onChange={setYearSelected}
+              onChange={setAnaHighPapersByYear}
               setClearBrushTrigger={setClearBrushTrigger}
-            />
+              setAnaFilterType={setAnaFilterType}
+              anaFilterType={anaFilterType}
+            />}
           </div>
         </div>
       </>
