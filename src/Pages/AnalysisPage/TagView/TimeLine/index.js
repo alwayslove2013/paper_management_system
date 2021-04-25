@@ -102,8 +102,8 @@ const TimeLine = React.memo(
         } else {
           bars.classed("active-bars", false);
           onInput(initYearRange);
+          setAnaFilterType("none");
           onChange(initYearRange);
-          setAnaFilterType("year");
         }
       };
       const brush = d3
@@ -122,7 +122,6 @@ const TimeLine = React.memo(
         d3.brush().move(svg);
         bars.classed("active-bars", false);
       });
-      // console.log("brush_go", brush_go);
     }, [clientRect]);
 
     useEffect(() => {

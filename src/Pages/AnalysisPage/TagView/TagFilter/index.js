@@ -5,8 +5,8 @@ import { useClientRect } from "Hooks";
 import { anaSvgPadding } from "Common";
 
 const TagFilter = React.memo(
-  ({ title = "title", data = [], setHighTag = () => {} }) => {
-    const svgId = `ana-tag-filter-svg-${title.replaceAll(/\W/g, "")}`;
+  ({ label = "label", data = [], setHighTag = () => {}, anaFilterType }) => {
+    const svgId = `ana-tag-filter-svg-${label.replaceAll(/\W/g, "")}`;
     const svg = d3.select(`#${svgId}`);
     const clientRect = useClientRect({
       svgId,
@@ -54,17 +54,18 @@ const TagFilter = React.memo(
         .attr("height", (d) => y(0) - y(d.all))
         .attr("width", x.bandwidth());
 
-      console.log("data", data);
-      svg
-        .append("g")
-        .classed("active-bars", true)
-        .selectAll("rect")
-        .data(data)
-        .join("rect")
-        .attr("x", (d) => x(d.label))
-        .attr("y", (d) => y(d.highlight))
-        .attr("height", (d) => y(0) - y(d.highlight))
-        .attr("width", x.bandwidth());
+      if (anaFilterType !== "none") {
+        svg
+          .append("g")
+          .classed("active-bars", true)
+          .selectAll("rect")
+          .data(data)
+          .join("rect")
+          .attr("x", (d) => x(d.label))
+          .attr("y", (d) => y(d.highlight))
+          .attr("height", (d) => y(0) - y(d.highlight))
+          .attr("width", x.bandwidth());
+      }
 
       svg.append("g").attr("class", "x-axis").call(xAxis);
 

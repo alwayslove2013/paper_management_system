@@ -19,6 +19,7 @@ const TagView = observer(() => {
     anaTimeData,
     anaTagViewData,
     setAnaHighPapersByYear,
+    setAnaHighPapersByTag,
     anaFilterType,
     setAnaFilterType,
   } = store;
@@ -30,11 +31,17 @@ const TagView = observer(() => {
     <div className="tag-view-container">
       <>
         {anaTagViewData.map((tagViewData) => (
-          <div className="tag-filter-container" key={tagViewData.title}>
-            <div className="tag-filter-label">{tagViewData.title}</div>
+          <div className="tag-filter-container" key={tagViewData.value}>
+            <div className="tag-filter-label">{tagViewData.label}</div>
             <div className="tag-filter-div">
               {tagViewData.data.length > 0 && (
-                <TagFilter title={tagViewData.title} data={tagViewData.data} />
+                <TagFilter
+                  label={tagViewData.label}
+                  value={tagViewData.value}
+                  data={tagViewData.data}
+                  setAnaFilterType={setAnaFilterType}
+                  anaFilterType={anaFilterType}
+                />
               )}
             </div>
           </div>

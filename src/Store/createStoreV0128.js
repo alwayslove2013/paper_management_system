@@ -446,7 +446,7 @@ const createStore = () => {
 
     get anaTagViewData() {
       return this.anaCategories.map((category) => {
-        const title = category.label;
+        const { label, value } = category;
         const data = category.list.map((tag) =>
           tag === "read"
             ? {
@@ -466,7 +466,8 @@ const createStore = () => {
               }
         );
         return {
-          title,
+          label,
+          value,
           data,
         };
       });
@@ -474,6 +475,7 @@ const createStore = () => {
 
     anaFilterType: "none", // "none", "year", "tag", "topic", "lasso"
     setAnaFilterType(type) {
+      debug && console.log('setAnaFilterType', type)
       this.anaFilterType = type;
     },
     clearBrushTrigger: () => {},
@@ -485,6 +487,7 @@ const createStore = () => {
     anaHighTag: "",
     anaHighPapers: [],
     setAnaHighPapersByTag({ anaHighCate, anaHighTag }) {
+      this.clearBrushTrigger();
       this.anaHighCate = anaHighCate;
       this.anaHighTag = anaHighTag;
       this.anaHighPapers = this.analysisPapers.filter(
