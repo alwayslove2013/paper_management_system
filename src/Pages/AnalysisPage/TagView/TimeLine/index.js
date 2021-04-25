@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./index.scss";
 import * as d3 from "d3";
+import { useClientRect } from "../../../../Hooks";
 
 const padding = {
   left: 5,
@@ -16,18 +17,15 @@ const TimeLine = React.memo(
     onChange = () => {},
     setClearBrushTrigger = () => {},
   }) => {
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
+    const clientRect = useClientRect({
+      svgId: "ana-time-line-svg",
+    });
+    const { width, height } = clientRect;
+
     const initYearRange = [d3.min(data, (d) => d.x), d3.max(data, (d) => d.x)];
-    // 初始化，确定长宽
     useEffect(() => {
-      const svg = d3.select("#ana-time-line-svg");
-      svg.selectAll("*").remove();
-      const clientRect = svg.node().getClientRects()[0];
-      const { width, height } = clientRect;
-      setWidth(width);
-      setHeight(height);
-    }, []);
+      onInput(initYearRange);
+    }, [data]);
 
     useEffect(() => {
       if (data.length === 0 || width === 0 || height === 0) return;
@@ -95,7 +93,6 @@ const TimeLine = React.memo(
           : onInput(initYearRange);
       };
       const brushEnd = ({ selection }) => {
-        console.log("selection", selection);
         if (selection) {
           const brushYear = data
             .filter(

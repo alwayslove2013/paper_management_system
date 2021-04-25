@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "../../../Store";
 import TagFilter from "./TagFilter";
 import TimeLine from "./TimeLine";
+// import { toJS } from "mobx";
 
 const TagView = observer(() => {
   const store = useGlobalStore();
@@ -13,9 +14,9 @@ const TagView = observer(() => {
     // unitXAttrList,
     // analysisPapers,
     // anaHighPapers,
-    // clearBrushTrigger,
+    clearBrushTrigger,
     setClearBrushTrigger,
-    timeData,
+    anaTimeData,
   } = store;
   // const timeList = unitXAttrList.map((a) => +a).sort();
   // const timeData = useMemo(
@@ -27,7 +28,7 @@ const TagView = observer(() => {
   //     })),
   //   [analysisPapers, anaHighPapers]
   // );
-  // console.log("===>controlTagNameList", controlTagNameList, timeData);
+  // console.log("===>controlTagNameList", toJS(controlTagNameList), anaTimeData);
   // const
   // const [clearBrushTrigger, setClearBrushTrigger] = useState(false);
   // console.log("ClearBrushTrigger", clearBrushTrigger);
@@ -45,7 +46,7 @@ const TagView = observer(() => {
           <div className="year-seleted-text">{yearSelecting.join("-")}</div>
           <div className="time-line-div">
             <TimeLine
-              data={timeData}
+              data={anaTimeData}
               onInput={setYearSelecting}
               onChange={setYearSelected}
               setClearBrushTrigger={setClearBrushTrigger}
