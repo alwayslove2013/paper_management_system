@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import "./index.scss";
 import * as d3 from "d3";
 import { useClientRect } from "Hooks";
-import { anaSvgPadding } from "Common";
+import { anaTimeSvgPadding as padding } from "Common";
 
 const TimeLine = React.memo(
   ({
@@ -13,7 +13,7 @@ const TimeLine = React.memo(
     anaFilterType,
     setAnaFilterType = () => {},
   }) => {
-    const padding = anaSvgPadding;
+    // const padding = anaTimeSvgPadding;
     const clientRect = useClientRect({
       svgId: "ana-time-line-svg",
     });
@@ -43,11 +43,11 @@ const TimeLine = React.memo(
             "transform",
             "translate(" + 0 + ", " + (height - padding.bottom) + ")"
           )
-          .call(d3.axisBottom(x).tickSizeOuter(0));
+          .call(d3.axisBottom(x).tickValues(d3.range(initYearRange[0], initYearRange[1], 5)).tickSizeOuter(0));
       const yAxis = (g) =>
         g
           .attr("transform", `translate(${width - padding.right},0)`)
-          .call(d3.axisRight(y))
+          .call(d3.axisRight(y).ticks(6))
           .call((g) => g.select(".domain").remove());
 
       const svg = d3.select("#ana-time-line-svg");

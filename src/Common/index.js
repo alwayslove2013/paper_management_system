@@ -1,9 +1,5 @@
-import anaSvgPadding from "./anaSvgPadding"
-import mustInclude from "./mustInclude"
-import mostCommon from "./mostCommon"
+import { anaSvgPadding, anaTimeSvgPadding } from "./svgPadding";
+import mustInclude from "./mustInclude";
+import mostCommon from "./mostCommon";
 
-export {
-  anaSvgPadding,
-  mustInclude,
-  mostCommon
-}
+export { anaSvgPadding, anaTimeSvgPadding, mustInclude, mostCommon };

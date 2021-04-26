@@ -253,7 +253,7 @@ const createStore = () => {
       return this.generateCategory(12);
     },
     get anaCategories() {
-      return this.generateCategory(20, true);
+      return this.generateCategory(18, true);
     },
     generateCategory(count, have_read = false) {
       const countries = mustInclude(

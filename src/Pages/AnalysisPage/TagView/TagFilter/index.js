@@ -43,11 +43,17 @@ const TagFilter = React.memo(
             "transform",
             "translate(" + 0 + ", " + (height - padding.bottom) + ")"
           )
-          .call(d3.axisBottom(x).tickSizeOuter(0));
+          .call(d3.axisBottom(x).tickSizeOuter(0))
+          .call((g) =>
+            g
+              .selectAll("text")
+              .attr("transform", "rotate(-28)")
+              .style("text-anchor", "end")
+          );
       const yAxis = (g) =>
         g
           .attr("transform", `translate(${width - padding.right},0)`)
-          .call(d3.axisRight(y))
+          .call(d3.axisRight(y).ticks(5))
           .call((g) => g.select(".domain").remove());
 
       svg
