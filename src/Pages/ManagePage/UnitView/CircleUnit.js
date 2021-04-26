@@ -1,7 +1,4 @@
 import React from "react";
-// import * as d3 from "d3";
-// import { useGlobalStore } from "../../Store";
-// import { observer } from "mobx-react-lite";
 
 const CircleUnit = React.memo(
   ({

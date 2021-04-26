@@ -1,10 +1,10 @@
 import React from "react";
 import "./index.scss";
-import userList from "../../Common/userList";
-import { useGlobalStore } from "../../Store";
+import userList from "Common/userList";
+import { useGlobalStore } from "Store";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { Select, Button } from "antd";
+import { Select } from "antd";
 const { Option } = Select;
 
 const Header = observer(() => {
@@ -15,9 +15,10 @@ const Header = observer(() => {
   const { currentPage } = store;
   const title = `Literature ${currentPage} System`;
   const switchPage = currentPage === "Analysis" ? "management" : "analysis";
+  const switchPageShowText = currentPage === "Analysis" ? "Manage" : "Analyze";
   const SwitchButton = () => (
     <Link to={switchPage} className="switch-button">
-      {switchPage}
+      {switchPageShowText}
     </Link>
   );
   return (

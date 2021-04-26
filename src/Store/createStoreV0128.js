@@ -1,13 +1,14 @@
 import * as d3 from "d3";
 import { toJS, runInAction } from "mobx";
 import {
+  getPapers,
   setPublicTags,
   setPrivateTags,
   getPublicTags,
   getPrivateTags,
-} from "../Server";
-// import { get } from "lodash";
-import mostCommon from "../Common/Counter";
+} from "Server";
+import { get } from "lodash";
+import { mostCommon, mustInclude } from "Common";
 
 const debug = true;
 
@@ -51,6 +52,12 @@ const createStore = () => {
     commonCountries: [],
     commonPublicTags: [],
     commonPrivateTags: [],
+    async initPapers() {
+      if (this.papers.length === 0) {
+        const papers = await getPapers();
+        this.setPapers(papers);
+      }
+    },
     async setPapers(papers, compareAttr = "citationCount") {
       debug && console.log("==> 初始化Papers");
       const doi2paper = {};
@@ -110,8 +117,8 @@ const createStore = () => {
 
       this.commonAuthors = mostCommon(
         papers.map((paper) => paper.authors),
-        7
-      ).concat(["Xiaoru Yuan"]);
+        30
+      );
       // console.log(
       //   "Authors Tags: ",
       //   mostCommon(
@@ -119,7 +126,10 @@ const createStore = () => {
       //     100
       //   )
       // );
-      this.commonCountries = mostCommon(papers.map((paper) => paper.countries));
+      this.commonCountries = mostCommon(
+        papers.map((paper) => paper.countries),
+        30
+      );
 
       // 先按引用量排序，再去统计分组的排序，这个时间消耗其实还挺大的。
       papers.sort((a, b) => b[compareAttr] - a[compareAttr]);
@@ -200,7 +210,7 @@ const createStore = () => {
         }
       });
       runInAction(() => {
-        this.commonPublicTags = mostCommon(Object.values(publicTags));
+        this.commonPublicTags = mostCommon(Object.values(publicTags), 30);
       });
     },
     async initPrivateTags() {
@@ -217,7 +227,7 @@ const createStore = () => {
             paper.privateTags = privateTags[paper.doi].filter((a) => a);
           }
         });
-        this.commonPrivateTags = mostCommon(Object.values(privateTags));
+        this.commonPrivateTags = mostCommon(Object.values(privateTags), 30);
       });
 
       this.batchUpdateColors();
@@ -233,35 +243,50 @@ const createStore = () => {
       }
     },
     initUserId() {
-      const userId = localStorage.getItem("paper-management-system-userId");
-      userId && this.setUserId(userId);
+      if (this.userId.length === 0) {
+        const userId = localStorage.getItem("paper-management-system-userId");
+        userId && this.setUserId(userId);
+      }
     },
 
     get controlTagNameList() {
+      return this.generateCategory(12);
+    },
+    get anaCategories() {
+      return this.generateCategory(18, true);
+    },
+    generateCategory(count, have_read = false) {
+      const countries = mustInclude(
+        this.commonCountries,
+        ["Japan", "Korea"],
+        count
+      );
+      const authors = mustInclude(this.commonAuthors, ["Xiaoru Yuan"], count);
+      const privateTags = mustInclude(this.commonPrivateTags, ["read"], count);
+      const publicTags = this.commonPublicTags;
       return [
         {
           label: "Country",
           value: "countries",
-          list: this.commonCountries.slice(0, 8).concat(["Japan", "Korea"]),
+          list: countries,
           highlightType: "outer",
         },
         {
           label: "Author",
           value: "authors",
-          list: this.commonAuthors,
+          list: authors,
           highlightType: "inner",
         },
         {
           label: "Private Tag",
           value: "privateTags",
-          // list: ["read"].concat(this.commonPrivateTags),
-          list: this.commonPrivateTags,
+          list: privateTags,
           highlightType: "inner",
         },
         {
           label: "Public Tag",
           value: "publicTags",
-          list: this.commonPublicTags,
+          list: publicTags,
           highlightType: "inner",
         },
       ];
@@ -399,6 +424,84 @@ const createStore = () => {
     },
     get currentSelectedPaper() {
       return this.papers.find((paper) => paper.doi === this.currentSelected);
+    },
+
+    get analysisPapers() {
+      return this.controlIsActive
+        ? this.papers.filter(
+            (paper) =>
+              paper.innerColors.length > 0 || paper.outerColors.length > 0
+          )
+        : this.papers;
+    },
+    get anaTimeData() {
+      const timeList = this.unitXAttrList.map((a) => +a).sort();
+      return timeList.map((year) => ({
+        x: year,
+        all: this.analysisPapers.filter((paper) => +paper.year === year).length,
+        highlight: this.anaHighPapers.filter((paper) => +paper.year === year)
+          .length,
+      }));
+    },
+
+    get anaTagViewData() {
+      return this.anaCategories.map((category) => {
+        const { label, value } = category;
+        const data = category.list.map((tag) =>
+          tag === "read"
+            ? {
+                label: "read",
+                all: this.analysisPapers.filter((paper) => paper.read).length,
+                highlight: this.anaHighPapers.filter((paper) => paper.read)
+                  .length,
+              }
+            : {
+                label: tag,
+                all: this.analysisPapers.filter((paper) =>
+                  paper[category.value].includes(tag)
+                ).length,
+                highlight: this.anaHighPapers.filter((paper) =>
+                  paper[category.value].includes(tag)
+                ).length,
+              }
+        );
+        return {
+          label,
+          value,
+          data,
+        };
+      });
+    },
+
+    anaFilterType: "none", // "none", "year", "tag", "topic", "lasso"
+    setAnaFilterType(type) {
+      debug && console.log("setAnaFilterType", type);
+      this.anaFilterType = type;
+    },
+    clearBrushTrigger: () => {},
+    setClearBrushTrigger(fn) {
+      this.clearBrushTrigger = fn;
+    },
+
+    anaHighCate: "",
+    anaHighTag: "",
+    anaHighPapers: [],
+    setAnaHighPapersByTag({ anaHighCate, anaHighTag }) {
+      debug && console.log("setAnaHighPapersByTag", anaHighCate, anaHighTag);
+      this.clearBrushTrigger();
+      this.anaHighCate = anaHighCate;
+      this.anaHighTag = anaHighTag;
+      this.anaHighPapers = this.analysisPapers.filter(
+        (paper) =>
+          get(paper, anaHighCate, []).includes(anaHighTag)
+      );
+    },
+    setAnaHighPapersByYear(yearRange) {
+      debug && console.log("setAnaHighPapersByYear", yearRange);
+      const [yearStart, yearEnd] = yearRange;
+      this.anaHighPapers = this.analysisPapers.filter(
+        (paper) => +paper.year >= yearStart && +paper.year <= yearEnd
+      );
     },
   };
 };
