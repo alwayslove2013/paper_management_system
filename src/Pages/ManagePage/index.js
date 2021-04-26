@@ -9,8 +9,8 @@ const ManagePage = () => {
   const store = useGlobalStore();
   useEffect(() => {
     store.setCurrentPage();
-    store.initUserId();
     store.initPapers();
+    store.initUserId();
   }, []);
   return (
     <div className="main-container">

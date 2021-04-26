@@ -22,8 +22,9 @@ const createStore = () => {
   return {
     currentPage: "Management",
     setCurrentPage() {
-      this.currentPage =
-        window.location.pathname === "/analysis" ? "Analysis" : "Management";
+      this.currentPage = window.location.pathname.includes("/analysis")
+        ? "Analysis"
+        : "Management";
     },
     tooltipX: 500,
     tooltipY: 500,
@@ -140,6 +141,7 @@ const createStore = () => {
 
       runInAction(() => {
         this.papers = papers;
+        this.initPrivateTags();
       });
     },
     setPaper(doi, attr, value) {
@@ -250,7 +252,7 @@ const createStore = () => {
     },
 
     get controlTagNameList() {
-      return this.generateCategory(12);
+      return this.generateCategory(10);
     },
     get anaCategories() {
       return this.generateCategory(18, true);
@@ -491,9 +493,8 @@ const createStore = () => {
       this.clearBrushTrigger();
       this.anaHighCate = anaHighCate;
       this.anaHighTag = anaHighTag;
-      this.anaHighPapers = this.analysisPapers.filter(
-        (paper) =>
-          get(paper, anaHighCate, []).includes(anaHighTag)
+      this.anaHighPapers = this.analysisPapers.filter((paper) =>
+        get(paper, anaHighCate, []).includes(anaHighTag)
       );
     },
     setAnaHighPapersByYear(yearRange) {

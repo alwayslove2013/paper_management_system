@@ -9,14 +9,14 @@ import Header from "Components/Header";
 const App = () => {
   return (
     <StoreProvider>
-      <Router>
+      <Router basename="/vis_paper_management">
         <div className="view-container">
           <div className="header-container">
             <Header />
           </div>
           <Switch>
-            <Route path="/management" component={ManagePage} />
-            <Route path="/analysis" component={Analysis} />
+            <Route exact path={`/management`} component={ManagePage} />
+            <Route exact path={`/analysis`} component={Analysis} />
             <Route path="/" component={ManagePage} />
           </Switch>
         </div>

@@ -11,9 +11,9 @@ import DetailView from "./DetailView";
 const AnalysisPage = () => {
   const store = useGlobalStore();
   useEffect(() => {
-    store.initUserId();
     store.setCurrentPage();
     store.initPapers();
+    store.initUserId();
   }, []);
   return (
     <div className="analysis-container">
