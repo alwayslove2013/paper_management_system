@@ -50,7 +50,7 @@ $info-view-height: 30px;
         .search-view-container {
           height: 100%;
           width: 200px;
-          
+
           // box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
       }
@@ -73,4 +73,10 @@ $info-view-height: 30px;
     left: 55%;
     bottom: 5%;
   }
+}
+
+.single-row {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

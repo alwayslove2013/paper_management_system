@@ -1,0 +1,53 @@
+.highlight-list-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  .paper-item:hover {
+    box-shadow: 0 0 5px #aaa;
+    // border: 1px solid #333;
+  }
+  .paper-item {
+    position: relative;
+    // width: 100%;
+    color: #888;
+    // width: 100%;
+    font-size: 12px;
+    display: flex;
+    padding: 1px 3px;
+    margin: 2px 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    .paper-index {
+      // float: left;
+    }
+    .paper-content {
+      margin-left: 3px;
+      margin-right: 10px;
+      position: relative;
+      width: 100%;
+      .paper-header {
+        // display: flex;
+        .paper-header-conferenceName {
+          color: #333;
+          font-weight: 600;
+          padding-right: 5px;
+          float: left;
+        }
+        .paper-header-title {
+          white-space: nowrap;
+          padding-right: 15px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
+      .paper-details {
+        font-size: 10px;
+      }
+    }
+  }
+}

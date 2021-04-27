@@ -2,13 +2,17 @@ $left-container-width: 24%;
 $middle-container-width: 45%;
 $container-border: 2px solid #ccc;
 .analysis-container {
-  display: flex;
+  // display: flex;
   .left-container {
+    // flex-shrink: 0;
+    float: left;
     height: 100%;
     width: $left-container-width;
     border-right: $container-border;
   }
   .middle-container {
+    // flex-shrink: 0;
+    float: left;
     height: 100%;
     width: $middle-container-width;
     border-right: $container-border;
@@ -25,7 +29,9 @@ $container-border: 2px solid #ccc;
     }
   }
   .right-container {
-    flex: 1;
+    // flex: 1;
+    // float: left;
+    margin-left: $left-container-width + $middle-container-width;
     height: 100%;
     flex-direction: column;
     .right-top-container {
@@ -40,7 +46,7 @@ $container-border: 2px solid #ccc;
     }
     .right-bottom-container {
       width: 100%;
-      flex: 1;
+      height: 33%;
     }
   }
 

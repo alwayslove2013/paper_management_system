@@ -528,6 +528,11 @@ const createStore = () => {
         (paper) => +paper.year >= yearStart && +paper.year <= yearEnd
       );
     },
+    anaSelectHighlightPaper: {},
+    setAnaSelectHighlightPaper(paper) {
+      debug && console.log("setAnaSelectHighlightPaper", toJS(paper));
+      this.anaSelectHighlightPaper = paper;
+    },
   };
 };
 
