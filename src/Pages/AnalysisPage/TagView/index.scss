@@ -1,11 +1,14 @@
 $tag-border: 1px solid #ccc;
+$tag-count: 6;
+$tag-filter-height: 16%;
 .tag-view-container {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   .tag-filter-container {
-    flex: 1;
+    // flex: 1;
+    height: $tag-filter-height;
     border-bottom: $tag-border;
     padding: 2px 5px;
     .year-seleted-text {

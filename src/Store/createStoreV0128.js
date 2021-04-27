@@ -71,6 +71,7 @@ const createStore = () => {
         paper.privateTags = [];
         paper.read = false;
         paper.publicTags = [];
+        // paper.keywords = [];
         paper.colors = [];
         paper.innerColors = [];
         paper.outerColors = [];
@@ -104,6 +105,10 @@ const createStore = () => {
             return country;
           })
           .filter((a) => a);
+
+        paper.keywords = paper.keywords
+          .split(/[;,]/)
+          .map((word) => word.trim().toLowerCase());
       });
 
       papers.forEach((paper) => {
@@ -257,6 +262,13 @@ const createStore = () => {
     get anaCategories() {
       return this.generateCategory(18, true);
     },
+
+    get commonKeywords() {
+      return mostCommon(
+        this.papers.map((paper) => paper.keywords),
+        30
+      );
+    },
     generateCategory(count, have_read = false) {
       const countries = mustInclude(
         this.commonCountries,
@@ -264,8 +276,13 @@ const createStore = () => {
         count
       );
       const authors = mustInclude(this.commonAuthors, ["Xiaoru Yuan"], count);
-      const privateTags = mustInclude(this.commonPrivateTags, ["read"], count);
-      const publicTags = this.commonPublicTags;
+      const privateTags = mustInclude(
+        this.commonPrivateTags,
+        have_read ? ["read"] : [],
+        count
+      );
+      const publicTags = mustInclude(this.commonPublicTags, [], count);
+      const keywords = mustInclude(this.commonKeywords, [], count);
       return [
         {
           label: "Country",
@@ -277,6 +294,12 @@ const createStore = () => {
           label: "Author",
           value: "authors",
           list: authors,
+          highlightType: "inner",
+        },
+        {
+          label: "Keywords",
+          value: "keywords",
+          list: keywords,
           highlightType: "inner",
         },
         {
@@ -305,6 +328,7 @@ const createStore = () => {
       authors: [],
       privateTags: [],
       publicTags: [],
+      keywords: [],
     },
     // 判断 至少有一个控制器被激活
     get controlIsActive() {
