@@ -71,7 +71,10 @@ const DetailView = observer(() => {
             ))}
           </div>
           <div className="detail-attrs">
-            <DetailItem paper={paper} label={"keywords"} />
+            <div className="detail-attr">
+              <div className="detail-key">keywords:</div>
+              <div className="detail-content">{get(paper, 'keywords', []).join("; ")}</div>
+            </div>
             <DetailItem paper={paper} label={"doi"} />
             <DetailItem paper={paper} label={"affiliation"} />
             <DetailItem paper={paper} label={"abstract"} />

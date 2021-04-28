@@ -5,12 +5,22 @@ import { useGlobalStore } from "Store";
 
 const HighlightListView = observer(() => {
   const store = useGlobalStore();
-  const { anaHighPapers, setAnaSelectHighlightPaper } = store;
+  const { analysisPapers, anaHighPapers, setAnaSelectHighlightPaper } = store;
   return (
     <div className="highlight-list-view">
-      {anaHighPapers.map((paper, index) => (
-        <PaperItem key={paper.doi} paper={paper} index={index} handleClick={setAnaSelectHighlightPaper}/>
-      ))}
+      <div className="highlight-list-header">
+        {anaHighPapers.length} / {analysisPapers.length}
+      </div>
+      <div className="highlight-list-content">
+        {anaHighPapers.map((paper, index) => (
+          <PaperItem
+            key={paper.doi}
+            paper={paper}
+            index={index}
+            handleClick={setAnaSelectHighlightPaper}
+          />
+        ))}
+      </div>
     </div>
   );
 });
