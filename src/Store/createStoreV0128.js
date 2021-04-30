@@ -515,6 +515,7 @@ const createStore = () => {
     setAnaHighPapersByTag({ anaHighCate, anaHighTag }) {
       debug && console.log("setAnaHighPapersByTag", anaHighCate, anaHighTag);
       this.clearBrushTrigger();
+      this.setAnaHighPapersByYear([0, 0])
       this.anaHighCate = anaHighCate;
       this.anaHighTag = anaHighTag;
       this.anaHighPapers = this.analysisPapers.filter((paper) =>

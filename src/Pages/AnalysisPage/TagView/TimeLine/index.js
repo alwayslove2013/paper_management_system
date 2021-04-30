@@ -22,7 +22,7 @@ const TimeLine = React.memo(
     const initYearRange = [d3.min(data, (d) => d.x), d3.max(data, (d) => d.x)];
     useEffect(() => {
       onInput(initYearRange);
-    }, [data]);
+    }, []);
 
     useEffect(() => {
       if (data.length === 0 || width === 0 || height === 0) return;
@@ -43,7 +43,12 @@ const TimeLine = React.memo(
             "transform",
             "translate(" + 0 + ", " + (height - padding.bottom) + ")"
           )
-          .call(d3.axisBottom(x).tickValues(d3.range(initYearRange[0], initYearRange[1], 5)).tickSizeOuter(0));
+          .call(
+            d3
+              .axisBottom(x)
+              .tickValues(d3.range(initYearRange[0], initYearRange[1], 5))
+              .tickSizeOuter(0)
+          );
       const yAxis = (g) =>
         g
           .attr("transform", `translate(${width - padding.right},0)`)
@@ -124,37 +129,43 @@ const TimeLine = React.memo(
       setClearBrushTrigger(() => {
         d3.brush().move(svg);
         bars.classed("active-bars", false);
+        onInput(initYearRange);
       });
     }, [clientRect]);
 
     useEffect(() => {
       if (
         width === 0 ||
-        height === 0 ||
-        anaFilterType === "year" ||
-        anaFilterType === "none"
+        height === 0
+        // ||
+        // anaFilterType === "year" ||
+        // anaFilterType === "none"
       )
         return;
       const svg = d3.select("#ana-time-line-svg");
       const highlightBarsG = svg.select(".highlight-bars");
-      const x = d3
-        .scaleBand()
-        .domain(data.map((d) => d.x))
-        .range([padding.left, width - padding.right])
-        .padding(0.2);
-      const y = d3
-        .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.all)])
-        .nice()
-        .range([height - padding.bottom, padding.top]);
-      const highlightBars = highlightBarsG
-        .selectAll("rect")
-        .data(data)
-        .join("rect")
-        .attr("x", (d) => x(d.x))
-        .attr("y", (d) => y(d.highlight))
-        .attr("height", (d) => y(0) - y(d.highlight))
-        .attr("width", x.bandwidth());
+      if (anaFilterType === "year" || anaFilterType === "none") {
+        highlightBarsG.selectAll("rect").attr("height", 0);
+      } else {
+        const x = d3
+          .scaleBand()
+          .domain(data.map((d) => d.x))
+          .range([padding.left, width - padding.right])
+          .padding(0.2);
+        const y = d3
+          .scaleLinear()
+          .domain([0, d3.max(data, (d) => d.all)])
+          .nice()
+          .range([height - padding.bottom, padding.top]);
+        const highlightBars = highlightBarsG
+          .selectAll("rect")
+          .data(data)
+          .join("rect")
+          .attr("x", (d) => x(d.x))
+          .attr("y", (d) => y(d.highlight))
+          .attr("height", (d) => y(0) - y(d.highlight))
+          .attr("width", x.bandwidth());
+      }
     }, [data, anaFilterType]);
     return <svg id="ana-time-line-svg" width="100%" height="100%" />;
   }
