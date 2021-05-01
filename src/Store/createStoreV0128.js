@@ -22,7 +22,7 @@ const createStore = () => {
   return {
     currentPage: "Management",
     setCurrentPage() {
-      this.currentPage = window.location.pathname.includes("/analysis")
+      this.currentPage = window.location.hash.includes("/analysis")
         ? "Analysis"
         : "Management";
     },
