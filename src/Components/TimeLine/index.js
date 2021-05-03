@@ -10,7 +10,7 @@ const TimeLine = React.memo(
     onInput = () => {},
     onChange = () => {},
     setClearBrushTrigger = () => {},
-    anaFilterType,
+    anaFilterType = 'none',
     setAnaFilterType = () => {},
   }) => {
     // const padding = anaTimeSvgPadding;

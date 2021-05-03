@@ -3,7 +3,7 @@ import "./index.scss";
 import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
 import TagFilter from "./TagFilter";
-import TimeLine from "./TimeLine";
+import TimeLine from "Components/TimeLine";
 // import { toJS } from "mobx";
 
 const TagView = observer(() => {

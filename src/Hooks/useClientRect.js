@@ -6,7 +6,7 @@ const useClientRect = ({ svgId }) => {
   const [clientRect, setClientRect] = useState({ width: 0, height: 0 });
   useEffect(() => {
     const svg = d3.select(`#${svgId}`);
-    svg.selectAll("*").remove();
+    // svg.selectAll("*").remove();
     const clientRect = svg.node().getClientRects()[0];
     setClientRect(clientRect);
   }, [svgId]);

@@ -1,0 +1,12 @@
+.tag-bar-row {
+  display: flex;
+  .tag-label {
+    width: 120px;
+  }
+  .tag-bar {
+    flex: 1;
+  }
+  .tag-count {
+    width: 100px;
+  }
+}
