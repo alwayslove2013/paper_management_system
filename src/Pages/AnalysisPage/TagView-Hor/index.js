@@ -36,7 +36,8 @@ const TagView = observer(() => {
         <TagFilter
           dataSource={anaTagViewData}
           onChange={setAnaHighPapersByTag}
-          setChangeType={setAnaFilterType}
+          // setChangeType={setAnaFilterType}
+          anaFilterType={anaFilterType}
         />
       </div>
       <div className="tag-time-line">

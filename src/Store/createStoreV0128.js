@@ -518,12 +518,14 @@ const createStore = () => {
       this.setAnaHighPapersByYear([0, 0])
       this.anaHighCate = anaHighCate;
       this.anaHighTag = anaHighTag;
+      this.setAnaFilterType(anaHighCate);
       this.anaHighPapers = this.analysisPapers.filter((paper) =>
         get(paper, anaHighCate, []).includes(anaHighTag)
       );
     },
     setAnaHighPapersByYear(yearRange) {
       debug && console.log("setAnaHighPapersByYear", yearRange);
+      // this.setAnaFilterType('year');
       const [yearStart, yearEnd] = yearRange;
       this.anaHighPapers = this.analysisPapers.filter(
         (paper) => +paper.year >= yearStart && +paper.year <= yearEnd

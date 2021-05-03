@@ -84,4 +84,17 @@ $info-view-height: 30px;
 .highlight-blue {
   color: rgb(51, 202, 240);
   fill: rgb(51, 202, 240);
+  // background-color: rgb(51, 202, 240);
+}
+
+.highlight-bar-blue {
+  fill: rgb(51, 202, 240);
+  background-color: rgb(51, 202, 240);
+}
+
+.non-active-bars {
+  fill: #bbb;
+}
+.active-bars {
+  fill: rgb(51, 202, 240);
 }
