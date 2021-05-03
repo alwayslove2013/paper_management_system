@@ -7,26 +7,24 @@ import { anaSvgPadding } from "Common";
 
 const { TabPane } = Tabs;
 
-const TagFilter = memo(
-  ({ dataSource, anaFilterType, onChange }) => {
-    return (
-      <Tabs
-      // defaultActiveKey={currentTab}
-      // onChange={setCurrentTab}
-      >
-        {dataSource.map((data) => (
-          <TabPane key={data.label} tab={data.label}>
-            <HorizontalBar
-              {...data}
-              isHighlight={anaFilterType !== "none"}
-              onChange={onChange}
-            />
-          </TabPane>
-        ))}
-      </Tabs>
-    );
-  }
-);
+const TagFilter = memo(({ dataSource, anaFilterType, onChange }) => {
+  return (
+    <Tabs
+    // defaultActiveKey={currentTab}
+    // onChange={setCurrentTab}
+    >
+      {dataSource.map((data) => (
+        <TabPane key={data.label} tab={data.label}>
+          <HorizontalBar
+            {...data}
+            isHighlight={anaFilterType !== "none"}
+            onChange={onChange}
+          />
+        </TabPane>
+      ))}
+    </Tabs>
+  );
+});
 
 const HorizontalBar = ({ value, data, isHighlight, onChange }) => {
   // console.log(label, value, data);
@@ -70,7 +68,15 @@ const HorizontalBar = ({ value, data, isHighlight, onChange }) => {
               />
             )}
           </div>
-          <div className="tag-count">{d.all}</div>
+          <div className="tag-count">
+            {isHighlight && (
+              <div className="tag-count-highlight highlight-blue">
+                {d.highlight}
+                &nbsp;/&nbsp;
+              </div>
+            )}
+            <div>{d.all}</div>
+          </div>
         </div>
       ))}
     </div>

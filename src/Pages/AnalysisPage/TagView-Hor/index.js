@@ -18,6 +18,8 @@ const TagView = observer(() => {
     setAnaHighPapersByTag,
     anaFilterType,
     setAnaFilterType,
+
+    anaHighTag,
   } = store;
   const [yearSelecting, setYearSelecting] = useState([0, 0]);
   return (
@@ -30,7 +32,11 @@ const TagView = observer(() => {
             highlightCount={anaHighPapers.length}
           />
         </div>
-        <div className="selected-highlight-attr">keywords - ppp</div>
+        {anaFilterType === "none" || (
+          <div className="selected-highlight-attr highlight-bar-blue">{`${
+            anaHighTag === "Usa" ? "USA" : anaHighTag
+          }`}</div>
+        )}
       </div>
       <div className="tag-highlight-tabs-container">
         <TagFilter

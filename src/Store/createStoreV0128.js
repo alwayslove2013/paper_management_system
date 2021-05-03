@@ -515,18 +515,24 @@ const createStore = () => {
     setAnaHighPapersByTag({ anaHighCate, anaHighTag }) {
       debug && console.log("setAnaHighPapersByTag", anaHighCate, anaHighTag);
       this.clearBrushTrigger();
-      this.setAnaHighPapersByYear([0, 0])
-      this.anaHighCate = anaHighCate;
-      this.anaHighTag = anaHighTag;
-      this.setAnaFilterType(anaHighCate);
-      this.anaHighPapers = this.analysisPapers.filter((paper) =>
-        get(paper, anaHighCate, []).includes(anaHighTag)
-      );
+      // this.setAnaHighPapersByYear([0, 0])
+      if (this.anaHighCate === anaHighCate && this.anaHighTag === anaHighTag) {
+        this.anaHighTag = "none";
+        this.setAnaFilterType("none");
+      } else {
+        this.anaHighCate = anaHighCate;
+        this.anaHighTag = anaHighTag;
+        this.setAnaFilterType(anaHighCate);
+        this.anaHighPapers = this.analysisPapers.filter((paper) =>
+          get(paper, anaHighCate, []).includes(anaHighTag)
+        );
+      }
     },
     setAnaHighPapersByYear(yearRange) {
       debug && console.log("setAnaHighPapersByYear", yearRange);
       // this.setAnaFilterType('year');
       const [yearStart, yearEnd] = yearRange;
+      this.anaHighTag = `${yearStart}-${yearEnd}`;
       this.anaHighPapers = this.analysisPapers.filter(
         (paper) => +paper.year >= yearStart && +paper.year <= yearEnd
       );
