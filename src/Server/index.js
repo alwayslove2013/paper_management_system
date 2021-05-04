@@ -59,6 +59,6 @@ function postData(url, data) {
   }).then((response) => response.json()); // parses response to JSON
 }
 
-export const getLdaRes = ({ dois, uid, num_topics = 10 }) => {
+export const getLdaRes = ({ dois, uid, num_topics = 3 }) => {
   return postData(baseUrl + '/get_lda_results', { dois, num_topics, uid });
 };

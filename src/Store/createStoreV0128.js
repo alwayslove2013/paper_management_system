@@ -70,6 +70,8 @@ const createStore = () => {
         // if (paper.Countries === "#" || paper.Countries === "###")
         //   paper.Countries = "";
         paper.privateTags = [];
+        paper.projection = [5, 5];
+        paper.topics = [];
         paper.read = false;
         paper.publicTags = [];
         // paper.keywords = [];
@@ -544,26 +546,29 @@ const createStore = () => {
       this.anaSelectHighlightPaper = paper;
     },
 
-    doi2projection: {},
-    doi2topics: {},
-    topicsDetail: {},
+    drawProjectionFlag: false,
+    resetProjectionFlag() {
+      this.drawProjectionFlag = false
+    },
+    num_topics: 5,
     tryLda() {
       const dois = this.analysisPapers.map((paper) => paper.doi);
       const uid = this.userId;
-      const num_topics = 5;
+      const num_topics = this.num_topics;
       getLdaRes({ dois, uid, num_topics }).then((data) => {
         runInAction(() => {
           console.log("data", data);
           const { paper_lda_res, topics_detail } = data;
           this.analysisPapers.forEach((paper) => {
             if (paper.doi in paper_lda_res) {
-              paper.projection = paper_lda_res[paper.doi].projection
-              paper.topics = paper_lda_res[paper.doi].topics
+              paper.projection = paper_lda_res[paper.doi].projection;
+              paper.topics = paper_lda_res[paper.doi].topics;
             } else {
-              paper.projection = [5, 5]
-              paper.topics = []
+              paper.projection = [5, 5];
+              paper.topics = [];
             }
-          })
+          });
+          this.drawProjectionFlag = true;
         });
       });
     },
