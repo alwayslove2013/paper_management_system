@@ -16,7 +16,7 @@ const fetchData = (url, params = "") => {
 
 export const getPapers = async () => {
   return await fetchData("get_papers");
-}
+};
 
 export const getPublicTags = async () => {
   return await fetchData("get_public_tags");
@@ -41,4 +41,24 @@ export const setPrivateTags = ({ uid, pid, paper }) => {
       tags: [...privateTags, read && "read"].filter((a) => a).join(","),
     });
   return "OK";
+};
+
+function postData(url, data) {
+  return fetch(url, {
+    body: JSON.stringify(data), // must match 'Content-Type' header
+    // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    // credentials: 'same-origin', // include, same-origin, *omit
+    // headers: {
+    //   'user-agent': 'Mozilla/4.0 MDN Example',
+    //   'content-type': 'application/json'
+    // },
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    // mode: 'cors', // no-cors, cors, *same-origin
+    // redirect: 'follow', // manual, *follow, error
+    // referrer: 'no-referrer', // *client, no-referrer
+  }).then((response) => response.json()); // parses response to JSON
+}
+
+export const getLdaRes = ({ dois, uid, num_topics = 10 }) => {
+  return postData(baseUrl + '/get_lda_results', { dois, num_topics, uid });
 };

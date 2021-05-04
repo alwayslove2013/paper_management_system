@@ -6,6 +6,7 @@ import {
   setPrivateTags,
   getPublicTags,
   getPrivateTags,
+  getLdaRes,
 } from "Server";
 import { get } from "lodash";
 import { mostCommon, mustInclude } from "Common";
@@ -541,6 +542,30 @@ const createStore = () => {
     setAnaSelectHighlightPaper(paper) {
       debug && console.log("setAnaSelectHighlightPaper", toJS(paper));
       this.anaSelectHighlightPaper = paper;
+    },
+
+    doi2projection: {},
+    doi2topics: {},
+    topicsDetail: {},
+    tryLda() {
+      const dois = this.analysisPapers.map((paper) => paper.doi);
+      const uid = this.userId;
+      const num_topics = 5;
+      getLdaRes({ dois, uid, num_topics }).then((data) => {
+        runInAction(() => {
+          console.log("data", data);
+          const { paper_lda_res, topics_detail } = data;
+          this.analysisPapers.forEach((paper) => {
+            if (paper.doi in paper_lda_res) {
+              paper.projection = paper_lda_res[paper.doi].projection
+              paper.topics = paper_lda_res[paper.doi].topics
+            } else {
+              paper.projection = [5, 5]
+              paper.topics = []
+            }
+          })
+        });
+      });
     },
   };
 };

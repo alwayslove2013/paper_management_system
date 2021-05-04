@@ -1,12 +1,14 @@
-import React from 'react'
-import './index.scss'
+import React, { useEffect } from "react";
+import "./index.scss";
+import { observer } from "mobx-react-lite";
+import { useGlobalStore } from "Store";
 
-const ProjectView = () => {
-  return (
-    <div>
-      ProjectView
-    </div>
-  )
-}
+const ProjectView = observer(() => {
+  const store = useGlobalStore();
+  useEffect(() => {
+    store.tryLda();
+  }, [])
+  return <div>ProjectView</div>;
+});
 
-export default ProjectView
+export default ProjectView;
