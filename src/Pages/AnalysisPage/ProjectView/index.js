@@ -66,55 +66,23 @@ const ProjectView = observer(() => {
         .nice()
         .range([height - padding.bottom, padding.top]);
 
-      const circlesG = svg.append("g").attr("class", "circles-g");
-      circlesG
-        .selectAll("circle")
-        .data(analysisPapers)
-        .join("circle")
-        .attr("cx", (d) => (d.projectionX = x(d.projection[0])))
-        .attr("cy", (d) => (d.projectionY = y(d.projection[1])))
-        .attr("r", 5)
-        .attr("fill", (d) => circleColor(d));
-
-      // const contours = d3
-      //   .contourDensity()
-      //   .x((d) => d.projectionX)
-      //   .y((d) => d.projectionY)
-      //   .size([
-      //     width - padding.left - padding.right,
-      //     height - padding.top - padding.bottom,
-      //   ])
-      //   .bandwidth(30)
-      //   .thresholds(5)(analysisPapers)
-      //   .slice(0, 1);
-      // console.log(analysisPapers.map((p) => [p.projectionX, p.projectionY]));
-      // const contourG = svg.append("g").attr("class", "contour-g");
-      // contourG
-      //   .attr("fill", "none")
-      //   .attr("stroke", "steelblue")
-      //   .attr("stroke-linejoin", "round")
-      //   .selectAll("path")
-      //   .data(contours)
-      //   .join("path")
-      //   .attr("stroke-width", 0.25)
-      //   .attr("d", d3.geoPath());
-
-      const contours = d3.range(num_topics).map((topic_i) =>
-        d3
-          .contourDensity()
-          .x((d) => d.projectionX)
-          .y((d) => d.projectionY)
-          .size([
-            width - padding.left - padding.right,
-            height - padding.top - padding.bottom,
-          ])
-          .bandwidth(30)
-          .thresholds(5)(
+      const contours = d3.range(num_topics).map(
+        (topic_i) =>
+          d3
+            .contourDensity()
+            .x((d) => x(d.projection[0]))
+            .y((d) => y(d.projection[1]))
+            // .size([
+            //   width - padding.left - padding.right,
+            //   height - padding.top - padding.bottom,
+            // ])
+            .size([width, height])
+            .bandwidth(30)
+            .thresholds(5)(
             analysisPapers.filter((paper) =>
               paper.topics.map((t) => t[0]).includes(topic_i)
             )
-          )
-          [0]
+          )[0]
       );
       const contourG = svg.append("g").attr("class", "contour-g");
       contourG
@@ -127,6 +95,16 @@ const ProjectView = observer(() => {
         .attr("stroke-width", 2)
         .attr("fill", (d, i) => circleColorScale[i])
         .attr("d", d3.geoPath());
+
+      const circlesG = svg.append("g").attr("class", "circles-g");
+      circlesG
+        .selectAll("circle")
+        .data(analysisPapers)
+        .join("circle")
+        .attr("cx", (d) => x(d.projection[0]))
+        .attr("cy", (d) => y(d.projection[1]))
+        .attr("r", 5)
+        .attr("fill", (d) => circleColor(d));
 
       resetProjectionFlag();
     }

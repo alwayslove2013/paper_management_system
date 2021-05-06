@@ -557,7 +557,7 @@ const createStore = () => {
       const num_topics = this.num_topics;
       getLdaRes({ dois, uid, num_topics }).then((data) => {
         runInAction(() => {
-          console.log("data", data);
+          // console.log("data", data);
           const { paper_lda_res, topics_detail } = data;
           this.analysisPapers.forEach((paper) => {
             if (paper.doi in paper_lda_res) {
