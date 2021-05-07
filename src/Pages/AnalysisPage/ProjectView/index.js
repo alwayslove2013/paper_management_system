@@ -16,7 +16,9 @@ const ProjectView = observer(() => {
     num_topics,
     resetProjectionFlag,
     setNumTopics,
-    topicColorScale
+    topicColorScale,
+    anaFilterType,
+    anaHighTopic,
   } = store;
   const clientRect = useClientRect({
     svgId,
@@ -93,8 +95,9 @@ const ProjectView = observer(() => {
         .selectAll("path")
         .data(contours)
         .join("path")
+        .attr("id", (d, i) => `contour-${i}`)
         .attr("opacity", 0.3)
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 7)
         .attr("fill", (d, i) => topicColorScale[i])
         .attr("d", d3.geoPath());
 
@@ -106,11 +109,30 @@ const ProjectView = observer(() => {
         .attr("cx", (d) => x(d.projection[0]))
         .attr("cy", (d) => y(d.projection[1]))
         .attr("r", 5)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 2)
         .attr("fill", (d) => circleColor(d));
 
       resetProjectionFlag();
     }
-  }, [width, drawProjectionFlag, num_topics, analysisPapers, anaHighPapers]);
+  }, [width, drawProjectionFlag, num_topics, analysisPapers]);
+
+  useEffect(() => {
+    const contourG = d3.select(".contour-g");
+    const circlesG = d3.select(".circles-g");
+    if (anaFilterType === "topic") {
+      contourG.selectAll("path").attr("opacity", 0.1).attr("stroke", "none");
+      contourG
+        .select(`#contour-${anaHighTopic}`)
+        .attr("opacity", 0.5)
+        .attr("stroke", "red");
+      circlesG.selectAll("circle").attr('opacity', (d) => d.topics.map(a => a[0]).includes(anaHighTopic) ? 1 : 0.3)
+    }
+    else {
+      contourG.selectAll("path").attr("opacity", 0.3).attr("stroke", "none");
+      circlesG.selectAll("circle").attr('opacity', 1)
+    }
+  }, [anaHighPapers, anaFilterType, anaHighTopic]);
 
   const [num_topics_ing, set_num_topics_ing] = useState(num_topics);
   const handleChangeNumTopicsIng = (num) => {
