@@ -2,32 +2,48 @@
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 3px 5px;
+  // display: flex;
+  // flex-direction: column;
+  padding: 0px 5px;
   .highlight-list-header {
-    font-size: 14px;
-    font-weight: 600;
-    float: right;
+    // font-size: 14px;
+    // font-weight: 600;
+    // float: right;
+    // color: #333;
+    // text-align: right;
+
+    font-size: 16px;
     color: #333;
-    text-align: right;
+    font-weight: 600;
+    // padding: 3px 0;
+    height: 12%;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    // padding: 3px 0;
+    height: 12%;
   }
   .highlight-list-content {
+    padding: 5px 2px;
+    height: 86%;
+    overflow-y: auto;
+    overflow-x: hidden;
     .paper-item:hover {
-      box-shadow: 0 0 5px #aaa;
+      box-shadow: 0 0 8px #666;
       // border: 1px solid #333;
     }
     .paper-item {
       position: relative;
       // width: 100%;
       color: #888;
+      background: rgb(245, 245, 245);
       // width: 100%;
       font-size: 12px;
       display: flex;
       padding: 1px 3px;
-      margin: 3px 0px;
-      border: 1px solid #ddd;
+      margin: 8px 0px;
+      // border: 1px solid #ddd;
+      box-shadow: 0 0 5px #ccc;
       border-radius: 5px;
       cursor: pointer;
       .paper-index {

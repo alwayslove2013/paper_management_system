@@ -10,7 +10,7 @@ $info-view-height: 30px;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #eee;
+  background: rgb(248, 248, 248);
   .header-container {
     position: absolute;
     top: 0;
@@ -106,7 +106,7 @@ $info-view-height: 30px;
   -webkit-border-radius: 6px;
 }
 ::-webkit-scrollbar-track-piece {
-  background-color: #fff; /*滚动条的背景颜色*/
+  background-color: transparent; /*滚动条的背景颜色*/
   -webkit-border-radius: 0; /*滚动条的圆角宽度*/
 }
 ::-webkit-scrollbar {

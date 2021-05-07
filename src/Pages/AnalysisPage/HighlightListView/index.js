@@ -9,7 +9,8 @@ const HighlightListView = observer(() => {
   return (
     <div className="highlight-list-view">
       <div className="highlight-list-header">
-        {anaHighPapers.length} / {analysisPapers.length}
+        Highlight Papers
+        {/* {anaHighPapers.length} / {analysisPapers.length} */}
       </div>
       <div className="highlight-list-content">
         {anaHighPapers.map((paper, index) => (
