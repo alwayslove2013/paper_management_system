@@ -546,6 +546,7 @@ const createStore = () => {
       this.anaSelectHighlightPaper = paper;
     },
 
+    topicColorScale: d3.schemeTableau10,
     drawProjectionFlag: false,
     resetProjectionFlag() {
       this.drawProjectionFlag = false;

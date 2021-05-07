@@ -6,10 +6,14 @@
     position: absolute;
     right: 10px;
     top: 5px;
+    // width: 200px;
     display: flex;
     align-items: center;
-    .ant-input-number {
-      width: 55px;
+    // .ant-input-number {
+    //   width: 55px;
+    // }
+    .ant-slider {
+      width: 100px;
     }
     .topics-number-input-text {
       font-weight: 600;
