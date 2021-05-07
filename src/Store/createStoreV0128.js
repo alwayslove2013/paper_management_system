@@ -548,27 +548,37 @@ const createStore = () => {
 
     drawProjectionFlag: false,
     resetProjectionFlag() {
-      this.drawProjectionFlag = false
+      this.drawProjectionFlag = false;
     },
     num_topics: 5,
+    setNumTopics(num) {
+      this.num_topics = num;
+      this.tryLda();
+    },
+    topics_detail: [],
     tryLda() {
       const dois = this.analysisPapers.map((paper) => paper.doi);
       const uid = this.userId;
       const num_topics = this.num_topics;
+      debug && console.log("try lda Start!", num_topics);
       getLdaRes({ dois, uid, num_topics }).then((data) => {
+        debug && console.log("try lda OK!", data);
         runInAction(() => {
           // console.log("data", data);
-          const { paper_lda_res, topics_detail } = data;
-          this.analysisPapers.forEach((paper) => {
-            if (paper.doi in paper_lda_res) {
-              paper.projection = paper_lda_res[paper.doi].projection;
-              paper.topics = paper_lda_res[paper.doi].topics;
-            } else {
-              paper.projection = [5, 5];
-              paper.topics = [];
-            }
-          });
-          this.drawProjectionFlag = true;
+          const { paper_lda_res, topics_detail, code = "success" } = data;
+          if (code === "success") {
+            this.analysisPapers.forEach((paper) => {
+              if (paper.doi in paper_lda_res) {
+                paper.projection = paper_lda_res[paper.doi].projection;
+                paper.topics = paper_lda_res[paper.doi].topics;
+              } else {
+                paper.projection = [5, 5];
+                paper.topics = [];
+              }
+            });
+            this.drawProjectionFlag = true;
+            this.topics_detail = topics_detail;
+          }
         });
       });
     },

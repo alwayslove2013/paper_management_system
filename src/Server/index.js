@@ -1,7 +1,7 @@
 import qs from "qs";
 
-const baseUrl = "http://vis.pku.edu.cn/vis4vis/";
-// const baseUrl = "http://127.0.0.1:12357/";
+// const baseUrl = "http://vis.pku.edu.cn/vis4vis/";
+const baseUrl = "http://127.0.0.1:12357/";
 
 const fetchData = (url, params = "") => {
   const getUrl =
@@ -48,10 +48,10 @@ function postData(url, data) {
     body: JSON.stringify(data), // must match 'Content-Type' header
     // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     // credentials: 'same-origin', // include, same-origin, *omit
-    // headers: {
-    //   'user-agent': 'Mozilla/4.0 MDN Example',
-    //   'content-type': 'application/json'
-    // },
+    headers: {
+      'user-agent': 'Mozilla/4.0 MDN Example',
+      'content-type': 'application/json'
+    },
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     // mode: 'cors', // no-cors, cors, *same-origin
     // redirect: 'follow', // manual, *follow, error
@@ -60,5 +60,5 @@ function postData(url, data) {
 }
 
 export const getLdaRes = ({ dois, uid, num_topics = 3 }) => {
-  return postData(baseUrl + '/get_lda_results', { dois, num_topics, uid });
+  return postData(baseUrl + 'get_lda_results', { dois, num_topics, uid });
 };

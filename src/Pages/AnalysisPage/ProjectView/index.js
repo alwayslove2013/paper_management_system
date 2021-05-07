@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
 import { useClientRect } from "Hooks";
 import * as d3 from "d3";
+import { InputNumber } from "antd";
 
 const ProjectView = observer(() => {
   const svgId = "ana-projection-map-svg";
@@ -14,6 +15,7 @@ const ProjectView = observer(() => {
     anaHighPapers,
     num_topics,
     resetProjectionFlag,
+    setNumTopics,
   } = store;
   const clientRect = useClientRect({
     svgId,
@@ -24,7 +26,6 @@ const ProjectView = observer(() => {
   }, []);
   useEffect(() => {
     if (width > 0 && drawProjectionFlag) {
-      console.log("width", height, width);
       const svg = d3.select(`#${svgId}`);
       svg.selectAll("*").remove();
 
@@ -109,7 +110,21 @@ const ProjectView = observer(() => {
       resetProjectionFlag();
     }
   }, [width, drawProjectionFlag, num_topics, analysisPapers, anaHighPapers]);
-  return <svg id={svgId} width="100%" height="100%" />;
+  return (
+    <div className="projection-view">
+      <svg id={svgId} width="100%" height="100%" />
+      <div className="topics-number-input">
+        <div className="topics-number-input-text">Topics Num:</div>
+        <InputNumber
+          size="small"
+          min={2}
+          max={10}
+          defaultValue={num_topics}
+          onChange={setNumTopics}
+        />
+      </div>
+    </div>
+  );
 });
 
 export default ProjectView;
