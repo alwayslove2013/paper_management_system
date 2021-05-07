@@ -36,7 +36,7 @@ const TopicView = observer(() => {
               ).length
             }
             onChange={() => setAnaHighPapersByTopic(i)}
-            isSelected={anaHighTopic === i}
+            isSelected={anaFilterType === 'topic' && anaHighTopic === i}
           />
         ))}
       </div>

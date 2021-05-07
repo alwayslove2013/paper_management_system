@@ -535,7 +535,8 @@ const createStore = () => {
     },
     setAnaHighPapersByTopic(topic) {
       debug && console.log("setAnaHighPapersByTopic", topic);
-      if (topic === this.anaHighTopic) {
+      this.clearBrushTrigger();
+      if (this.anaFilterType === 'topic' && this.anaHighTopic === topic) {
         this.anaHighTopic = "none"
         this.setAnaFilterType("none");
         this.anaHighPapers = this.analysisPapers;
