@@ -41,7 +41,7 @@ const HorizontalBar = ({ value, data, isHighlight, onChange }) => {
     .range([0, 90]);
 
   return (
-    <div id={divId}>
+    <div id={divId} style={{paddingBottom: 20}} >
       {data.map((d) => (
         <div
           className="tag-bar-row"

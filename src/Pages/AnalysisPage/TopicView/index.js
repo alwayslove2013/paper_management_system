@@ -11,6 +11,8 @@ const TopicView = observer(() => {
     analysisPapers,
     anaHighPapers,
     anaFilterType,
+    setAnaHighPapersByTopic,
+    anaHighTopic,
   } = store;
   return (
     <div className="topic-list-view">
@@ -22,7 +24,7 @@ const TopicView = observer(() => {
             index={i + 1}
             key={i}
             color={topicColorScale[i]}
-            isHighlight={anaFilterType !== 'none'}
+            isHighlight={anaFilterType !== "none"}
             all={
               analysisPapers.filter((paper) =>
                 paper.topics.map((a) => a[0]).includes(i)
@@ -33,6 +35,8 @@ const TopicView = observer(() => {
                 paper.topics.map((a) => a[0]).includes(i)
               ).length
             }
+            onChange={() => setAnaHighPapersByTopic(i)}
+            isSelected={anaHighTopic === i}
           />
         ))}
       </div>
@@ -40,12 +44,24 @@ const TopicView = observer(() => {
   );
 });
 
-const TopicItem = ({ topic, index, color, isHighlight, all, highlight }) => {
+const TopicItem = ({
+  topic,
+  index,
+  color,
+  isHighlight,
+  all,
+  highlight,
+  onChange,
+  isSelected,
+}) => {
   const style = {
     background: color,
   };
+  const topicItemClass = ["topic-item", isSelected && "topic-item-selected"]
+    .filter((a) => a)
+    .join(" ");
   return (
-    <div className="topic-item" style={style}>
+    <div className={topicItemClass} style={style} onClick={onChange}>
       <div className="topic-header">
         <div className="topic-index">Topic {index}</div>
         <div className="topic-number">

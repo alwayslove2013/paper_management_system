@@ -17,10 +17,15 @@
     position: relative;
     height: 86%;
     padding-bottom: 20px;
+    .topic-item-selected {
+      border: 4px solid rgb(228, 28, 28) !important;
+      box-shadow: 0 0 5px red;
+    }
     .topic-item {
       display: flex;
       flex-direction: column;
       margin: 10px 3px;
+      border: 4px solid transparent;
       // border: 1px solid #ccc;
       padding: 2px 10px 2px 5px;
       border-radius: 8px;
@@ -43,7 +48,7 @@
     }
 
     .topic-item:hover {
-      box-shadow: 0 0 10px #333;
+      box-shadow: 0 0 5px #333;
       opacity: 1;
     }
   }

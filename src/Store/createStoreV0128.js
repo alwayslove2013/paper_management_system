@@ -514,6 +514,7 @@ const createStore = () => {
 
     anaHighCate: "",
     anaHighTag: "",
+    anaHighTopic: "",
     anaHighPapers: [],
     setAnaHighPapersByTag({ anaHighCate, anaHighTag }) {
       debug && console.log("setAnaHighPapersByTag", anaHighCate, anaHighTag);
@@ -522,12 +523,28 @@ const createStore = () => {
       if (this.anaHighCate === anaHighCate && this.anaHighTag === anaHighTag) {
         this.anaHighTag = "none";
         this.setAnaFilterType("none");
+        this.anaHighPapers = this.analysisPapers;
       } else {
         this.anaHighCate = anaHighCate;
         this.anaHighTag = anaHighTag;
         this.setAnaFilterType(anaHighCate);
         this.anaHighPapers = this.analysisPapers.filter((paper) =>
           get(paper, anaHighCate, []).includes(anaHighTag)
+        );
+      }
+    },
+    setAnaHighPapersByTopic(topic) {
+      debug && console.log("setAnaHighPapersByTopic", topic);
+      if (topic === this.anaHighTopic) {
+        this.anaHighTopic = "none"
+        this.setAnaFilterType("none");
+        this.anaHighPapers = this.analysisPapers;
+      } else {
+        this.anaHighTopic = topic;
+        this.anaHighTag = `topic ${topic + 1}`;
+        this.setAnaFilterType('topic');
+        this.anaHighPapers = this.analysisPapers.filter((paper) =>
+          paper.topics.map(a => a[0]).includes(topic)
         );
       }
     },
