@@ -108,7 +108,7 @@ const ProjectView = observer(() => {
         .join("circle")
         .attr("cx", (d) => x(d.projection[0]))
         .attr("cy", (d) => y(d.projection[1]))
-        .attr("r", 5)
+        .attr("r", 6)
         .attr("stroke", "#fff")
         .attr("stroke-width", 2)
         .attr("fill", (d) => circleColor(d));

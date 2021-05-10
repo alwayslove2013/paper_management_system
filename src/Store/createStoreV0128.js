@@ -81,6 +81,8 @@ const createStore = () => {
         paper.internalRefList = [];
         paper.internalCitedList = [];
         paper.topics = [[0, 1]];
+        paper.isHighlight = false;
+        paper.indexByYear = 0;
         paper.refList = paper.refList
           .toLowerCase()
           // .split(";")

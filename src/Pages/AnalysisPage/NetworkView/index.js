@@ -36,8 +36,11 @@ const NetworkView = observer(() => {
     bottom: 40,
   };
 
-  const rectWidth = 28;
-  const rectHeight = 12;
+  const rectWidth =
+    ((width - padding.left - padding.right) /
+      (yearRange[1] - yearRange[0] + 1)) *
+    0.68;
+  const rectHeight = rectWidth * 0.4;
   const svg = d3.select(`#${svgId}`);
   const x = d3
     .scaleLinear()
@@ -78,9 +81,14 @@ const NetworkView = observer(() => {
       .attr("fill", (d) => topicColorScale[d.topics[0] ? d.topics[0][0] : 0]);
   }
 
+  // analysisPapers.forEach((paper) => (paper.isHighlight = false));
+  // anaHighPapers.forEach((paper) => (paper.isHighlight = true));
+  const anaHighPapersDoiSet = new Set(anaHighPapers.map((p) => p.doi));
   if (anaFilterType !== "none") {
-    console.log('anaHighTopic', anaHighTopic);
-    const contourColor = anaFilterType === "topic" ? topicColorScale[anaHighTopic] : defaultHighColor;
+    const contourColor =
+      anaFilterType === "topic"
+        ? topicColorScale[anaHighTopic]
+        : defaultHighColor;
     const contourG = svg.select(".paper-contour-g");
     contourG.selectAll("*").remove();
     const contourFunc = d3
@@ -107,75 +115,83 @@ const NetworkView = observer(() => {
       .attr("stroke-width", 7)
       .attr("fill", contourColor)
       .attr("d", d3.geoPath());
+
+    const rectG = svg.select(".paper-rect-g").selectAll("g");
+    
+    rectG
+      .select("rect")
+      .attr("opacity", (d) => (anaHighPapersDoiSet.has(d.doi) ? 1 : 0.15));
+  } else {
+    const rectG = svg.select(".paper-rect-g").selectAll("g");
+    rectG.select("rect").attr("opacity", 1);
+    const contourG = svg.select(".paper-contour-g");
+    contourG.selectAll("*").remove();
   }
-  // 得到topic
-  // useEffect(() => {
-  //   if (drawProjectionFlag) {
-  //     console.log("====> Network! get topic");
-  //     const data = analysisPapers;
-  //     const compareIndexByTopic = (a, b) => {
-  //       if (a.topics[0][0] === b.topics[0][0]) {
-  //         return a.topics[0][1] - b.topics[0][1];
-  //       } else {
-  //         return a.topics[0][0] - b.topics[0][0];
-  //       }
-  //     };
-  //     data.sort(compareIndexByTopic);
-  //     const year2count = {};
-  //     data.forEach((d) => {
-  //       if (!(d.year in year2count)) {
-  //         year2count[d.year] = 0;
-  //       }
-  //       d.indexByYear = year2count[d.year];
-  //       year2count[d.year] += 1;
-  //     });
-  //     const paperRectG = svg.select(".paper-rect-g").selectAll("g");
-  //     paperRectG.attr(
-  //       "transform",
-  //       (d) => `translate(${x(+d.year)}, ${y(d.indexByYear)})`
-  //     );
-  //     paperRectG
-  //       .select("rect")
-  //       .attr("fill", (d) => topicColorScale[d.topics[0] ? d.topics[0][0] : 0]);
 
-  //     // const contourG = svg.select(".paper-contour-g");
-  //     // contourG.selectAll("*").remove();
-  //     // const contourFunc = d3
-  //     //   .contourDensity()
-  //     //   .x((d) => x(+d.year))
-  //     //   .y((d) => y(d.indexByYear))
-  //     //   .size([width, height])
-  //     //   .bandwidth(30)
-  //     //   .thresholds(5);
-  //     // const contours = d3
-  //     //   .range(num_topics)
-  //     //   .map(
-  //     //     (topic_i) =>
-  //     //       contourFunc(
-  //     //         data.filter((paper) =>
-  //     //           paper.topics.map((t) => t[0]).includes(topic_i)
-  //     //         )
-  //     //       )[0]
-  //     //   );
+  // 引用
+  const doi2paper = {};
+  analysisPapers.forEach((paper) => (doi2paper[paper.doi] = paper));
+  const refLinks = [];
+  analysisPapers.forEach((paper) => {
+    paper.refList.forEach((refPaperDoi) => {
+      if (refPaperDoi in doi2paper) {
+        // const refPaper = doi2paper[refPaperDoi]
+        const link = {
+          source: refPaperDoi,
+          target: paper.doi,
+          weight: 1,
+        };
+        refLinks.push(link);
+      }
+    });
+  });
+  const linksG = svg.select(".paper-link-g");
+  const diagonal = d3
+    .linkHorizontal()
+    .x((doi) => x(doi2paper[doi].year))
+    .y((doi) => y(doi2paper[doi].indexByYear));
+  const computedPath = (d) => {
+    if (y(doi2paper[d.source].indexByYear) === y(doi2paper[d.target].indexByYear)) {
+      const x0 = x(doi2paper[d.source].year)
+      const y0 = y(doi2paper[d.source].indexByYear)
+      const x3 = x(doi2paper[d.target].year)
+      const y3 = y0
 
-  //     // contourG
-  //     //   .attr("stroke", "none")
-  //     //   .attr("stroke-linejoin", "round")
-  //     //   .selectAll("path")
-  //     //   .data(contours)
-  //     //   .join("path")
-  //     //   .attr("id", (d, i) => `contour-${i}`)
-  //     //   .attr("opacity", 0.3)
-  //     //   .attr("stroke-width", 7)
-  //     //   .attr("fill", (d, i) => topicColorScale[i])
-  //     //   .attr("d", d3.geoPath());
-  //   }
-  // }, [drawProjectionFlag]);
+      const x1 = x0 + (x3 - x0) * 0.3;
+      const x2 = x0 + (x3 - x0) * 0.7;
+      const y1 = y0 + (height - padding.bottom - padding.top) / (d3.max(paperCountByYear)) * 0.8;
+      const y2 = y1;
+      return `M${x0},${y0} C ${x1},${y1},${x2},${y2},${x3},${y3}`
+    }
+    else {
+      return diagonal(d)
+    }
+  }
+  linksG.selectAll("*").remove();
+  linksG
+    .selectAll("path")
+    .data(refLinks)
+    .join("path")
+    .attr("d", computedPath)
+    .attr(
+      "opacity",
+      (d) =>
+        (anaHighPapersDoiSet.has(d.source) &&
+          anaHighPapersDoiSet.has(d.target)) *
+        0.3
+    );
 
   // 初始化
   useEffect(() => {
     if (width > 0) {
       svg.selectAll("*").remove();
+      svg.append("g").attr("class", "paper-contour-g");
+      svg
+        .append("g")
+        .attr("class", "paper-link-g")
+        .attr("stroke", "#666")
+        .attr("stroke-width", 5)
+        .attr("fill", "none");
 
       const data = analysisPapers;
       // .map((d) => toJS(d));
@@ -212,9 +228,9 @@ const NetworkView = observer(() => {
         .attr("y", -rectHeight / 2)
         .attr("width", rectWidth)
         .attr("height", rectHeight)
+        .style("stroke", "#fff")
+        .style("stroke-width", 3)
         .attr("fill", (d) => topicColorScale[d.topics[0] ? d.topics[0][0] : 0]);
-
-      svg.append("g").attr("class", "paper-contour-g");
     }
   }, [width]);
 
