@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
 import { useClientRect } from "Hooks";
 import * as d3 from "d3";
-import { InputNumber, Slider } from "antd";
+import { Slider } from "antd";
 
 const ProjectView = observer(() => {
   const svgId = "ana-projection-map-svg";
@@ -126,11 +126,14 @@ const ProjectView = observer(() => {
         .select(`#contour-${anaHighTopic}`)
         .attr("opacity", 0.5)
         .attr("stroke", "red");
-      circlesG.selectAll("circle").attr('opacity', (d) => d.topics.map(a => a[0]).includes(anaHighTopic) ? 1 : 0.3)
-    }
-    else {
+      circlesG
+        .selectAll("circle")
+        .attr("opacity", (d) =>
+          d.topics.map((a) => a[0]).includes(anaHighTopic) ? 1 : 0.3
+        );
+    } else {
       contourG.selectAll("path").attr("opacity", 0.3).attr("stroke", "none");
-      circlesG.selectAll("circle").attr('opacity', 1)
+      circlesG.selectAll("circle").attr("opacity", 1);
     }
   }, [anaHighPapers, anaFilterType, anaHighTopic]);
 

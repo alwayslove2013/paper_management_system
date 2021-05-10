@@ -80,6 +80,7 @@ const createStore = () => {
         paper.outerColors = [];
         paper.internalRefList = [];
         paper.internalCitedList = [];
+        paper.topics = [[0, 1]];
         paper.refList = paper.refList
           .toLowerCase()
           // .split(";")
@@ -536,16 +537,16 @@ const createStore = () => {
     setAnaHighPapersByTopic(topic) {
       debug && console.log("setAnaHighPapersByTopic", topic);
       this.clearBrushTrigger();
-      if (this.anaFilterType === 'topic' && this.anaHighTopic === topic) {
-        this.anaHighTopic = "none"
+      if (this.anaFilterType === "topic" && this.anaHighTopic === topic) {
+        this.anaHighTopic = "none";
         this.setAnaFilterType("none");
         this.anaHighPapers = this.analysisPapers;
       } else {
         this.anaHighTopic = topic;
         this.anaHighTag = `topic ${topic + 1}`;
-        this.setAnaFilterType('topic');
+        this.setAnaFilterType("topic");
         this.anaHighPapers = this.analysisPapers.filter((paper) =>
-          paper.topics.map(a => a[0]).includes(topic)
+          paper.topics.map((a) => a[0]).includes(topic)
         );
       }
     },
@@ -564,7 +565,8 @@ const createStore = () => {
       this.anaSelectHighlightPaper = paper;
     },
 
-    topicColorScale: d3.schemeTableau10,
+    topicColorScale: d3.schemeTableau10.slice(1),
+    defaultHighColor: d3.schemeTableau10[0],
     drawProjectionFlag: false,
     resetProjectionFlag() {
       this.drawProjectionFlag = false;
@@ -589,7 +591,9 @@ const createStore = () => {
             this.analysisPapers.forEach((paper) => {
               if (paper.doi in paper_lda_res) {
                 paper.projection = paper_lda_res[paper.doi].projection;
-                paper.topics = paper_lda_res[paper.doi].topics;
+                paper.topics = paper_lda_res[paper.doi].topics.sort(
+                  (a, b) => b[1] - a[1]
+                );
               } else {
                 paper.projection = [5, 5];
                 paper.topics = [];

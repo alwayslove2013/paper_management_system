@@ -1,5 +1,5 @@
 $left-container-width: 24%;
-$middle-container-width: 45%;
+$middle-container-width: 50%;
 $container-border: 2px solid #ccc;
 .analysis-container {
   // display: flex;
@@ -20,7 +20,7 @@ $container-border: 2px solid #ccc;
     flex-direction: column;
     .middle-top-container {
       width: 100%;
-      height: 50%;
+      height: 65%;
       border-bottom: $container-border;
     }
     .middle-bottom-container {
