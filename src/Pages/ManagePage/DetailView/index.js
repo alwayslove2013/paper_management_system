@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./index.scss";
 import { useGlobalStore } from "Store";
 import { observer } from "mobx-react-lite";
@@ -73,7 +73,9 @@ const DetailView = observer(() => {
           <div className="detail-attrs">
             <div className="detail-attr">
               <div className="detail-key">keywords:</div>
-              <div className="detail-content">{get(paper, 'keywords', []).join("; ")}</div>
+              <div className="detail-content">
+                {get(paper, "keywords", []).join("; ")}
+              </div>
             </div>
             <DetailItem paper={paper} label={"doi"} />
             <DetailItem paper={paper} label={"affiliation"} />

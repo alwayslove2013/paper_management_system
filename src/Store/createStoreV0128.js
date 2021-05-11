@@ -187,16 +187,14 @@ const createStore = () => {
       return xAttrList;
     },
     unitYAttr: "conferenceName",
-    get unitYAttrList() {
-      return ["SciVis", "InfoVis", "EuroVis", "VAST", "PacificVis"];
-      // const yAttrSet = new Set();
-      // this.papers.forEach((paper) => {
-      //   yAttrSet.add(paper[this.unitYAttr]);
-      // });
-      // const yAttrList = Array.from(yAttrSet);
-      // yAttrList.sort();
-      // return yAttrList;
-    },
+    unitYAttrList: [
+      "SciVis",
+      "InfoVis",
+      "EuroVis",
+      "VAST",
+      "PacificVis",
+      "Others",
+    ],
     maxUnitBlockPaperCount: 0,
     unitBlockCount: {},
     computedPosition(papers) {
@@ -204,7 +202,9 @@ const createStore = () => {
       const unitBlockCount = {};
       papers.forEach((paper) => {
         const xAttr = paper[this.unitXAttr];
-        const yAttr = paper[this.unitYAttr];
+        const yAttr = this.unitYAttrList.includes(paper[this.unitYAttr])
+          ? paper[this.unitYAttr]
+          : this.unitYAttrList[this.unitYAttrList.length - 1];
         if (!(xAttr in unitBlockCount)) unitBlockCount[xAttr] = {};
         if (!(yAttr in unitBlockCount[xAttr])) unitBlockCount[xAttr][yAttr] = 0;
         paper.unitIndex = unitBlockCount[xAttr][yAttr];

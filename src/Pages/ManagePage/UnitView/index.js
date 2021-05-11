@@ -143,7 +143,9 @@ const UnitView = observer(() => {
     paperCircle.oriData = toJS(paper);
 
     paperCircle.BlockIndexX = unitXAttrList.indexOf(paper[unitXAttr]);
-    paperCircle.BlockIndexY = unitYAttrList.indexOf(paper[unitYAttr]);
+    paperCircle.BlockIndexY = unitYAttrList.includes(paper[unitYAttr])
+      ? unitYAttrList.indexOf(paper[unitYAttr])
+      : unitYAttrList.length - 1;
 
     const doi = paper.doi;
     paperCircle.doi = doi;
@@ -166,7 +168,7 @@ const UnitView = observer(() => {
       (paperCircle.circleIndexY + 0.5) * r;
 
     // 外挂逻辑
-    if (paper["year"] === '2004' && paperCircle.BlockIndexY > 0) {
+    if (paper["year"] === "2004" && paperCircle.BlockIndexY > 0) {
       paperCircle.cy += 50 - paperCircle.BlockIndexY * 10;
     }
 
@@ -203,7 +205,7 @@ const UnitView = observer(() => {
     }
 
     paperCircle.opacity = controlIsActive
-      ? (paper.innerColors.length + paper.outerColors.length)  > 0
+      ? paper.innerColors.length + paper.outerColors.length > 0
         ? 0.8
         : 0.4
       : 0.8;
