@@ -79,6 +79,20 @@ const NetworkView = observer(() => {
     paperRectG
       .select("rect")
       .attr("fill", (d) => topicColorScale[d.topics[0] ? d.topics[0][0] : 0]);
+    paperRectG
+      .selectAll("rect")
+      .data((d) =>
+        d.topics.map((a, i, s) => {
+          a.len = s.length;
+          return a;
+        })
+      )
+      .join("rect")
+      .attr("x", (d, i) => -rectWidth / 2 + (rectWidth / d.len) * i)
+      .attr("y", -rectHeight / 2)
+      .attr("width", (d) => rectWidth / d.len)
+      .attr("height", rectHeight)
+      .attr("fill", (d) => topicColorScale[d[0]]);
   }
 
   // analysisPapers.forEach((paper) => (paper.isHighlight = false));
@@ -117,13 +131,11 @@ const NetworkView = observer(() => {
       .attr("d", d3.geoPath());
 
     const rectG = svg.select(".paper-rect-g").selectAll("g");
-    
-    rectG
-      .select("rect")
-      .attr("opacity", (d) => (anaHighPapersDoiSet.has(d.doi) ? 1 : 0.15));
+
+    rectG.attr("opacity", (d) => (anaHighPapersDoiSet.has(d.doi) ? 1 : 0.15));
   } else {
     const rectG = svg.select(".paper-rect-g").selectAll("g");
-    rectG.select("rect").attr("opacity", 1);
+    rectG.attr("opacity", 1);
     const contourG = svg.select(".paper-contour-g");
     contourG.selectAll("*").remove();
   }
@@ -151,22 +163,26 @@ const NetworkView = observer(() => {
     .x((doi) => x(doi2paper[doi].year))
     .y((doi) => y(doi2paper[doi].indexByYear));
   const computedPath = (d) => {
-    if (y(doi2paper[d.source].indexByYear) === y(doi2paper[d.target].indexByYear)) {
-      const x0 = x(doi2paper[d.source].year)
-      const y0 = y(doi2paper[d.source].indexByYear)
-      const x3 = x(doi2paper[d.target].year)
-      const y3 = y0
+    if (
+      y(doi2paper[d.source].indexByYear) === y(doi2paper[d.target].indexByYear)
+    ) {
+      const x0 = x(doi2paper[d.source].year);
+      const y0 = y(doi2paper[d.source].indexByYear);
+      const x3 = x(doi2paper[d.target].year);
+      const y3 = y0;
 
       const x1 = x0 + (x3 - x0) * 0.3;
       const x2 = x0 + (x3 - x0) * 0.7;
-      const y1 = y0 + (height - padding.bottom - padding.top) / (d3.max(paperCountByYear)) * 0.8;
+      const y1 =
+        y0 +
+        ((height - padding.bottom - padding.top) / d3.max(paperCountByYear)) *
+          0.8;
       const y2 = y1;
-      return `M${x0},${y0} C ${x1},${y1},${x2},${y2},${x3},${y3}`
+      return `M${x0},${y0} C ${x1},${y1},${x2},${y2},${x3},${y3}`;
+    } else {
+      return diagonal(d);
     }
-    else {
-      return diagonal(d)
-    }
-  }
+  };
   linksG.selectAll("*").remove();
   linksG
     .selectAll("path")
@@ -177,8 +193,7 @@ const NetworkView = observer(() => {
       "opacity",
       (d) =>
         (anaHighPapersDoiSet.has(d.source) &&
-          anaHighPapersDoiSet.has(d.target)) *
-        0.3
+          anaHighPapersDoiSet.has(d.target)) * 0.3
     );
 
   // 初始化
@@ -217,6 +232,8 @@ const NetworkView = observer(() => {
         .selectAll("g")
         .data(data)
         .join("g")
+        .style("stroke", "#fff")
+        .style("stroke-width", 2)
         .attr("id", (d) => d.doi)
         .attr(
           "transform",
@@ -228,8 +245,6 @@ const NetworkView = observer(() => {
         .attr("y", -rectHeight / 2)
         .attr("width", rectWidth)
         .attr("height", rectHeight)
-        .style("stroke", "#fff")
-        .style("stroke-width", 3)
         .attr("fill", (d) => topicColorScale[d.topics[0] ? d.topics[0][0] : 0]);
     }
   }, [width]);
