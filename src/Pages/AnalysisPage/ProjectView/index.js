@@ -19,14 +19,19 @@ const ProjectView = observer(() => {
     topicColorScale,
     anaFilterType,
     anaHighTopic,
+    setAnaSelectHighlightPaper,
+    anaSelectHighlightPaperDoi,
   } = store;
   const clientRect = useClientRect({
     svgId,
   });
   const { width, height } = clientRect;
+  // 初始化
   useEffect(() => {
     store.tryLda();
   }, []);
+
+  // 接收到topics数据，开始绘制
   useEffect(() => {
     if (width > 0 && drawProjectionFlag) {
       const svg = d3.select(`#${svgId}`);
@@ -76,10 +81,6 @@ const ProjectView = observer(() => {
             .contourDensity()
             .x((d) => x(d.projection[0]))
             .y((d) => y(d.projection[1]))
-            // .size([
-            //   width - padding.left - padding.right,
-            //   height - padding.top - padding.bottom,
-            // ])
             .size([width, height])
             .bandwidth(30)
             .thresholds(5)(
@@ -111,7 +112,11 @@ const ProjectView = observer(() => {
         .attr("r", 6)
         .attr("stroke", "#fff")
         .attr("stroke-width", 2)
-        .attr("fill", (d) => circleColor(d));
+        .attr("fill", (d) => circleColor(d))
+        .style("cursor", "pointer")
+        .on("click", (e, d) => {
+          setAnaSelectHighlightPaper(d.doi);
+        });
 
       // resetProjectionFlag();
       setTimeout(() => {
@@ -120,10 +125,28 @@ const ProjectView = observer(() => {
     }
   }, [width, drawProjectionFlag, num_topics, analysisPapers]);
 
+  // 出现高亮
   useEffect(() => {
     const contourG = d3.select(".contour-g");
     const circlesG = d3.select(".circles-g");
-    if (anaFilterType === "topic") {
+    const anaHighPapersDoiSet = new Set(
+      anaHighPapers.map((paper) => paper.doi)
+    );
+    if (anaFilterType === "none") {
+      // 无高亮状态
+      contourG.selectAll("path").attr("opacity", 0.3).attr("stroke", "none");
+      circlesG
+        .selectAll("circle")
+        .attr("opacity", 1)
+        .attr("stroke", (d) =>
+          d.doi === anaSelectHighlightPaperDoi ? "red" : "#fff"
+        )
+        .attr("stroke-width", (d) =>
+          d.doi === anaSelectHighlightPaperDoi ? 4 : 2
+        )
+        .attr("r", (d) => (d.doi === anaSelectHighlightPaperDoi ? 9 : 6));
+    } else if (anaFilterType === "topic") {
+      // 高亮主题
       contourG.selectAll("path").attr("opacity", 0.1).attr("stroke", "none");
       contourG
         .select(`#contour-${anaHighTopic}`)
@@ -132,17 +155,42 @@ const ProjectView = observer(() => {
       circlesG
         .selectAll("circle")
         .attr("opacity", (d) =>
-          d.topics.map((a) => a[0]).includes(anaHighTopic) ? 1 : 0.3
-        );
+          d.topics.map((a) => a[0]).includes(anaHighTopic) ||
+          d.doi === anaSelectHighlightPaperDoi
+            ? 1
+            : 0.3
+        )
+        .attr("stroke", (d) =>
+          d.doi === anaSelectHighlightPaperDoi ? "red" : "#fff"
+        )
+        .attr("stroke-width", (d) =>
+          d.doi === anaSelectHighlightPaperDoi ? 4 : 2
+        )
+        .attr("r", (d) => (d.doi === anaSelectHighlightPaperDoi ? 9 : 6));
     } else {
+      // 被其他属性高亮
       contourG.selectAll("path").attr("opacity", 0.3).attr("stroke", "none");
-      circlesG.selectAll("circle").attr("opacity", 1);
+      circlesG
+        .selectAll("circle")
+        .attr("opacity", (d) =>
+          anaHighPapersDoiSet.has(d.doi) || d.doi === anaSelectHighlightPaperDoi
+            ? 1
+            : 0.3
+        )
+        .attr("stroke", (d) =>
+          anaHighPapersDoiSet.has(d.doi) || d.doi === anaSelectHighlightPaperDoi
+            ? "red"
+            : "#fff"
+        )
+        .attr("stroke-width", (d) =>
+          d.doi === anaSelectHighlightPaperDoi ? 4 : 2
+        )
+        .attr("r", (d) => (d.doi === anaSelectHighlightPaperDoi ? 9 : 6));
     }
-  }, [anaHighPapers, anaFilterType, anaHighTopic]);
+  }, [anaHighPapers, anaFilterType, anaHighTopic, anaSelectHighlightPaperDoi]);
 
   const [num_topics_ing, set_num_topics_ing] = useState(num_topics);
   const handleChangeNumTopicsIng = (num) => {
-    // console.log("???", num);
     set_num_topics_ing(num);
   };
   return (
@@ -152,15 +200,7 @@ const ProjectView = observer(() => {
         <div className="topics-number-input-text">
           Topics Num: {num_topics_ing}
         </div>
-        {/* <InputNumber
-          size="small"
-          min={2}
-          max={10}
-          defaultValue={num_topics}
-          onChange={setNumTopics}
-        /> */}
         <Slider
-          // size="small"
           min={2}
           max={10}
           onAfterChange={setNumTopics}
