@@ -113,7 +113,10 @@ const ProjectView = observer(() => {
         .attr("stroke-width", 2)
         .attr("fill", (d) => circleColor(d));
 
-      resetProjectionFlag();
+      // resetProjectionFlag();
+      setTimeout(() => {
+        resetProjectionFlag();
+      }, 3000);
     }
   }, [width, drawProjectionFlag, num_topics, analysisPapers]);
 

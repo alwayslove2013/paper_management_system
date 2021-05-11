@@ -571,6 +571,7 @@ const createStore = () => {
     defaultHighColor: d3.schemeTableau10[0],
     drawProjectionFlag: false,
     resetProjectionFlag() {
+      debug && console.log('reset drawProjectionFlag')
       this.drawProjectionFlag = false;
     },
     num_topics: 5,

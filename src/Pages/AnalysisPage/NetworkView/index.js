@@ -52,6 +52,7 @@ const NetworkView = observer(() => {
     .range([padding.top, height - padding.bottom]);
 
   // 节点rect渲染
+  console.log('drawProjectionFlag', drawProjectionFlag)
   if (drawProjectionFlag) {
     console.log("====> Network! get topic");
     const data = analysisPapers;
