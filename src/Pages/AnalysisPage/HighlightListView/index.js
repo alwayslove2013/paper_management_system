@@ -5,7 +5,11 @@ import { useGlobalStore } from "Store";
 
 const HighlightListView = observer(() => {
   const store = useGlobalStore();
-  const { analysisPapers, anaHighPapers, setAnaSelectHighlightPaper } = store;
+  const {
+    anaSelectHighlightPaperDoi,
+    anaHighPapers,
+    setAnaSelectHighlightPaper,
+  } = store;
   return (
     <div className="highlight-list-view">
       <div className="highlight-list-header">
@@ -19,6 +23,7 @@ const HighlightListView = observer(() => {
             paper={paper}
             index={index}
             handleClick={setAnaSelectHighlightPaper}
+            isSelected={paper.doi === anaSelectHighlightPaperDoi}
           />
         ))}
       </div>
@@ -26,8 +31,16 @@ const HighlightListView = observer(() => {
   );
 });
 
-const PaperItem = ({ paper, index, handleClick = () => {} }) => (
-  <div className="paper-item" onClick={() => handleClick(paper)}>
+const PaperItem = ({
+  paper,
+  index,
+  handleClick = () => {},
+  isSelected = false,
+}) => (
+  <div
+    className={`paper-item ${isSelected ? "paper-item-selected" : ""}`}
+    onClick={() => handleClick(paper.doi)}
+  >
     <div className="paper-index">{index + 1}.</div>
     <div className="paper-content">
       <div className="paper-header">

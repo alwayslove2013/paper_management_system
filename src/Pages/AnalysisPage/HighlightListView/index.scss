@@ -32,6 +32,9 @@
       box-shadow: 0 0 8px #666;
       // border: 1px solid #333;
     }
+    .paper-item-selected {
+      border: 3px solid rgb(209, 65, 65) !important;
+    }
     .paper-item {
       position: relative;
       // width: 100%;
@@ -45,15 +48,16 @@
       // border: 1px solid #ddd;
       box-shadow: 0 0 5px #ccc;
       border-radius: 5px;
+      border: 3px solid transparent;
       cursor: pointer;
       .paper-index {
         // float: left;
       }
       .paper-content {
-        margin-left: 3px;
+        margin-left: 4px;
         margin-right: 10px;
         position: relative;
-        width: 100%;
+        width: 98%;
         .paper-header {
           // display: flex;
           .paper-header-conferenceName {

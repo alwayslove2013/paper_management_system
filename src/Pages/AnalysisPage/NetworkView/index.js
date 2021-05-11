@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import "./index.scss";
 import { observer } from "mobx-react-lite";
-import { toJS } from "mobx";
 import { useGlobalStore } from "Store";
 import { useClientRect } from "Hooks";
 import * as d3 from "d3";
@@ -19,10 +18,11 @@ const NetworkView = observer(() => {
     topicColorScale,
     defaultHighColor,
     drawProjectionFlag,
-    num_topics,
     anaFilterType,
     anaHighTopic,
     anaHighPapers,
+    setAnaSelectHighlightPaper,
+    anaSelectHighlightPaperDoi,
   } = store;
   const yearRange = d3.extent(analysisPapers, (d) => +d.year);
   const paperCountByYear = d3
@@ -52,7 +52,6 @@ const NetworkView = observer(() => {
     .range([padding.top, height - padding.bottom]);
 
   // 节点rect渲染
-  console.log('drawProjectionFlag', drawProjectionFlag)
   if (drawProjectionFlag) {
     console.log("====> Network! get topic");
     const data = analysisPapers;
@@ -96,8 +95,12 @@ const NetworkView = observer(() => {
       .attr("fill", (d) => topicColorScale[d[0]]);
   }
 
-  // analysisPapers.forEach((paper) => (paper.isHighlight = false));
-  // anaHighPapers.forEach((paper) => (paper.isHighlight = true));
+  const rectG = svg.select(".paper-rect-g").selectAll("g");
+  rectG.style("stroke", (d) =>
+    d.doi === anaSelectHighlightPaperDoi ? "red" : "#fff"
+  );
+
+  // 画contour
   const anaHighPapersDoiSet = new Set(anaHighPapers.map((p) => p.doi));
   if (anaFilterType !== "none") {
     const contourColor =
@@ -113,12 +116,7 @@ const NetworkView = observer(() => {
       .size([width, height])
       .bandwidth(30)
       .thresholds(5);
-    const contour = contourFunc(
-      // analysisPapers.filter((paper) =>
-      //   paper.topics.map((t) => t[0]).includes(anaHighTopic)
-      // )
-      anaHighPapers
-    )[0];
+    const contour = contourFunc(anaHighPapers)[0];
 
     contourG
       .attr("stroke", "none")
@@ -141,7 +139,7 @@ const NetworkView = observer(() => {
     contourG.selectAll("*").remove();
   }
 
-  // 引用
+  // 引用连接
   const doi2paper = {};
   analysisPapers.forEach((paper) => (doi2paper[paper.doi] = paper));
   const refLinks = [];
@@ -190,12 +188,21 @@ const NetworkView = observer(() => {
     .data(refLinks)
     .join("path")
     .attr("d", computedPath)
-    .attr(
-      "opacity",
-      (d) =>
-        (anaHighPapersDoiSet.has(d.source) &&
-          anaHighPapersDoiSet.has(d.target)) * 0.3
-    );
+    .attr("opacity", (d) => {
+      // 无高亮区域且有单选
+      if (anaFilterType === "none" && anaSelectHighlightPaperDoi !== "") {
+        return (
+          (d.source === anaSelectHighlightPaperDoi ||
+            d.target === anaSelectHighlightPaperDoi) * 0.3
+        );
+      } else {
+        // 有高亮区域，只高亮区域内引用
+        return (
+          (anaHighPapersDoiSet.has(d.source) &&
+            anaHighPapersDoiSet.has(d.target)) * 0.3
+        );
+      }
+    });
 
   // 初始化
   useEffect(() => {
@@ -234,12 +241,16 @@ const NetworkView = observer(() => {
         .data(data)
         .join("g")
         .style("stroke", "#fff")
-        .style("stroke-width", 2)
+        .style("stroke-width", 3)
         .attr("id", (d) => d.doi)
         .attr(
           "transform",
           (d) => `translate(${x(+d.year)}, ${y(d.indexByYear)})`
-        );
+        )
+        .style("cursor", "pointer")
+        .on("click", (e, d) => {
+          setAnaSelectHighlightPaper(d.doi);
+        });
       paperRectG
         .append("rect")
         .attr("x", -rectWidth / 2)

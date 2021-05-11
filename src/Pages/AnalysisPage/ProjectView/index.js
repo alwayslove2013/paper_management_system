@@ -116,7 +116,7 @@ const ProjectView = observer(() => {
       // resetProjectionFlag();
       setTimeout(() => {
         resetProjectionFlag();
-      }, 3000);
+      }, 1000);
     }
   }, [width, drawProjectionFlag, num_topics, analysisPapers]);
 

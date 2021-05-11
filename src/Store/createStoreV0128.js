@@ -561,17 +561,28 @@ const createStore = () => {
         (paper) => +paper.year >= yearStart && +paper.year <= yearEnd
       );
     },
-    anaSelectHighlightPaper: {},
-    setAnaSelectHighlightPaper(paper) {
-      debug && console.log("setAnaSelectHighlightPaper", toJS(paper));
-      this.anaSelectHighlightPaper = paper;
+    anaSelectHighlightPaperDoi: "",
+    setAnaSelectHighlightPaper(paperDoi) {
+      debug && console.log("setAnaSelectHighlightPaper", paperDoi);
+      if (this.anaSelectHighlightPaperDoi === paperDoi) {
+        debug && console.log("reset anaSelectHighlightPaperDoi");
+        this.anaSelectHighlightPaperDoi = "";
+      } else {
+        this.anaSelectHighlightPaperDoi = paperDoi;
+      }
     },
-
+    get anaSelectHighlightPaper() {
+      return (
+        this.analysisPapers.find(
+          (paper) => paper.doi === this.anaSelectHighlightPaperDoi
+        ) || {}
+      );
+    },
     topicColorScale: d3.schemeTableau10.slice(1),
     defaultHighColor: d3.schemeTableau10[0],
     drawProjectionFlag: false,
     resetProjectionFlag() {
-      debug && console.log('reset drawProjectionFlag')
+      debug && console.log("reset drawProjectionFlag");
       this.drawProjectionFlag = false;
     },
     num_topics: 5,
@@ -604,6 +615,8 @@ const createStore = () => {
             });
             this.drawProjectionFlag = true;
             this.topics_detail = topics_detail;
+            // 初始化一下
+            this.anaHighPapers = this.analysisPapers;
           }
         });
       });
