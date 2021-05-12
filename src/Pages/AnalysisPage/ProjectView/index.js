@@ -31,18 +31,34 @@ const ProjectView = observer(() => {
     store.tryLda();
   }, []);
 
+  const padding = {
+    left: 30,
+    right: 30,
+    top: 30,
+    bottom: 30,
+  };
+  const x = d3
+    .scaleLinear()
+    .domain([
+      d3.min(analysisPapers, (d) => d.projection[0]),
+      d3.max(analysisPapers, (d) => d.projection[0]),
+    ])
+    .nice()
+    .range([padding.left, width - padding.right]);
+  const y = d3
+    .scaleLinear()
+    .domain([
+      d3.min(analysisPapers, (d) => d.projection[1]),
+      d3.max(analysisPapers, (d) => d.projection[1]),
+    ])
+    .nice()
+    .range([height - padding.bottom, padding.top]);
+
   // 接收到topics数据，开始绘制
   useEffect(() => {
     if (width > 0 && drawProjectionFlag) {
       const svg = d3.select(`#${svgId}`);
-      svg.selectAll("*").remove();
-
-      const padding = {
-        left: 30,
-        right: 30,
-        top: 30,
-        bottom: 30,
-      };
+      svg.selectAll("g").remove();
 
       // const topicColorScale = d3.schemeTableau10;
       const circleColor = (paper) => {
@@ -58,22 +74,6 @@ const ProjectView = observer(() => {
           return topicColorScale[mainTopic[0]];
         }
       };
-      const x = d3
-        .scaleLinear()
-        .domain([
-          d3.min(analysisPapers, (d) => d.projection[0]),
-          d3.max(analysisPapers, (d) => d.projection[0]),
-        ])
-        .nice()
-        .range([padding.left, width - padding.right]);
-      const y = d3
-        .scaleLinear()
-        .domain([
-          d3.min(analysisPapers, (d) => d.projection[1]),
-          d3.max(analysisPapers, (d) => d.projection[1]),
-        ])
-        .nice()
-        .range([height - padding.bottom, padding.top]);
 
       const contours = d3.range(num_topics).map(
         (topic_i) =>
@@ -147,6 +147,7 @@ const ProjectView = observer(() => {
         .attr("r", (d) => (d.doi === anaSelectHighlightPaperDoi ? 9 : 6));
     } else if (anaFilterType === "topic") {
       // 高亮主题
+      //    contour高亮 + 包括该主题的节点高亮
       contourG.selectAll("path").attr("opacity", 0.1).attr("stroke", "none");
       contourG
         .select(`#contour-${anaHighTopic}`)
@@ -167,6 +168,81 @@ const ProjectView = observer(() => {
           d.doi === anaSelectHighlightPaperDoi ? 4 : 2
         )
         .attr("r", (d) => (d.doi === anaSelectHighlightPaperDoi ? 9 : 6));
+
+      const svg = d3.select(`#${svgId}`);
+      svg.select("#topic-entity-g").remove();
+      svg.select("#topic-link-g").remove();
+      const topicEntityG = svg.append("g").attr("id", "topic-entity-g");
+      const topicLinkG = svg.append("g").attr("id", "topic-link-g");
+
+      const generateEntity = (topicIndex) => {
+        const allPapers = analysisPapers.filter((paper) =>
+          paper.topics.map((a) => a[0]).includes(topicIndex)
+        );
+        const mainPapers = analysisPapers.filter(
+          (paper) => paper.topics[0][0] === topicIndex
+        );
+        const positionX = x(
+          mainPapers.reduce((s, a) => s + a.projection[0], 0) /
+            mainPapers.length
+        );
+        const positionY = y(
+          mainPapers.reduce((s, a) => s + a.projection[1], 0) /
+            mainPapers.length
+        );
+        return {
+          allPapers,
+          topicIndex,
+          mainPapers,
+          positionX,
+          positionY,
+          color: topicColorScale[topicIndex],
+        };
+      };
+      const anaHighTopicEntity = generateEntity(anaHighTopic);
+      const anaHighTopicPaperDoiSet = new Set(
+        anaHighTopicEntity.allPapers.map((paper) => paper.doi)
+      );
+      console.log(
+        "anaHighTopicEntity",
+        anaHighTopicEntity,
+        anaHighTopicPaperDoiSet
+      );
+      const anaOtherEntities = d3
+        .range(num_topics)
+        .filter((a) => a !== anaHighTopic)
+        .map((topicIndex) => generateEntity(topicIndex));
+      anaOtherEntities.forEach((entity) => {
+        entity.intersectionPapers = entity.allPapers.filter(
+          (paper) => !anaHighTopicPaperDoiSet.has(paper)
+        );
+      });
+      console.log("anaOtherEntities", anaOtherEntities);
+
+      const entityR = d3
+        .scaleLinear()
+        .domain(
+          d3.extent(
+            [...anaOtherEntities, anaHighTopicEntity],
+            (d) => d.allPapers.length
+          )
+        )
+        .range([25, 40]);
+
+      topicEntityG
+        .append("g")
+        .attr("id", "other-topics-g")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 5)
+        .selectAll("circle")
+        .data(anaOtherEntities)
+        .join("circle")
+        .attr("cx", (d) => d.positionX)
+        .attr("cy", (d) => d.positionY)
+        .attr("r", (d) => entityR(d.allPapers.length))
+        .attr("fill", (d) => d.color);
+
+      // const Link
     } else {
       // 被其他属性高亮
       contourG.selectAll("path").attr("opacity", 0.3).attr("stroke", "none");
@@ -195,7 +271,30 @@ const ProjectView = observer(() => {
   };
   return (
     <div className="projection-view">
-      <svg id={svgId} width="100%" height="100%" />
+      <svg id={svgId} width="100%" height="100%">
+        <defs>
+          <marker
+            id="arrow"
+            markerWidth="10"
+            markerHeight="10"
+            refX="0"
+            refY="3"
+            orient="auto"
+            markerUnits="strokeWidth"
+          >
+            <path d="M0,0 L0,6 L9,3 z" fill="#f00" />
+          </marker>
+        </defs>
+        <line
+          x1="50"
+          y1="250"
+          x2="250"
+          y2="50"
+          stroke="#000"
+          strokeWidth="5"
+          markerEnd="url(#arrow)"
+        />
+      </svg>
       <div className="topics-number-input">
         <div className="topics-number-input-text">
           Topics Num: {num_topics_ing}
