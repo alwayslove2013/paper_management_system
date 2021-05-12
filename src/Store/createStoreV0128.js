@@ -265,8 +265,70 @@ const createStore = () => {
     get controlTagNameList() {
       return this.generateCategory(10);
     },
+    // get anaCategories() {
+    //   return this.generateCategory(18, true);
+    // },
     get anaCategories() {
-      return this.generateCategory(18, true);
+      const count = 50;
+      const have_read = false;
+      const countries = mustInclude(
+        mostCommon(
+          this.analysisPapers.map((paper) => paper.countries),
+          30
+        ),
+        ["Japan", "Korea"],
+        count
+      );
+      const authors = mostCommon(
+        this.analysisPapers.map((paper) => paper.authors),
+        30
+      );
+      const privateTags = mustInclude(
+        this.commonPrivateTags,
+        have_read ? ["read"] : [],
+        count
+      );
+      const publicTags = mustInclude(this.commonPublicTags, [], count);
+      const keywords = mustInclude(
+        mostCommon(
+          this.analysisPapers.map((paper) => paper.keywords),
+          30
+        ),
+        [],
+        count
+      );
+      return [
+        {
+          label: "Country",
+          value: "countries",
+          list: countries,
+          highlightType: "outer",
+        },
+        {
+          label: "Author",
+          value: "authors",
+          list: authors,
+          highlightType: "inner",
+        },
+        {
+          label: "Keywords",
+          value: "keywords",
+          list: keywords,
+          highlightType: "inner",
+        },
+        {
+          label: "Private Tag",
+          value: "privateTags",
+          list: privateTags,
+          highlightType: "inner",
+        },
+        {
+          label: "Public Tag",
+          value: "publicTags",
+          list: publicTags,
+          highlightType: "inner",
+        },
+      ];
     },
 
     get commonKeywords() {
