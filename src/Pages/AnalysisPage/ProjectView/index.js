@@ -5,6 +5,7 @@ import { useGlobalStore } from "Store";
 import { useClientRect } from "Hooks";
 import * as d3 from "d3";
 import { Slider } from "antd";
+import { find_d } from "Common";
 
 const ProjectView = observer(() => {
   const svgId = "ana-projection-map-svg";
@@ -16,6 +17,7 @@ const ProjectView = observer(() => {
     num_topics,
     resetProjectionFlag,
     setNumTopics,
+    defaultHighColor,
     topicColorScale,
     anaFilterType,
     anaHighTopic,
@@ -91,14 +93,16 @@ const ProjectView = observer(() => {
       );
       const contourG = svg.append("g").attr("class", "contour-g");
       contourG
-        .attr("stroke", "none")
+        .attr("stroke", "#111")
+        .attr("stroke-width", 1)
         .attr("stroke-linejoin", "round")
+        // .attr("marker-end", "url(#arrow)")
         .selectAll("path")
         .data(contours)
         .join("path")
         .attr("id", (d, i) => `contour-${i}`)
         .attr("opacity", 0.3)
-        .attr("stroke-width", 7)
+        .attr("stroke-width", 1)
         .attr("fill", (d, i) => topicColorScale[i])
         .attr("d", d3.geoPath());
 
@@ -111,7 +115,7 @@ const ProjectView = observer(() => {
         .attr("cy", (d) => y(d.projection[1]))
         .attr("r", 6)
         .attr("stroke", "#fff")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 1)
         .attr("fill", (d) => circleColor(d))
         .style("cursor", "pointer")
         .on("click", (e, d) => {
@@ -142,7 +146,7 @@ const ProjectView = observer(() => {
           d.doi === anaSelectHighlightPaperDoi ? "red" : "#fff"
         )
         .attr("stroke-width", (d) =>
-          d.doi === anaSelectHighlightPaperDoi ? 4 : 2
+          d.doi === anaSelectHighlightPaperDoi ? 4 : 1
         )
         .attr("r", (d) => (d.doi === anaSelectHighlightPaperDoi ? 9 : 6));
     } else if (anaFilterType === "topic") {
@@ -152,7 +156,9 @@ const ProjectView = observer(() => {
       contourG
         .select(`#contour-${anaHighTopic}`)
         .attr("opacity", 0.5)
-        .attr("stroke", "red");
+        .attr("stroke", "#111")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", 5)
       circlesG
         .selectAll("circle")
         .attr("opacity", (d) =>
@@ -165,15 +171,13 @@ const ProjectView = observer(() => {
           d.doi === anaSelectHighlightPaperDoi ? "red" : "#fff"
         )
         .attr("stroke-width", (d) =>
-          d.doi === anaSelectHighlightPaperDoi ? 4 : 2
+          d.doi === anaSelectHighlightPaperDoi ? 4 : 1
         )
         .attr("r", (d) => (d.doi === anaSelectHighlightPaperDoi ? 9 : 6));
 
       const svg = d3.select(`#${svgId}`);
       svg.select("#topic-entity-g").remove();
       svg.select("#topic-link-g").remove();
-      const topicEntityG = svg.append("g").attr("id", "topic-entity-g");
-      const topicLinkG = svg.append("g").attr("id", "topic-link-g");
 
       const generateEntity = (topicIndex) => {
         const allPapers = analysisPapers.filter((paper) =>
@@ -213,36 +217,248 @@ const ProjectView = observer(() => {
         .filter((a) => a !== anaHighTopic)
         .map((topicIndex) => generateEntity(topicIndex));
       anaOtherEntities.forEach((entity) => {
-        entity.intersectionPapers = entity.allPapers.filter(
-          (paper) => !anaHighTopicPaperDoiSet.has(paper)
+        entity.intersectionPapers = entity.allPapers.filter((paper) =>
+          anaHighTopicPaperDoiSet.has(paper.doi)
         );
       });
       console.log("anaOtherEntities", anaOtherEntities);
 
-      const entityR = d3
-        .scaleLinear()
-        .domain(
-          d3.extent(
-            [...anaOtherEntities, anaHighTopicEntity],
-            (d) => d.allPapers.length
+      const drawEntity = () => {
+        const topicEntityGG = svg.append("g").attr("id", "topic-entity-g");
+        // const entityArea = d3
+        //   .scaleLinear()
+        //   .domain([
+        //     0,
+        //     d3.max(
+        //       [...anaOtherEntities, anaHighTopicEntity],
+        //       (d) => d.allPapers.length
+        //     ),
+        //   ])
+        //   .range([0, 1600]);
+
+        // const entityR = (d) => Math.sqrt(entityArea(d));
+
+        const entityR = d3
+          .scaleLinear()
+          .domain(
+            d3.extent(
+              [...anaOtherEntities, anaHighTopicEntity],
+              (d) => d.allPapers.length
+            )
           )
-        )
-        .range([25, 40]);
+          .range([20, 40]);
 
-      topicEntityG
-        .append("g")
-        .attr("id", "other-topics-g")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 5)
-        .selectAll("circle")
-        .data(anaOtherEntities)
-        .join("circle")
-        .attr("cx", (d) => d.positionX)
-        .attr("cy", (d) => d.positionY)
-        .attr("r", (d) => entityR(d.allPapers.length))
-        .attr("fill", (d) => d.color);
+        const otherTopicEntityGG = topicEntityGG
+          .append("g")
+          .attr("id", "other-topics-g");
+        const otherTopicEntityG = otherTopicEntityGG
+          .selectAll("g")
+          .data(anaOtherEntities)
+          .join("g")
+          .attr("stroke-width", 1.5)
+          .attr("stroke", "#fff");
+        otherTopicEntityG
+          .append("circle")
+          .attr("cx", (d) => d.positionX)
+          .attr("cy", (d) => d.positionY)
+          .attr("r", (d) => entityR(d.allPapers.length))
+          .attr("fill", (d) => d.color);
 
-      // const Link
+        otherTopicEntityG
+          .append("path")
+          .attr("fill", topicColorScale[anaHighTopic])
+          .attr("d", (d) => {
+            const angle =
+              (2 * Math.PI * d.intersectionPapers.length) / d.allPapers.length;
+            const r = entityR(d.allPapers.length);
+            const start = {
+              x: d.positionX,
+              y: d.positionY - r,
+            };
+            const end = {
+              x: d.positionX + Math.sin(angle) * r,
+              y: d.positionY - Math.cos(angle) * r,
+            };
+            return `M ${d.positionX} ${d.positionY}
+          L ${start.x} ${start.y}
+          A ${r} ${r} 0 0 1 ${end.x} ${end.y}
+          Z
+          `;
+          });
+        // otherTopicEntityG
+        //   .append("circle")
+        //   .attr("stroke-width", 3)
+        //   .attr("stroke", "#fff")
+        //   .attr("cx", (d) => d.positionX)
+        //   .attr("cy", (d) => d.positionY)
+        //   .attr("r", (d) => entityR(d.intersectionPapers.length))
+        //   .attr("fill", topicColorScale[anaHighTopic]);
+      };
+
+      const topicLinks = anaOtherEntities.map((entity) => {
+        const topicIndex = entity.topicIndex;
+        const source = {
+          x: entity.positionX,
+          y: entity.positionY,
+        };
+        const target = {
+          x: anaHighTopicEntity.positionX,
+          y: anaHighTopicEntity.positionY,
+        };
+
+        const res = find_d(source.x, source.y, target.x, target.y, 25);
+        const citeControlPoints = [
+          {
+            x: res.x_1_3_negative,
+            y: res.y_1_3_negative,
+          },
+          {
+            x: res.x_2_3_negative,
+            y: res.y_2_3_negative,
+          },
+        ];
+        const citedControlPoints = [
+          {
+            x: res.x_1_3_positive,
+            y: res.y_1_3_positive,
+          },
+          {
+            x: res.x_2_3_positive,
+            y: res.y_2_3_positive,
+          },
+        ];
+        const interPapers = entity.allPapers.filter((paper) =>
+          anaHighTopicPaperDoiSet.has(paper.doi)
+        );
+        const interCount = interPapers.length;
+        const interPapersDoiSet = new Set(
+          interPapers.map((paper) => paper.doi)
+        );
+        const independentPapers = entity.allPapers.filter(
+          (paper) => !interPapersDoiSet.has(paper.doi)
+        );
+        const centralEntityIndependentPapers =
+          anaHighTopicEntity.allPapers.filter(
+            (paper) => !interPapersDoiSet.has(paper.doi)
+          );
+
+        const citeDoiSet = new Set(
+          independentPapers.reduce((s, a) => s.concat(a.refList), [])
+        );
+        const citePapers = centralEntityIndependentPapers.filter((paper) =>
+          citeDoiSet.has(paper.doi)
+        );
+        const citePapersDoiSet = new Set(citePapers.map((paper) => paper.doi));
+        const citeLinkCount = independentPapers.reduce(
+          (s, paper) =>
+            s + paper.refList.filter((doi) => citePapersDoiSet.has(doi)).length,
+          0
+        );
+        const citePaperCount = citePapers.length;
+
+        const citedDoiSet = new Set(
+          centralEntityIndependentPapers.reduce(
+            (s, a) => s.concat(a.refList),
+            []
+          )
+        );
+        const citedPapers = independentPapers.filter((paper) =>
+          citedDoiSet.has(paper.doi)
+        );
+        const citedPapersDoiSet = new Set(
+          citedPapers.map((paper) => paper.doi)
+        );
+        const citedLinkCount = centralEntityIndependentPapers.reduce(
+          (s, paper) =>
+            s +
+            paper.refList.filter((doi) => citedPapersDoiSet.has(doi)).length,
+          0
+        );
+        const citedPaperCount = citedPapers.length;
+
+        return {
+          topicIndex,
+          source,
+          target,
+          citeControlPoints,
+          citedControlPoints,
+          independentPapers,
+          interPapers,
+          centralEntityIndependentPapers,
+          citeDoiSet,
+          citedDoiSet,
+          interCount,
+          citePapers,
+          citePaperCount,
+          citeLinkCount,
+          citedPapers,
+          citedPaperCount,
+          citedLinkCount,
+        };
+      });
+      console.log("topicLinks", topicLinks);
+
+      const drawEntityLinks = () => {
+        const topicLinkGG = svg
+          .append("g")
+          .attr("id", "topic-link-g")
+          .attr("stroke-linecap", "round")
+          .attr("opacity", 0.7);
+        const _linkWidth = d3
+          .scaleLinear()
+          .domain([
+            0,
+            d3.max(topicLinks, (d) =>
+              d3.max([d.interCount, d.citeLinkCount, d.citedLinkCount])
+            ),
+          ])
+          .range([5, 20]);
+        const linkWidth = (weight) => (weight === 0 ? 0 : _linkWidth(weight));
+        const topicLinkG = topicLinkGG
+          .selectAll("g")
+          .data(topicLinks)
+          .join("g")
+          .attr("id", (d) => `topic-${d.topicIndex}`)
+          .attr("fill", "none");
+
+        // topicLinkG
+        //   .append("path")
+        //   .attr("class", "inter")
+        //   // .attr("fill", "none")
+        //   .attr("stroke", defaultHighColor)
+        //   .attr("stroke-width", (d) => linkWidth(d.interCount))
+        //   .attr(
+        //     "d",
+        //     (d) => `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`
+        //   );
+
+        topicLinkG
+          .append("path")
+          .attr("class", "cited")
+          .attr("stroke", (d) => topicColorScale[d.topicIndex])
+          .attr("stroke-width", (d) => linkWidth(d.citedLinkCount))
+          // .attr("fill", "none")
+          // .attr("marker-end", "url(#arrow)")
+          .attr(
+            "d",
+            (d) =>
+              `M${d.source.x},${d.source.y} C${d.citeControlPoints[0].x},${d.citeControlPoints[0].y},${d.citeControlPoints[1].x},${d.citeControlPoints[1].y},${d.target.x},${d.target.y}`
+          );
+        topicLinkG
+          .append("path")
+          .attr("class", "cite")
+          .attr("stroke", topicColorScale[anaHighTopic])
+          .attr("stroke-width", (d) => linkWidth(d.citeLinkCount))
+          // .attr("fill", "none")
+          // .attr("marker-end", "url(#arrow)")
+          .attr(
+            "d",
+            (d) =>
+              `M${d.target.x},${d.target.y} C${d.citedControlPoints[1].x},${d.citedControlPoints[1].y},${d.citedControlPoints[0].x},${d.citedControlPoints[0].y},${d.source.x},${d.source.y}`
+          );
+      };
+      drawEntityLinks();
+      drawEntity();
     } else {
       // 被其他属性高亮
       contourG.selectAll("path").attr("opacity", 0.3).attr("stroke", "none");
@@ -277,7 +493,7 @@ const ProjectView = observer(() => {
             id="arrow"
             markerWidth="10"
             markerHeight="10"
-            refX="0"
+            refX="9"
             refY="3"
             orient="auto"
             markerUnits="strokeWidth"
@@ -285,15 +501,6 @@ const ProjectView = observer(() => {
             <path d="M0,0 L0,6 L9,3 z" fill="#f00" />
           </marker>
         </defs>
-        <line
-          x1="50"
-          y1="250"
-          x2="250"
-          y2="50"
-          stroke="#000"
-          strokeWidth="5"
-          markerEnd="url(#arrow)"
-        />
       </svg>
       <div className="topics-number-input">
         <div className="topics-number-input-text">
