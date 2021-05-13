@@ -3,7 +3,7 @@ import { useGlobalStore } from "Store";
 import "./index.scss";
 // import TagView from "./TagView";
 import TagView from "./TagView-Hor";
-import ProjectView from "./ProjectView";
+import ProjectView from "./ProjectView-New";
 import NetworkView from "./NetworkView";
 import TopicView from "./TopicView";
 import HighlightListView from "./HighlightListView";

@@ -1,0 +1,25 @@
+.projection-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  .topics-number-input {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    // width: 200px;
+    display: flex;
+    align-items: center;
+    // .ant-input-number {
+    //   width: 55px;
+    // }
+    .ant-slider {
+      width: 100px;
+    }
+    .topics-number-input-text {
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+      margin-right: 10px;
+    }
+  }
+}

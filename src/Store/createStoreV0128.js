@@ -624,7 +624,7 @@ const createStore = () => {
       );
     },
     anaSelectHighlightPaperDoi: "",
-    setAnaSelectHighlightPaper(paperDoi) {
+    setAnaSelectHighlightPaperDoi(paperDoi) {
       debug && console.log("setAnaSelectHighlightPaper", paperDoi);
       if (this.anaSelectHighlightPaperDoi === paperDoi) {
         debug && console.log("reset anaSelectHighlightPaperDoi");

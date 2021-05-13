@@ -21,7 +21,7 @@ const ProjectView = observer(() => {
     topicColorScale,
     anaFilterType,
     anaHighTopic,
-    setAnaSelectHighlightPaper,
+    setAnaSelectHighlightPaperDoi,
     anaSelectHighlightPaperDoi,
   } = store;
   const clientRect = useClientRect({
@@ -119,7 +119,7 @@ const ProjectView = observer(() => {
         .attr("fill", (d) => circleColor(d))
         .style("cursor", "pointer")
         .on("click", (e, d) => {
-          setAnaSelectHighlightPaper(d.doi);
+          setAnaSelectHighlightPaperDoi(d.doi);
         });
 
       // resetProjectionFlag();
