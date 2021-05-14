@@ -85,7 +85,8 @@ const ProjectionView = observer(() => {
   const paperCircleR = d3
     .scaleLinear()
     .domain([0, d3.max(analysisPapers, (d) => +d.citationCount)])
-    .range([5, 10]);
+    .range([3, 15]);
+  
   const paperCircleColor = (paper) => {
     if (paper.topics.length === 0) {
       return "#ccc";

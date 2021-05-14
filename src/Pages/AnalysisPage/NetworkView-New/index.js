@@ -65,7 +65,7 @@ const NetworkView = observer(() => {
     .domain([0, d3.max(paperCountByYear) - 1])
     .range([padding.top, height - padding.bottom]);
   const year2count = {};
-  const data = analysisPapers;
+  const data = analysisPapers.slice();
   const compareIndexByTopic = (a, b) => {
     if (a.topics[0][0] === b.topics[0][0]) {
       return a.topics[0][1] - b.topics[0][1];

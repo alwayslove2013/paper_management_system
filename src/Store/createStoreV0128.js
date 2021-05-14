@@ -88,6 +88,7 @@ const createStore = () => {
           // .split(";")
           .split(/[,;]/)
           .map((a) => a.trim());
+        paper.doi = paper.doi.toLowerCase();
         doi2paper[paper.doi] = paper;
 
         // 提取authors
@@ -706,8 +707,8 @@ const createStore = () => {
     ) {
       debug && console.log("citePaperDois", citePaperDois);
       debug && console.log("citedPaperDois", citedPaperDois);
-      debug &&
-        console.log("centralIndependentPaperDois", centralIndependentPaperDois);
+      // debug &&
+      //   console.log("centralIndependentPaperDois", centralIndependentPaperDois);
       this.anaHighEntityCitePaperDois = citePaperDois;
       this.anaHighEntityCitedPaperDois = citedPaperDois;
       this.anaHighTopicIndenpentPaperDois = centralIndependentPaperDois;
