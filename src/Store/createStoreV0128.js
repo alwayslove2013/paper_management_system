@@ -603,10 +603,12 @@ const createStore = () => {
       this.clearBrushTrigger();
       if (this.anaFilterType === "topic" && this.anaHighTopic === topic) {
         this.anaHighTopic = "none";
+        this.anaHighEntityTopic = -1;
         this.setAnaFilterType("none");
         this.anaHighPapers = this.analysisPapers;
       } else {
         this.anaHighTopic = topic;
+        this.anaHighEntityTopic = -1;
         this.anaHighTag = `topic ${topic + 1}`;
         this.setAnaFilterType("topic");
         this.anaHighPapers = this.analysisPapers.filter((paper) =>
@@ -687,8 +689,12 @@ const createStore = () => {
     anaHighEntityTopic: -1,
     setAnaHighEntityTopic(topicIndex) {
       if (this.anaHighEntityTopic === topicIndex) {
+        debug && console.log("setAnaHighEntityTopic", false);
         this.anaHighEntityTopic = -1;
-      } else this.anaHighEntityTopic = topicIndex;
+      } else {
+        debug && console.log("setAnaHighEntityTopic", topicIndex);
+        this.anaHighEntityTopic = topicIndex;
+      }
     },
     anaHighEntityCitePaperDois: [],
     anaHighEntityCitedPaperDois: [],

@@ -24,6 +24,8 @@ const ProjectionView = observer(() => {
     setAnaSelectHighlightPaperDoi,
     anaSelectHighlightPaperDoi,
     setHighEntityLinkData,
+    anaHighEntityTopic,
+    setAnaHighEntityTopic,
   } = store;
   const [num_topics_ing, set_num_topics_ing] = useState(num_topics);
 
@@ -190,6 +192,10 @@ const ProjectionView = observer(() => {
           Z
           `;
   };
+  const entityOpacity = (entity) => {
+    if (anaHighEntityTopic < 0) return 0.8;
+    else return entity.topicIndex === anaHighEntityTopic ? 1 : 0.6;
+  }
 
   // 主题间Link相关
   const topicLinks = anaOtherEntities.map((entity) => {
@@ -295,10 +301,12 @@ const ProjectionView = observer(() => {
     .range([5, 20]);
   const linkWidth = (weight) => (weight === 0 ? 0 : _linkWidth(weight));
   const topicLinkOpacity = (topicLink) => {
-    return 0.7;
+    if (anaHighEntityTopic < 0) return 0.7;
+    else return topicLink.topicIndex === anaHighEntityTopic ? 1 : 0.3;
   };
   const handleClickLinks = (link) => {
     console.log("link", link);
+    setAnaHighEntityTopic(link.topicIndex);
     setHighEntityLinkData(
       link.citePapers.map((paper) => paper.doi),
       link.citedPapers.map((paper) => paper.doi),
@@ -380,10 +388,9 @@ const ProjectionView = observer(() => {
                 id="others-topic-entities-g"
                 stroke="#fff"
                 strokeWidth="3"
-                opacity="0.9"
               >
                 {anaOtherEntities.map((entity) => (
-                  <g key={entity.topicIndex}>
+                  <g key={entity.topicIndex} opacity={entityOpacity(entity)}>
                     <circle
                       cx={entity.positionX}
                       cy={entity.positionY}

@@ -22,8 +22,6 @@ const NetworkView = observer(() => {
   const {
     analysisPapers,
     topicColorScale,
-    defaultHighColor,
-    drawProjectionFlag,
     anaFilterType,
     anaHighTopic,
     anaHighPapers,
