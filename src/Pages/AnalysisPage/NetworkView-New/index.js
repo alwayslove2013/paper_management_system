@@ -63,8 +63,17 @@ const NetworkView = observer(() => {
     .domain([0, d3.max(paperCountByYear) - 1])
     .range([padding.top, height - padding.bottom]);
   const year2count = {};
+  const data = analysisPapers;
+  const compareIndexByTopic = (a, b) => {
+    if (a.topics[0][0] === b.topics[0][0]) {
+      return a.topics[0][1] - b.topics[0][1];
+    } else {
+      return a.topics[0][0] - b.topics[0][0];
+    }
+  };
+  data.sort(compareIndexByTopic);
   const doi2indexByYear = {};
-  analysisPapers.forEach((paper) => {
+  data.forEach((paper) => {
     if (!(paper.year in year2count)) {
       year2count[paper.year] = 0;
     }
@@ -78,6 +87,7 @@ const NetworkView = observer(() => {
   };
   const rectStroke = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return "red";
+    if (anaFilterType === "none") return "#fff";
     if (anaHighPapersDoiSet.has(paper.doi)) return "#666";
     else return "#fff";
   };
@@ -87,6 +97,7 @@ const NetworkView = observer(() => {
   };
   const rectStrokeDashArray = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return [4, 7];
+    if (anaFilterType === "none") return "none";
     if (anaHighPapersDoiSet.has(paper.doi)) return [5, 4];
     else return "none";
   };
@@ -167,6 +178,7 @@ const NetworkView = observer(() => {
       link.target === anaSelectHighlightPaperDoi
     )
       return 0.7;
+    if (anaFilterType === "none") return 0.1;
     if (
       anaHighPapersDoiSet.has(link.source) &&
       anaHighPapersDoiSet.has(link.target)

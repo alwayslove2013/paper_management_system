@@ -23,6 +23,7 @@ const ProjectionView = observer(() => {
     anaHighTopic,
     setAnaSelectHighlightPaperDoi,
     anaSelectHighlightPaperDoi,
+    setHighEntityLinkData,
   } = store;
   const [num_topics_ing, set_num_topics_ing] = useState(num_topics);
 
@@ -296,6 +297,14 @@ const ProjectionView = observer(() => {
   const topicLinkOpacity = (topicLink) => {
     return 0.7;
   };
+  const handleClickLinks = (link) => {
+    console.log("link", link);
+    setHighEntityLinkData(
+      link.citePapers.map((paper) => paper.doi),
+      link.citedPapers.map((paper) => paper.doi),
+      link.centralEntityIndependentPapers.map((paper) => paper.doi)
+    );
+  };
 
   return (
     <div className="projection-view">
@@ -342,6 +351,7 @@ const ProjectionView = observer(() => {
                   fill="none"
                   opacity={topicLinkOpacity(topicLink)}
                   cursor="pointer"
+                  onClick={() => handleClickLinks(topicLink)}
                 >
                   <path
                     className="cited"
@@ -366,7 +376,12 @@ const ProjectionView = observer(() => {
             </g>
             <g id="topic-entities-g">
               <g id="selected-topic-entity-g"></g>
-              <g id="others-topic-entities-g" stroke="#fff" strokeWidth="3" opacity="0.9">
+              <g
+                id="others-topic-entities-g"
+                stroke="#fff"
+                strokeWidth="3"
+                opacity="0.9"
+              >
                 {anaOtherEntities.map((entity) => (
                   <g key={entity.topicIndex}>
                     <circle

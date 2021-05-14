@@ -683,6 +683,29 @@ const createStore = () => {
         });
       });
     },
+
+    anaHighEntityTopic: -1,
+    setAnaHighEntityTopic(topicIndex) {
+      if (this.anaHighEntityTopic === topicIndex) {
+        this.anaHighEntityTopic = -1;
+      } else this.anaHighEntityTopic = topicIndex;
+    },
+    anaHighEntityCitePaperDois: [],
+    anaHighEntityCitedPaperDois: [],
+    anaHighTopicIndenpentPaperDois: [],
+    setHighEntityLinkData(
+      citePaperDois,
+      citedPaperDois,
+      centralIndependentPaperDois
+    ) {
+      debug && console.log("citePaperDois", citePaperDois);
+      debug && console.log("citedPaperDois", citedPaperDois);
+      debug &&
+        console.log("centralIndependentPaperDois", centralIndependentPaperDois);
+      this.anaHighEntityCitePaperDois = citePaperDois;
+      this.anaHighEntityCitedPaperDois = citedPaperDois;
+      this.anaHighTopicIndenpentPaperDois = centralIndependentPaperDois;
+    },
   };
 };
 
