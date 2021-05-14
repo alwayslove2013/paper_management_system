@@ -27,6 +27,10 @@ const NetworkView = observer(() => {
     anaHighPapers,
     setAnaSelectHighlightPaperDoi,
     anaSelectHighlightPaperDoi,
+    anaHighEntityTopic,
+    anaHighEntityCitePaperDois,
+    anaHighEntityCitedPaperDois,
+    anaHighTopicIndenpentPaperDois,
   } = store;
 
   // rect
@@ -81,10 +85,18 @@ const NetworkView = observer(() => {
   const rectOpacity = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return 1;
     if (anaHighPapersDoiSet.has(paper.doi)) return 1;
-    else return 0.3;
+    if (anaHighEntityTopic >= 0) {
+      if (anaHighEntityCitePaperDois.includes(paper.doi)) return 0.9;
+      if (anaHighEntityCitedPaperDois.includes(paper.doi)) return 0.9;
+    }
+    return 0.3;
   };
   const rectStroke = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return "red";
+    if (anaHighEntityTopic >= 0) {
+      if (anaHighEntityCitePaperDois.includes(paper.doi)) return "#666";
+      if (anaHighEntityCitedPaperDois.includes(paper.doi)) return "#666";
+    }
     if (anaFilterType === "none") return "#fff";
     if (anaHighPapersDoiSet.has(paper.doi)) return "#666";
     else return "#fff";
@@ -95,6 +107,10 @@ const NetworkView = observer(() => {
   };
   const rectStrokeDashArray = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return [4, 7];
+    if (anaHighEntityTopic >= 0) {
+      if (anaHighEntityCitePaperDois.includes(paper.doi)) return "none";
+      if (anaHighEntityCitedPaperDois.includes(paper.doi)) return "none";
+    }
     if (anaFilterType === "none") return "none";
     if (anaHighPapersDoiSet.has(paper.doi)) return [5, 4];
     else return "none";
@@ -163,6 +179,18 @@ const NetworkView = observer(() => {
       link.target === anaSelectHighlightPaperDoi
     )
       return "#333";
+    if (anaHighEntityTopic >= 0) {
+      if (
+        anaHighEntityCitePaperDois.includes(link.target) &&
+        anaHighTopicIndenpentPaperDois.includes(link.source)
+      )
+        return topicColorScale[anaHighTopic];
+      if (
+        anaHighEntityCitedPaperDois.includes(link.source) &&
+        anaHighTopicIndenpentPaperDois.includes(link.target)
+      )
+        return topicColorScale[anaHighEntityTopic];
+    }
     if (
       anaHighPapersDoiSet.has(link.source) &&
       anaHighPapersDoiSet.has(link.target)
@@ -177,7 +205,20 @@ const NetworkView = observer(() => {
     )
       return 0.7;
     if (anaFilterType === "none") return 0.1;
+    if (anaHighEntityTopic >= 0) {
+      if (
+        anaHighEntityCitePaperDois.includes(link.target) &&
+        anaHighTopicIndenpentPaperDois.includes(link.source)
+      )
+        return 0.9;
+      if (
+        anaHighEntityCitedPaperDois.includes(link.source) &&
+        anaHighTopicIndenpentPaperDois.includes(link.target)
+      )
+        return 0.9;
+    }
     if (
+      anaHighEntityTopic < 0 &&
       anaHighPapersDoiSet.has(link.source) &&
       anaHighPapersDoiSet.has(link.target)
     )
@@ -190,6 +231,18 @@ const NetworkView = observer(() => {
       link.target === anaSelectHighlightPaperDoi
     )
       return 5;
+    if (anaHighEntityTopic >= 0) {
+      if (
+        anaHighEntityCitePaperDois.includes(link.target) &&
+        anaHighTopicIndenpentPaperDois.includes(link.source)
+      )
+        return 5;
+      if (
+        anaHighEntityCitedPaperDois.includes(link.source) &&
+        anaHighTopicIndenpentPaperDois.includes(link.target)
+      )
+        return 5;
+    }
     if (
       anaHighPapersDoiSet.has(link.source) &&
       anaHighPapersDoiSet.has(link.target)
@@ -211,7 +264,7 @@ const NetworkView = observer(() => {
             // strokeWidth="2"
           />
         </g>
-        <g id="network-internal-links-g" fill="none">
+        <g id="network-links-g" fill="none">
           {internalLinks.map((link) => (
             <path
               key={`${link.source}-${link.target}`}
@@ -223,8 +276,6 @@ const NetworkView = observer(() => {
             />
           ))}
         </g>
-        <g id="network-cite-links-g"></g>
-        <g id="network-cited-links-g"></g>
         <g id="network-rects-g">
           {analysisPapers.map((paper) => (
             <g
