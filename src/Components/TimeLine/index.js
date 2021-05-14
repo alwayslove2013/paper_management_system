@@ -53,7 +53,7 @@ const TimeLine = React.memo(
         g
           .attr("transform", `translate(${width - padding.right},0)`)
           .call(d3.axisRight(y).ticks(6))
-          .call((g) => g.select(".domain").remove());
+          // .call((g) => g.select(".domain").remove());
 
       const svg = d3.select("#ana-time-line-svg");
       // svg.selectAll("*").remove();
