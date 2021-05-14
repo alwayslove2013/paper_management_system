@@ -107,13 +107,13 @@ const ProjectionView = observer(() => {
     if (anaSelectHighlightPaperDoi === paper.doi) return 6;
     if (anaFilterType === "none") return 1;
     if (anaFilterType === "topic") return 1;
-    return anaHighPapers.map((paper) => paper.doi).includes(paper.doi) ? 4 : 1;
+    return anaHighPapers.map((paper) => paper.doi).includes(paper.doi) ? 3 : 1;
   };
   const paperCircleDasharray = (paper) => {
-    if (anaSelectHighlightPaperDoi === paper.doi) return [10, 4];
+    if (anaSelectHighlightPaperDoi === paper.doi) return [4, 8];
     if (anaFilterType === "none" || anaFilterType === "topic") return "none";
     return anaHighPapers.map((paper) => paper.doi).includes(paper.doi)
-      ? [6, 3]
+      ? [5, 5]
       : "none";
   };
   const paperCircleStroke = (paper) => {
@@ -323,6 +323,7 @@ const ProjectionView = observer(() => {
                 paperCircleStrokeWidth(paper)
               }
               fill={paperCircleColor(paper)}
+              strokeLinecap="round"
               strokeWidth={paperCircleStrokeWidth(paper)}
               opacity={paperCircleOpacity(paper)}
               strokeDasharray={paperCircleDasharray(paper)}

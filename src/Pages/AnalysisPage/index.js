@@ -4,7 +4,7 @@ import "./index.scss";
 // import TagView from "./TagView";
 import TagView from "./TagView-Hor";
 import ProjectView from "./ProjectView-New";
-import NetworkView from "./NetworkView";
+import NetworkView from "./NetworkView-New";
 import TopicView from "./TopicView";
 import HighlightListView from "./HighlightListView";
 import DetailView from "./DetailView";

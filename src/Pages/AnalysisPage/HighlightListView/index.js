@@ -8,7 +8,7 @@ const HighlightListView = observer(() => {
   const {
     anaSelectHighlightPaperDoi,
     anaHighPapers,
-    setAnaSelectHighlightPaper,
+    setAnaSelectHighlightPaperDoi,
   } = store;
   return (
     <div className="highlight-list-view">
@@ -22,7 +22,7 @@ const HighlightListView = observer(() => {
             key={paper.doi}
             paper={paper}
             index={index}
-            handleClick={setAnaSelectHighlightPaper}
+            handleClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
             isSelected={paper.doi === anaSelectHighlightPaperDoi}
           />
         ))}
