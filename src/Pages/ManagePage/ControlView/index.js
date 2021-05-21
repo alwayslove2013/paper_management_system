@@ -12,7 +12,7 @@ const ControlView = observer(() => {
     <div className="control-view">
       <div className="control-item">
         <div className="control-item-title">Title Search</div>
-        <div className="control-item-options">
+        <div className="control-item-search-input">
           <SearchView searchAttr={"title"} />
         </div>
       </div>
@@ -28,8 +28,7 @@ export default ControlView;
 
 const ControlItem = observer(({ tagData }) => {
   const store = useGlobalStore();
-  const { tag2color } = store;
-
+  const { tag2color, papers } = store;
   const [tags, setTags] = useState([]);
   // 又是一个外挂逻辑，从ana界面切回来以后，需要初始化tag item，理论上这个应该放在store统一处理
   useEffect(() => {
@@ -64,6 +63,12 @@ const ControlItem = observer(({ tagData }) => {
             isSelect={
               tags.indexOf(item) > -1 && tag2color[`${tagData.value}---${item}`]
             }
+            count={
+              tags.indexOf(item) > -1
+                ? papers.filter((paper) => paper[tagData.value].includes(item))
+                    .length
+                : 0
+            }
           />
         ))}
       </div>
@@ -71,7 +76,7 @@ const ControlItem = observer(({ tagData }) => {
   );
 });
 
-const ControlOption = ({ value, clickOption, isSelect }) => {
+const ControlOption = ({ value, clickOption, isSelect, count = 0 }) => {
   const className = ["control-item-option", isSelect && "option-active"]
     .filter((a) => a)
     .join(" ");
@@ -81,7 +86,7 @@ const ControlOption = ({ value, clickOption, isSelect }) => {
   const value_format = value === "Usa" ? "USA" : value;
   return (
     <div className={className} onClick={() => clickOption(value)} style={style}>
-      {value_format}
+      {value_format} {isSelect && `(${count})`}
     </div>
   );
 };

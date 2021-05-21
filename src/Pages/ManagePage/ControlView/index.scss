@@ -7,8 +7,8 @@
   justify-content: space-around;
   align-items: center;
   .control-item {
-    display: flex;
-    flex-direction: column;
+    // display: flex;
+    // flex-direction: column;
     align-items: center;
     min-width: 12%;
     max-width: 35%;
@@ -17,6 +17,7 @@
     box-shadow: 0 0 5px rgb(138, 138, 138);
     border-radius: 5px;
     margin: 0 10px;
+    position: relative;
     .control-item-title {
       font-size: 12px;
       border-radius: 3px;
@@ -24,11 +25,15 @@
       padding: 0 5px;
       // color: rgb(240, 240, 240);
       // background-color: rgb(107, 107, 107);
+      display: flex;
+      justify-content: space-around;
     }
     .control-item-options {
       font-size: 8px;
       display: flex;
       flex-wrap: wrap;
+      max-height: 75%;
+      overflow: auto;
       .control-item-option {
         margin: 1px 3px;
         padding: 0 5px;
