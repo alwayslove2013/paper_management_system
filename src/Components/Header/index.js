@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import "./index.scss";
 import userList from "Common/userList";
 import { useGlobalStore } from "Store";
+import { batchUpdatePapers } from "Server";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { Select, Modal } from "antd";
-import { CloudUploadOutlined } from "@ant-design/icons";
+import { Select, Modal, Input, Upload, Button } from "antd";
+import { CloudUploadOutlined, UploadOutlined } from "@ant-design/icons";
+
 const { Option } = Select;
 
 const Header = observer(() => {
@@ -13,7 +15,7 @@ const Header = observer(() => {
   const handleChange = (userId) => {
     store.setUserId(userId);
   };
-  const { currentPage } = store;
+  const { currentPage, userId } = store;
   const [uploadModalShow, _setUploadModalShow] = useState(false);
   const setUploadModalShow = () => _setUploadModalShow(!uploadModalShow);
   const title = `Literature ${currentPage} System`;
@@ -24,6 +26,49 @@ const Header = observer(() => {
       {switchPageShowText}
     </Link>
   );
+
+  const [conferenceName, setConferenceName] = useState("");
+  const [publicTags, setPublicTags] = useState("");
+  const [privateTags, setPrivateTags] = useState("");
+  const batchUpdateItems = [
+    {
+      label: "Conference Name",
+      setFunc: setConferenceName,
+    },
+    {
+      label: "Public Tags",
+      setFunc: setPublicTags,
+    },
+    {
+      label: "Private Tags",
+      setFunc: setPrivateTags,
+    },
+  ];
+
+  console.log("????", conferenceName, publicTags, privateTags);
+
+  const [file, setFile] = useState("");
+
+  const uploadProps = {
+    maxCount: 1,
+    beforeUpload: (file) => {
+      console.log("file", file);
+      setFile(file);
+      return false;
+    },
+  };
+
+  const handleSubmit = () => {
+    batchUpdatePapers({
+      file,
+      conferenceName,
+      publicTags,
+      privateTags,
+      userId,
+    });
+    setUploadModalShow();
+  };
+
   return (
     <div className="header">
       <div className="title">{title}</div>
@@ -50,13 +95,22 @@ const Header = observer(() => {
       <Modal
         title="Upload"
         visible={uploadModalShow}
-        onOk={setUploadModalShow}
+        onOk={handleSubmit}
         onCancel={setUploadModalShow}
         centered
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        {batchUpdateItems.map((item) => (
+          <div key={item.label} className="update_item">
+            <div className="update-item-label">{item.label}</div>
+            <Input
+              placeholder="Empty means no batch setting"
+              onChange={(e) => item.setFunc(e.target.value)}
+            />
+          </div>
+        ))}
+        <Upload {...uploadProps} className="update_item">
+          <Button icon={<UploadOutlined />}>bib/json/csv</Button>
+        </Upload>
       </Modal>
     </div>
   );

@@ -49,8 +49,8 @@ function postData(url, data) {
     // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     // credentials: 'same-origin', // include, same-origin, *omit
     headers: {
-      'user-agent': 'Mozilla/4.0 MDN Example',
-      'content-type': 'application/json'
+      "user-agent": "Mozilla/4.0 MDN Example",
+      "content-type": "application/json",
     },
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     // mode: 'cors', // no-cors, cors, *same-origin
@@ -60,5 +60,35 @@ function postData(url, data) {
 }
 
 export const getLdaRes = ({ dois, uid, num_topics = 3 }) => {
-  return postData(baseUrl + 'get_lda_results', { dois, num_topics, uid });
+  return postData(baseUrl + "get_lda_results", { dois, num_topics, uid });
+};
+
+export const batchUpdatePapers = ({
+  file,
+  conferenceName,
+  publicTags,
+  privateTags,
+  userId,
+}) => {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("conferenceName", conferenceName);
+  form.append("publicTags", publicTags);
+  form.append("privateTags", privateTags);
+  form.append("uid", userId);
+  const fileType = file.name.split(".").slice(-1)[0];
+  form.append("fileType", fileType);
+  return fetch(baseUrl + "add_papers", {
+    body: form, // must match 'Content-Type' header
+    // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    // credentials: 'same-origin', // include, same-origin, *omit
+    // headers: {
+    //   "user-agent": "Mozilla/4.0 MDN Example",
+    //   "content-type": "application/json",
+    // },
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    // mode: 'cors', // no-cors, cors, *same-origin
+    // redirect: 'follow', // manual, *follow, error
+    // referrer: 'no-referrer', // *client, no-referrer
+  }).then((response) => response.json()); // parses response to JSON
 };
