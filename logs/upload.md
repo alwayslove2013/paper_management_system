@@ -1,0 +1,34 @@
+上传需要的工作
+
+
+- 前端
+  - 右上角一个触发器 - button
+  - 打开一个card
+    - 3个upload
+      - json
+      - csv
+      - bib
+    - 批量设置
+      - conferenceName / journalName
+      - public tags
+      - private tags
+    - 分别触发不同的server api
+  - 单篇文献数据的修改
+    - detail 右上角提供一个触发器 - icon
+    - 打开一个card
+      - form
+      - 所有的必要的属性
+      - 需要注意的是，doi的修改
+- 后端
+  - batch_update
+    - 重复的doi
+      - 属性覆盖
+    - 新的doi
+      - 直接添加
+    - 对于bib
+      - 套用一个完整的解析
+  - single_update
+    - doi如若修改
+      - remove老的
+      - init新的
+    - 完美覆盖

@@ -713,6 +713,13 @@ const createStore = () => {
       this.anaHighEntityCitedPaperDois = citedPaperDois;
       this.anaHighTopicIndenpentPaperDois = centralIndependentPaperDois;
     },
+
+    // upload
+    uploadModalShow: false,
+    setUploadModalShow() {
+      debug && console.log("setUploadModalShow", !this.uploadModalShow);
+      this.uploadModalShow = !this.uploadModalShow;
+    },
   };
 };
 

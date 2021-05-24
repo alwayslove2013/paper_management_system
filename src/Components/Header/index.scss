@@ -6,14 +6,31 @@
   background: rgb(51, 51, 51);
   color: #fcf1f1;
   font-size: 14px;
+
   .title {
     padding: 0 10px;
   }
-  .switch-button {
-    margin-left: 15px;
-    background: #fff;
-    border-radius: 3px;
-    padding: 0 5px;
-    color: #666;
+  .user-selector {
+    display: flex;
+    align-items: center;
+    .switch-button {
+      margin-left: 20px;
+      background: #fff;
+      border-radius: 3px;
+      padding: 0 5px;
+      color: #666;
+    }
+    .update-data-trigger {
+      height: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 15px;
+      margin-right: 15px;
+      cursor: pointer;
+    }
+    .update-data-trigger:hover {
+      color: rgb(83, 196, 211);
+    }
   }
 }

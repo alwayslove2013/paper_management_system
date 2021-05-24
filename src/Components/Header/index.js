@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import "./index.scss";
 import userList from "Common/userList";
 import { useGlobalStore } from "Store";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { Select } from "antd";
+import { Select, Modal } from "antd";
+import { CloudUploadOutlined } from "@ant-design/icons";
 const { Option } = Select;
 
 const Header = observer(() => {
@@ -13,6 +14,8 @@ const Header = observer(() => {
     store.setUserId(userId);
   };
   const { currentPage } = store;
+  const [uploadModalShow, _setUploadModalShow] = useState(false);
+  const setUploadModalShow = () => _setUploadModalShow(!uploadModalShow);
   const title = `Literature ${currentPage} System`;
   const switchPage = currentPage === "Analysis" ? "management" : "analysis";
   const switchPageShowText = currentPage === "Analysis" ? "Manage" : "Analyze";
@@ -24,7 +27,7 @@ const Header = observer(() => {
   return (
     <div className="header">
       <div className="title">{title}</div>
-      <div className="user-selector title">
+      <div className="user-selector">
         User: &nbsp;
         <Select
           value={store.userId}
@@ -40,7 +43,21 @@ const Header = observer(() => {
           ))}
         </Select>
         <SwitchButton />
+        <div className="update-data-trigger" onClick={setUploadModalShow}>
+          <CloudUploadOutlined style={{ fontSize: 24 }} />
+        </div>
       </div>
+      <Modal
+        title="Upload"
+        visible={uploadModalShow}
+        onOk={setUploadModalShow}
+        onCancel={setUploadModalShow}
+        centered
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
     </div>
   );
 });
