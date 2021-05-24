@@ -23,21 +23,36 @@ const Header = observer(() => {
     //   console.log("t", t);
     //   console.log("g", g);
     // },
+    
     beforeUpload: (file, fileList) => {
       console.log("===> file", file);
       console.log("===> fileList", fileList);
+      const formData = new FormData()
+      formData.append('myFile', file)
+      formData.append('data', 123)
+      formData.append('dasdsta', {adsa: 'sasf'})
       // store.update(file)
-      return true;
+      fetch(url, {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((res) => console.log(res));
+      return false;
     },
     onChange: (info) => {
       console.log("===>info", info);
       console.log(info.fileList);
     },
     itemRender: () => <></>,
+    maxCount: 1,
+    previewFile(file) {
+      console.log("Your upload file:", file);
+    },
   };
   return (
     <div className="header">
-      <div className="title">Paper Management System</div>
+      <div className="title">Paper Managemen t System</div>
       <div className="user-selector title">
         User: &nbsp;
         <Select
