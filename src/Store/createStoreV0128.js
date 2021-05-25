@@ -7,6 +7,7 @@ import {
   getPublicTags,
   getPrivateTags,
   getLdaRes,
+  singleUpdatePaper,
 } from "Server";
 import { get } from "lodash";
 import { mostCommon, mustInclude, find_d } from "Common";
@@ -55,7 +56,7 @@ const createStore = () => {
     commonPublicTags: [],
     commonPrivateTags: [],
     // 实际上干两件事，papers + publicTags
-    async initPapers(update=false) {
+    async initPapers(update = false) {
       if (this.papers.length === 0 || update) {
         const papers = await getPapers();
         this.setPapers(papers);
@@ -113,8 +114,8 @@ const createStore = () => {
             return country;
           })
           .filter((a) => a);
-        
-        paper.year = +paper.year
+
+        paper.year = +paper.year;
 
         paper.keywords = paper.keywords
           .split(/[;,]/)
@@ -521,7 +522,11 @@ const createStore = () => {
       this.isSelected = false;
     },
     get currentSelectedPaper() {
-      return this.papers.find((paper) => paper.doi === this.currentSelected);
+      const currentSelectedPaper = this.papers.find(
+        (paper) => paper.doi === this.currentSelected
+      );
+      debug && console.log("currentSelectedPaper", toJS(currentSelectedPaper));
+      return currentSelectedPaper;
     },
 
     get analysisPapers() {
@@ -722,6 +727,20 @@ const createStore = () => {
     setUploadModalShow() {
       debug && console.log("setUploadModalShow", !this.uploadModalShow);
       this.uploadModalShow = !this.uploadModalShow;
+    },
+
+    updatePaper(oriDoi, newPaper) {
+      debug && console.log("update paper info", oriDoi, newPaper);
+      // newPaper.authors = newPaper.authors.join(";")
+      // newPaper.countries = newPaper.countries.join(";")
+      // newPaper.keywords = newPaper.keywords.join(";")
+      // newPaper.refList = newPaper.refList.join(";")
+      singleUpdatePaper(oriDoi, newPaper).then(() =>{
+        runInAction(() => {
+          console.log("singleUpdatePaper finished", oriDoi, newPaper)
+          this.initPapers()
+        })
+      })
     },
   };
 };

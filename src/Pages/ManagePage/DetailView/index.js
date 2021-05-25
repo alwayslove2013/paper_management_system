@@ -3,19 +3,50 @@ import "./index.scss";
 import { useGlobalStore } from "Store";
 import { observer } from "mobx-react-lite";
 import { get } from "lodash";
-import { Switch } from "antd";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
-import { Tag, Input } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Switch, Modal, Tag, Input } from "antd";
+import {
+  CloseOutlined,
+  CheckOutlined,
+  PlusOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { toJS } from "mobx";
 
 const debug = true;
 
+const keys = [
+  "title",
+  "doi",
+  "year",
+  "conferenceName",
+  "authors",
+  "citationCount",
+  "affiliation",
+  "countries",
+  "abstract",
+  "keywords",
+  "refList",
+];
 const DetailView = observer(() => {
   const store = useGlobalStore();
-  const { currentSelectedPaper, setPaper } = store;
+  const { currentSelectedPaper, setPaper, updatePaper } = store;
   const paper = currentSelectedPaper;
-  debug && console.log("currentSelectedPaper", toJS(currentSelectedPaper));
+  const [uploadModalShow, _setUploadModalShow] = useState(false);
+  const [newPaper, setNewPaper] = useState({});
+  const setUploadModalShow = () => {
+    if (!uploadModalShow) {
+      const _newPaper = {};
+      keys.forEach(
+        (key) =>
+          (_newPaper[key] = Array.isArray(currentSelectedPaper[key])
+            ? currentSelectedPaper[key].join("; ")
+            : currentSelectedPaper[key])
+      );
+      setNewPaper(_newPaper);
+    }
+    _setUploadModalShow(!uploadModalShow);
+  };
+
   if (!currentSelectedPaper) {
     return <div></div>;
   }
@@ -40,13 +71,26 @@ const DetailView = observer(() => {
   const handleChangeRead = (value) => {
     setPaper(doi, "read", value);
   };
+
+  const handleSubmit = () => {
+    updatePaper(currentSelectedPaper.doi, newPaper);
+    setUploadModalShow();
+  };
+
   return (
     <div className="detail-view" key={doi}>
       {paper && (
         <>
-          <div className="detail-title">{paper.title}</div>
-          <div className="detail-authors">
-            {get(paper, "authors", []).join("; ")} ({paper.year})
+          <div className="detail-header">
+            <div className="detail-header-content">
+              <div className="detail-title">{paper.title}</div>
+              <div className="detail-authors">
+                {get(paper, "authors", []).join("; ")} ({paper.year})
+              </div>
+            </div>
+            <div className="detail-header-icons">
+              <SettingOutlined onClick={setUploadModalShow} />
+            </div>
           </div>
           <div className="detail-edit-tags">
             <div className="detail-edit-read">
@@ -78,9 +122,38 @@ const DetailView = observer(() => {
               </div>
             </div>
             <DetailItem paper={paper} label={"doi"} />
+            <DetailItem
+              paper={paper}
+              label={"conference/journal"}
+              value={"conferenceName"}
+            />
             <DetailItem paper={paper} label={"affiliation"} />
             <DetailItem paper={paper} label={"abstract"} />
           </div>
+          <Modal
+            key={currentSelectedPaper.doi}
+            title="Upload"
+            visible={uploadModalShow}
+            onOk={handleSubmit}
+            onCancel={setUploadModalShow}
+            centered
+          >
+            {keys.map((key) => (
+              <div className="detail-new-paper-item" key={key}>
+                <div className="detail-new-paper-label">{key}</div>
+                <div className="detail-new-paper-input">
+                  <Input
+                    value={newPaper[key]}
+                    onChange={(e) => {
+                      const new_paper = { ...newPaper };
+                      new_paper[key] = e.target.value;
+                      setNewPaper(new_paper);
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </Modal>
         </>
       )}
     </div>
@@ -89,12 +162,15 @@ const DetailView = observer(() => {
 
 export default DetailView;
 
-const DetailItem = ({ paper, label }) => (
-  <div className="detail-attr">
-    <div className="detail-key">{label}:</div>
-    <div className="detail-content">{get(paper, label, "")}</div>
-  </div>
-);
+const DetailItem = ({ paper, label, value = "" }) => {
+  if (value.length === 0) value = label;
+  return (
+    <div className="detail-attr">
+      <div className="detail-key">{label}:</div>
+      <div className="detail-content">{get(paper, value, "")}</div>
+    </div>
+  );
+};
 
 const DetailEditTags = ({ title, initTags, handleChangeTags }) => {
   const [tags, _setTags] = useState(initTags);

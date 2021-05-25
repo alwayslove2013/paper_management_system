@@ -7,15 +7,32 @@
   box-shadow: 0 0 5px rgb(150, 150, 150);
   font-size: 12px;
   overflow-y: auto;
-  .detail-title {
-    font-size: 16px;
-    font-weight: 600;
-  }
-  .detail-authors {
-    padding-bottom: 3px;
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .detail-header-content {
+      .detail-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .detail-authors {
+        padding-bottom: 3px;
+      }
+    }
+    .detail-header-icons:hover {
+      color: rgb(83, 196, 211);
+    }
+    .detail-header-icons {
+      font-size: 22px;
+      margin-right: 10px;
+      cursor: pointer;
+      padding-bottom: 5px;
+    }
     margin-bottom: 5px;
     border-bottom: 1px solid #ccc;
   }
+
   .detail-edit-read {
     display: flex;
     align-items: center;
