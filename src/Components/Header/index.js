@@ -15,7 +15,7 @@ const Header = observer(() => {
   const handleChange = (userId) => {
     store.setUserId(userId);
   };
-  const { currentPage, userId } = store;
+  const { currentPage, userId, initPapers } = store;
   const [uploadModalShow, _setUploadModalShow] = useState(false);
   const setUploadModalShow = () => _setUploadModalShow(!uploadModalShow);
   const title = `Literature ${currentPage} System`;
@@ -45,14 +45,13 @@ const Header = observer(() => {
     },
   ];
 
-  console.log("????", conferenceName, publicTags, privateTags);
+  // console.log("????", conferenceName, publicTags, privateTags);
 
   const [file, setFile] = useState("");
 
   const uploadProps = {
     maxCount: 1,
     beforeUpload: (file) => {
-      console.log("file", file);
       setFile(file);
       return false;
     },
@@ -65,6 +64,8 @@ const Header = observer(() => {
       publicTags,
       privateTags,
       userId,
+    }).then(() => {
+      initPapers(true);
     });
     setUploadModalShow();
   };

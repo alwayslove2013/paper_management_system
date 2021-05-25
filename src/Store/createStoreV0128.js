@@ -54,8 +54,9 @@ const createStore = () => {
     commonCountries: [],
     commonPublicTags: [],
     commonPrivateTags: [],
-    async initPapers() {
-      if (this.papers.length === 0) {
+    // 实际上干两件事，papers + publicTags
+    async initPapers(update=false) {
+      if (this.papers.length === 0 || update) {
         const papers = await getPapers();
         this.setPapers(papers);
       }
@@ -112,6 +113,8 @@ const createStore = () => {
             return country;
           })
           .filter((a) => a);
+        
+        paper.year = +paper.year
 
         paper.keywords = paper.keywords
           .split(/[;,]/)
