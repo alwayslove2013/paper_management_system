@@ -156,11 +156,11 @@ const UnitView = observer(() => {
       paper.unitIndex / xAttr2blockCountX[paperCircle.BlockIndexX]
     );
 
-    paperCircle.cx =
-      unitLayoutPadding.left +
-      paperCircle.BlockIndexX *
-        (unitBlockWidth + unitBlockPadding.left + unitBlockPadding.right) +
-      (paperCircle.circleIndexX + 0.5) * r;
+    // paperCircle.cx =
+    //   unitLayoutPadding.left +
+    //   paperCircle.BlockIndexX *
+    //     (unitBlockWidth + unitBlockPadding.left + unitBlockPadding.right) +
+    //   (paperCircle.circleIndexX + 0.5) * r;
     paperCircle.cy =
       unitLayoutPadding.top +
       paperCircle.BlockIndexY *

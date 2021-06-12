@@ -216,7 +216,7 @@ const createStore = () => {
         unitBlockCount[xAttr][yAttr] += 1;
       });
       this.maxUnitBlockPaperCount =
-        Math.max(...papers.map((paper) => paper.unitIndex)) * 0.6;
+        Math.max(...papers.map((paper) => paper.unitIndex)) * 0.7;
       this.unitBlockCount = unitBlockCount;
     },
 
