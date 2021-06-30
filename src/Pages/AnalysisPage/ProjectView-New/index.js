@@ -69,13 +69,14 @@ const ProjectionView = observer(() => {
         .y((d) => y(d.projection[1]))
         .size([width, height])
         .bandwidth(30)
-        .thresholds(5)(
+        .thresholds(35)(
         analysisPapers.filter((paper) =>
           paper.topics.map((topic) => topic[0]).includes(topic_i)
         )
-      )[0]
+      )[topic_i % 5]
   );
   const contourOpacity = (topicIndex) => {
+    // return 1
     if (anaFilterType === "none") return 0.25;
     else if (anaFilterType !== "topic") return 0.1;
     else return topicIndex === anaHighTopic ? 0.36 : 0.1;
@@ -86,7 +87,7 @@ const ProjectionView = observer(() => {
     .scaleLinear()
     .domain([0, d3.max(analysisPapers, (d) => +d.citationCount)])
     .range([3, 15]);
-  
+
   const paperCircleColor = (paper) => {
     if (paper.topics.length === 0) {
       return "#ccc";
@@ -327,14 +328,30 @@ const ProjectionView = observer(() => {
       <svg id={svgId} width="100%" height="100%">
         <g id="topic-contours-g" strokeLinejoin="round" strokeWidth="1.5">
           {contours.map((contour, topicIndex) => (
-            <path
-              key={topicIndex}
-              d={d3.geoPath()(contour)}
-              fill={topicColorScale[topicIndex]}
-              opacity={contourOpacity(topicIndex)}
-              stroke={topicIndex === anaHighTopic ? "#111" : "none"}
-              strokeDasharray={topicIndex === anaHighTopic ? 5 : "none"}
-            />
+            <>
+              <path
+                key={topicIndex}
+                d={d3.geoPath()(contour)}
+                fill={topicColorScale[topicIndex]}
+                opacity={contourOpacity(topicIndex)}
+                stroke={
+                  topicIndex === anaHighTopic
+                    ? "#111"
+                    : topicColorScale[topicIndex]
+                }
+                strokeDasharray={topicIndex === anaHighTopic ? 5 : "none"}
+              />
+              <path
+                key={`${topicIndex}-border`}
+                d={d3.geoPath()(contour)}
+                fill={'none'}
+                opacity={1}
+                stroke={
+                  topicColorScale[topicIndex]
+                }
+                strokeDasharray={5}
+              />
+            </>
           ))}
         </g>
         <g id="paper-circles-g" stroke="#fff">

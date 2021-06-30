@@ -547,6 +547,16 @@ const createStore = () => {
       }));
     },
 
+    get minYearAna() {
+      return d3.min(this.analysisPapers.map((paper) => +paper.year));
+    },
+    get maxYearAna() {
+      return d3.max(this.analysisPapers.map((paper) => +paper.year));
+    },
+    get anaYearRange() {
+      console.log('ssdsd', d3.range(this.minYearAna, this.maxYearAna + 1, 1))
+      return d3.range(this.minYearAna, this.maxYearAna + 1, 1);
+    },
     get anaTagViewData() {
       return this.anaCategories.map((category) => {
         const { label, value } = category;
@@ -557,6 +567,11 @@ const createStore = () => {
                 all: this.analysisPapers.filter((paper) => paper.read).length,
                 highlight: this.anaHighPapers.filter((paper) => paper.read)
                   .length,
+                all_timeDis: this.anaYearRange.map((year) =>
+                  this.analysisPapers.filter(
+                    (paper) => paper.read && paper.year == year
+                  ).length
+                ),
               }
             : {
                 label: tag,
@@ -566,6 +581,12 @@ const createStore = () => {
                 highlight: this.anaHighPapers.filter((paper) =>
                   paper[category.value].includes(tag)
                 ).length,
+                all_timeDis: this.anaYearRange.map((year) =>
+                  this.analysisPapers.filter(
+                    (paper) =>
+                      paper[category.value].includes(tag) && paper.year == year
+                  ).length
+                ),
               }
         );
         return {
@@ -735,12 +756,12 @@ const createStore = () => {
       // newPaper.countries = newPaper.countries.join(";")
       // newPaper.keywords = newPaper.keywords.join(";")
       // newPaper.refList = newPaper.refList.join(";")
-      singleUpdatePaper(oriDoi, newPaper).then(() =>{
+      singleUpdatePaper(oriDoi, newPaper).then(() => {
         runInAction(() => {
-          console.log("singleUpdatePaper finished", oriDoi, newPaper)
-          this.initPapers()
-        })
-      })
+          console.log("singleUpdatePaper finished", oriDoi, newPaper);
+          this.initPapers();
+        });
+      });
     },
   };
 };

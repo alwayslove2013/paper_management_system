@@ -8,6 +8,7 @@ import NetworkView from "./NetworkView-New";
 import TopicView from "./TopicView";
 import HighlightListView from "./HighlightListView";
 import DetailView from "./DetailView";
+import StatisticsView from "./StatisticsView";
 
 const AnalysisPage = () => {
   const store = useGlobalStore();
@@ -19,7 +20,8 @@ const AnalysisPage = () => {
   return (
     <div className="analysis-container">
       <div className="left-container">
-        <TagView />
+        {/* <TagView /> */}
+        <StatisticsView />
       </div>
       <div className="middle-container">
         <div className="middle-top-container">
