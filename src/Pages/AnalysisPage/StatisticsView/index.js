@@ -16,8 +16,17 @@ const headerRatio = 0.05;
 const timeDistributionRatio = 0.1;
 
 const heatmapTitleRatio = 0.036;
-const heatmapRowRation = 0.024;
-const heatmapRectHeight = 0.018;
+const heatmapRowRatio = 0.024;
+const heatmapRowLabelWidthRatio = 0.24;
+const heatmapRowRectsLeftPaddingRatio = 0.02;
+const heatmapRowRectsRightPaddingRatio = 0.03;
+const heatmapRowRectsWidthRatio =
+  1 -
+  heatmapRowLabelWidthRatio -
+  heatmapRowRectsLeftPaddingRatio -
+  heatmapRowRectsRightPaddingRatio;
+const heatmapRectHeightRatio = 0.018;
+const heatmapRectWidthRatio = 0.75;
 const heatmapBottomRatio = 0.01;
 
 const authorCount = 10;
@@ -29,7 +38,6 @@ const StatisticsView = observer(() => {
     svgId,
   });
   const { width, height } = clientRect;
-  console.log(svgId, width, height);
 
   const headerStyle = { transform: `translateY(${ratio(0)})` };
   const timeDisStyle = { transform: `translateY(${ratio(headerRatio)})` };
@@ -40,9 +48,7 @@ const StatisticsView = observer(() => {
     transform: `translateY(${ratio(
       headerRatio +
         timeDistributionRatio +
-        (heatmapTitleRatio +
-          heatmapRowRation * authorCount +
-          heatmapBottomRatio)
+        (heatmapTitleRatio + heatmapRowRatio * authorCount + heatmapBottomRatio)
     )})`,
   };
   const topicDisStyle = {
@@ -50,25 +56,26 @@ const StatisticsView = observer(() => {
       headerRatio +
         timeDistributionRatio +
         (heatmapTitleRatio +
-          heatmapRowRation * authorCount +
+          heatmapRowRatio * authorCount +
           heatmapBottomRatio) +
         (heatmapTitleRatio +
-          heatmapRowRation * keywordsCount +
+          heatmapRowRatio * keywordsCount +
           heatmapBottomRatio)
     )})`,
   };
 
-  const heatmapRowStyle = (i) => ({
-    transform: `translateY(${ratio(heatmapRowRation * i)})`,
-  });
-
   const store = useGlobalStore();
-  const { analysisPapers, anaHighPapers, anaTagViewData } = store;
+  const { analysisPapers, anaHighPapers, anaTagViewData, anaYearRange } = store;
+  const yearCount = anaYearRange.length;
   console.log("analysisPapers", analysisPapers, anaTagViewData);
 
   const authorData = anaTagViewData
     .find((d) => d.value === "authors")
-    .data.slice(0, 10);
+    .data.slice(0, authorCount);
+
+  const keywordData = anaTagViewData
+    .find((d) => d.value === "keywords")
+    .data.slice(0, keywordsCount);
 
   return (
     <svg id={svgId} width="100%" height="100%">
@@ -80,43 +87,12 @@ const StatisticsView = observer(() => {
       </g>
       <g id="authors-distribution-g" style={authorDisStyle}>
         <HeatmapContent height={height} title={"Author"}>
-          {authorData.map((d, i) => (
-            <g
-              className="heatmap-row-g"
-              key={d.label}
-              style={heatmapRowStyle(i)}
-            >
-              <text
-                x="100"
-                y={ratio(heatmapRectHeight)}
-                fontSize={fontS * height}
-                fill="#aaa"
-                textAnchor="end"
-              >
-                {d.label}
-              </text>
-              <g
-                className="heatmap-row-rects-g"
-                style={{ transform: `translateX(110px)` }}
-              >
-                {d.all_timeDis.map((count, i) => (
-                  <rect
-                    key={i}
-                    x={(width / 30) * i}
-                    y="0"
-                    width={(width / 30) * 0.8}
-                    height={heatmapRectHeight * height}
-                    fill={count > 0 ? 'red' : 'none'}
-                  />
-                ))}
-              </g>
-            </g>
-          ))}
+          <HeatMap data={authorData} width={width} height={height} />
         </HeatmapContent>
       </g>
       <g id="keywords-distribution-g" style={keywordDisStyle}>
         <HeatmapContent height={height} title={"Keyword"}>
-          <circle cx="0" cy="0" r="10" fill="red" />
+          <HeatMap data={keywordData} width={width} height={height} />
         </HeatmapContent>
       </g>
       <g id="topics-distribution-g" style={topicDisStyle}>
@@ -164,6 +140,56 @@ const HeatmapContent = ({
       >
         {children}
       </g>
+    </>
+  );
+};
+
+const heatmapColors = ["#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"];
+
+const HeatMap = ({ data, width, height }) => {
+  const yearCount = data.length > 0 ? data[0].all_timeDis.length : 1;
+  const rectWidth = (width * heatmapRowRectsWidthRatio) / yearCount;
+  const heatmapRowStyle = (i) => ({
+    transform: `translateY(${ratio(heatmapRowRatio * i)})`,
+  });
+  const color = (count) => {
+    if (count === 0) return "transparent";
+    const index = count >= heatmapColors.length ? heatmapColors.length : count;
+    return heatmapColors[index - 1];
+  };
+  return (
+    <>
+      {data.map((d, i) => (
+        <g className="heatmap-row-g" key={d.label} style={heatmapRowStyle(i)}>
+          <text
+            x={width * heatmapRowLabelWidthRatio}
+            y={ratio(heatmapRectHeightRatio)}
+            fontSize={fontS * height}
+            fill="#aaa"
+            textAnchor="end"
+          >
+            {d.label}
+          </text>
+          <g
+            className="heatmap-row-rects-g"
+            transform={`translate(${
+              width *
+              (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
+            }, 0)`}
+          >
+            {d.all_timeDis.map((count, i) => (
+              <rect
+                key={i}
+                x={rectWidth * i}
+                y="0"
+                width={rectWidth * heatmapRectWidthRatio}
+                height={heatmapRectHeightRatio * height}
+                fill={color(count)}
+              />
+            ))}
+          </g>
+        </g>
+      ))}
     </>
   );
 };
