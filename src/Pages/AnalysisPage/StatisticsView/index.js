@@ -18,7 +18,7 @@ const timeDistributionRatio = 0.1;
 const heatmapTitleRatio = 0.036;
 const heatmapRowRatio = 0.024;
 const heatmapRowLabelWidthRatio = 0.24;
-const heatmapRowRectsLeftPaddingRatio = 0.02;
+const heatmapRowRectsLeftPaddingRatio = 0.05;
 const heatmapRowRectsRightPaddingRatio = 0.03;
 const heatmapRowRectsWidthRatio =
   1 -
@@ -71,8 +71,9 @@ const StatisticsView = observer(() => {
     anaTagViewData,
     anaYearRange,
     num_topics,
+    topicColorScale,
   } = store;
-  console.log("analysisPapers", analysisPapers);
+  // console.log("analysisPapers", analysisPsapers);
 
   const authorData = anaTagViewData
     .find((d) => d.value === "authors")
@@ -99,6 +100,7 @@ const StatisticsView = observer(() => {
       highLightDis: anaYearRange.map(
         (year) => highlightPapers.filter((paper) => paper.year == year).length
       ),
+      color: topicColorScale[topic_index],
     };
   });
   console.log("topicData", topicData);
@@ -123,12 +125,79 @@ const StatisticsView = observer(() => {
       </g>
       <g id="topics-distribution-g" style={topicDisStyle}>
         <HeatmapContent height={height} title={"Topic"}>
-          {/* <TopicDistribution data={}/> */}
+          <TopicDistribution data={topicData} width={width} height={height} />
         </HeatmapContent>
       </g>
     </svg>
   );
 });
+
+const topicBarChartHeightRatio = 0.05;
+const topicBarChartBottomRatio = 0.005;
+
+const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
+  const topicBarChartStyle = (i) => {
+    // tr
+  };
+  let maxCount = 1;
+  data.forEach((topicData) => {
+    topicData.allDis.forEach(
+      (count) => (maxCount = maxCount < count ? count : maxCount)
+    );
+  });
+  const yearCount = data.length === 0 ? 1 : data[0].allDis.length;
+  const x = (i) => ((width * heatmapRowRectsWidthRatio) / yearCount) * i;
+  const y = (count) =>
+    (height * topicBarChartHeightRatio * (maxCount - count)) / maxCount;
+
+  return (
+    <g className="topic-bar-chart">
+      {data.map((topicData, i) => (
+        <g
+          key={topicData.label}
+          transform={`translate(0, ${
+            (topicBarChartHeightRatio + topicBarChartBottomRatio) * height * i
+          })`}
+          fill={topicData.color}
+        >
+          <text
+            x={heatmapRowLabelWidthRatio * width}
+            y={topicBarChartHeightRatio * height * 0.5}
+            fontSize={fontS * height}
+            textAnchor="end"
+          >
+            {topicData.label}
+          </text>
+          <text
+            x={heatmapRowLabelWidthRatio * width}
+            y={topicBarChartHeightRatio * height * 1}
+            fontSize={fontS * height}
+            textAnchor="end"
+          >
+            {topicData.highlightCount}/{topicData.allCount}
+          </text>
+          <g
+            className="topic-bar-chart-bars"
+            transform={`translate(${
+              width *
+              (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
+            }, 0)`}
+          >
+            {topicData.allDis.map((count, j) => (
+              <rect
+                key={j}
+                x={x(j)}
+                y={y(count)}
+                width={((width * heatmapRowRectsWidthRatio) / yearCount) * 0.9}
+                height={y(0) - y(count)}
+              />
+            ))}
+          </g>
+        </g>
+      ))}
+    </g>
+  );
+};
 
 const HeatmapContent = ({
   icon = "",
