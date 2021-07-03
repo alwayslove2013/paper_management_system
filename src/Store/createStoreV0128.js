@@ -554,7 +554,6 @@ const createStore = () => {
       return d3.max(this.analysisPapers.map((paper) => +paper.year));
     },
     get anaYearRange() {
-      console.log('ssdsd', d3.range(this.minYearAna, this.maxYearAna + 1, 1))
       return d3.range(this.minYearAna, this.maxYearAna + 1, 1);
     },
     get anaTagViewData() {

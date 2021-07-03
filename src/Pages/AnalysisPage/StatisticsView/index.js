@@ -66,8 +66,6 @@ const StatisticsView = observer(() => {
 
   const store = useGlobalStore();
   const { analysisPapers, anaHighPapers, anaTagViewData, anaYearRange } = store;
-  const yearCount = anaYearRange.length;
-  console.log("analysisPapers", analysisPapers, anaTagViewData);
 
   const authorData = anaTagViewData
     .find((d) => d.value === "authors")

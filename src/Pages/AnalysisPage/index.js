@@ -2,13 +2,14 @@ import React, { useEffect } from "react";
 import { useGlobalStore } from "Store";
 import "./index.scss";
 // import TagView from "./TagView";
-import TagView from "./TagView-Hor";
+// import TagView from "./TagView-Hor";
 import ProjectView from "./ProjectView-New";
 import NetworkView from "./NetworkView-New";
 import TopicView from "./TopicView";
-import HighlightListView from "./HighlightListView";
-import DetailView from "./DetailView";
+// import HighlightListView from "./HighlightListView";
+// import DetailView from "./DetailView";
 import StatisticsView from "./StatisticsView";
+import PapersTable from "./PapersTable";
 
 const AnalysisPage = () => {
   const store = useGlobalStore();
@@ -35,11 +36,14 @@ const AnalysisPage = () => {
         <div className="right-top-container">
           <TopicView />
         </div>
-        <div className="right-middle-container">
+        {/* <div className="right-middle-container">
           <HighlightListView />
         </div>
         <div className="right-bottom-container">
-          <DetailView />
+          <DetailView /> 
+        </div> */}
+        <div className="right-middle-bottom-container">
+          <PapersTable />
         </div>
       </div>
     </div>
