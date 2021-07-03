@@ -65,7 +65,14 @@ const StatisticsView = observer(() => {
   };
 
   const store = useGlobalStore();
-  const { analysisPapers, anaHighPapers, anaTagViewData, anaYearRange } = store;
+  const {
+    analysisPapers,
+    anaHighPapers,
+    anaTagViewData,
+    anaYearRange,
+    num_topics,
+  } = store;
+  console.log("analysisPapers", analysisPapers);
 
   const authorData = anaTagViewData
     .find((d) => d.value === "authors")
@@ -74,6 +81,27 @@ const StatisticsView = observer(() => {
   const keywordData = anaTagViewData
     .find((d) => d.value === "keywords")
     .data.slice(0, keywordsCount);
+
+  const topicData = d3.range(0, num_topics).map((topic_index) => {
+    const papers = analysisPapers.filter((paper) =>
+      paper.topics.map((a) => a[0]).includes(topic_index)
+    );
+    const highlightPapers = anaHighPapers.filter((paper) =>
+      paper.topics.map((a) => a[0]).includes(topic_index)
+    );
+    return {
+      label: `topic ${topic_index + 1}`,
+      allCount: papers.length,
+      highlightCount: highlightPapers.length,
+      allDis: anaYearRange.map(
+        (year) => papers.filter((paper) => paper.year == year).length
+      ),
+      highLightDis: anaYearRange.map(
+        (year) => highlightPapers.filter((paper) => paper.year == year).length
+      ),
+    };
+  });
+  console.log("topicData", topicData);
 
   return (
     <svg id={svgId} width="100%" height="100%">
@@ -95,7 +123,7 @@ const StatisticsView = observer(() => {
       </g>
       <g id="topics-distribution-g" style={topicDisStyle}>
         <HeatmapContent height={height} title={"Topic"}>
-          <circle cx="0" cy="0" r="10" fill="red" />
+          {/* <TopicDistribution data={}/> */}
         </HeatmapContent>
       </g>
     </svg>
