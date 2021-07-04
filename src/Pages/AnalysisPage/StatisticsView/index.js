@@ -350,29 +350,30 @@ const TimeLine = ({
             stroke="#aaa"
             strokeWidth="1"
           />
-          {data
-            .filter((d) => +d.year % 5 === 0)
-            .map((d, i) => (
-              <g key={i}>
-                <path
-                  d={`M${x(i) + barWidth * 0.5},${timeDisLineRatio * height}V${
-                    timeDisStickRatio * height
-                  }`}
-                  stroke="#888"
-                  strokeWidth="2"
-                />
-                <text
-                  x={x(i) + barWidth * 0.5}
-                  y={timeDisStickTextRatio * height}
-                  textAnchor="middle"
-                  fontSize={fontS * height}
-                  fill="#aaa"
-                  // fontWeight="600"
-                >
-                  {d.year}
-                </text>
-              </g>
-            ))}
+          {data.map(
+            (d, i) =>
+              +d.year % 5 === 0 && (
+                <g key={i}>
+                  <path
+                    d={`M${x(i) + barWidth * 0.5},${
+                      timeDisLineRatio * height
+                    }V${timeDisStickRatio * height}`}
+                    stroke="#888"
+                    strokeWidth="2"
+                  />
+                  <text
+                    x={x(i) + barWidth * 0.5}
+                    y={timeDisStickTextRatio * height}
+                    textAnchor="middle"
+                    fontSize={fontS * height}
+                    fill="#aaa"
+                    // fontWeight="600"
+                  >
+                    {d.year}
+                  </text>
+                </g>
+              )
+          )}
         </g>
       </g>
     </g>

@@ -25,7 +25,7 @@ const PapersTable = observer(() => {
       title: "Title",
       showText: (paper) => paper.title,
       style: {
-        width: "48%",
+        width: "50%",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
@@ -36,7 +36,7 @@ const PapersTable = observer(() => {
       title: "Authors",
       showText: (paper) => get(paper, "authors[0]", ""),
       style: {
-        width: "24%",
+        width: "22%",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",

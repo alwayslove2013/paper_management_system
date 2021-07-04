@@ -6,6 +6,7 @@ import { useClientRect } from "Hooks";
 import * as d3 from "d3";
 import { Slider } from "antd";
 import { find_d } from "Common";
+import { get } from "lodash";
 
 const ProjectionView = observer(() => {
   const svgId = "ana-projection-map-svg";
@@ -323,6 +324,27 @@ const ProjectionView = observer(() => {
     );
   };
 
+  const mostCitedPapers = d3
+    .sort([...analysisPapers], (p) => +p.citationCount)
+    .slice(-8);
+  const mostCitedPaperDoiSet = new Set(
+    mostCitedPapers.map((paper) => paper.doi)
+  );
+  const labelFontS = d3
+    .scaleLinear()
+    .domain(d3.extent(mostCitedPapers, (p) => p.citationCount))
+    .range([16, 22]);
+  console.log("mostCitedPaperDoiSet", mostCitedPaperDoiSet);
+
+  const abbr = (paper) => {
+    const author = get(paper, "authors[0]", "").split(" ").slice(-1);
+    const conference = get(paper, "conferenceName", "");
+    const year = get(paper, "year", "");
+    return mostCitedPaperDoiSet.has(paper.doi)
+      ? `[${author}. ${conference} ${year}]`
+      : "";
+  };
+
   return (
     <div className="projection-view">
       <svg id={svgId} width="100%" height="100%">
@@ -344,11 +366,9 @@ const ProjectionView = observer(() => {
               <path
                 key={`${topicIndex}-border`}
                 d={d3.geoPath()(contour)}
-                fill={'none'}
+                fill={"none"}
                 opacity={1}
-                stroke={
-                  topicColorScale[topicIndex]
-                }
+                stroke={topicColorScale[topicIndex]}
                 strokeDasharray={5}
               />
             </>
@@ -356,23 +376,27 @@ const ProjectionView = observer(() => {
         </g>
         <g id="paper-circles-g" stroke="#fff">
           {analysisPapers.map((paper) => (
-            <circle
+            <g
               key={paper.doi}
-              cx={x(paper.projection[0])}
-              cy={y(paper.projection[1])}
-              r={
-                paperCircleR(+paper.citationCount) +
-                paperCircleStrokeWidth(paper)
-              }
-              fill={paperCircleColor(paper)}
-              strokeLinecap="round"
-              strokeWidth={paperCircleStrokeWidth(paper)}
-              opacity={paperCircleOpacity(paper)}
-              strokeDasharray={paperCircleDasharray(paper)}
-              stroke={paperCircleStroke(paper)}
-              cursor="pointer"
-              onClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
-            />
+              transform={`translate(${x(paper.projection[0])}, ${y(
+                paper.projection[1]
+              )})`}
+            >
+              <circle
+                r={
+                  paperCircleR(+paper.citationCount) +
+                  paperCircleStrokeWidth(paper)
+                }
+                fill={paperCircleColor(paper)}
+                strokeLinecap="round"
+                strokeWidth={paperCircleStrokeWidth(paper)}
+                opacity={paperCircleOpacity(paper)}
+                strokeDasharray={paperCircleDasharray(paper)}
+                stroke={paperCircleStroke(paper)}
+                cursor="pointer"
+                onClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
+              />
+            </g>
           ))}
         </g>
         {anaFilterType === "topic" && (
@@ -428,6 +452,28 @@ const ProjectionView = observer(() => {
             </g>
           </>
         )}
+        <g id="paper-circles-lables-g" stroke="#fff">
+          {analysisPapers.map((paper) => (
+            <g
+              key={paper.doi}
+              transform={`translate(${x(paper.projection[0])}, ${y(
+                paper.projection[1]
+              )})`}
+            >
+              <text
+                fontSize={labelFontS(paper.citationCount)}
+                fill="#333"
+                stroke="none"
+                textAnchor="middle"
+                y="-10"
+                opacity={0.9}
+                pointerEvents="none"
+              >
+                {abbr(paper)}
+              </text>
+            </g>
+          ))}
+        </g>
       </svg>
       <div className="topics-number-input">
         <div className="topics-number-input-text">
