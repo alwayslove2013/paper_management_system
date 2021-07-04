@@ -12,7 +12,7 @@ const fontS = 0.015;
 
 const ratio = (r) => `${r * 100}%`;
 
-const headerRatio = 0.05;
+const headerRatio = 0.045;
 const timeDistributionRatio = 0.1;
 
 const heatmapTitleRatio = 0.036;
@@ -153,7 +153,11 @@ const StatisticsView = observer(() => {
   return (
     <svg id={svgId} width="100%" height="100%">
       <g id="header-g" style={headerStyle}>
-        <circle cx="0" cy="0" r="10" fill="green" />
+        <StatisticsHeader
+          allCount={analysisPapers.length}
+          width={width}
+          height={height}
+        />
       </g>
       <g id="time-distribution-g" style={timeDisStyle}>
         <TimeLine
@@ -186,6 +190,61 @@ const StatisticsView = observer(() => {
     </svg>
   );
 });
+
+const StatisticsHeader = ({ allCount = 0, width = 0, height = 0 }) => {
+  return (
+    <>
+      <text
+        x={width * 0.04}
+        y={headerRatio * height * 0.55}
+        fontSize={fontL * height}
+        fontWeight="600"
+        fill="#444"
+      >
+        Papers: {allCount}
+      </text>
+      <path
+        d={`M${width * 0.02}, ${headerRatio * height * 0.8} H${width * 0.98}`}
+        stroke="#ccc"
+        strokeWidth="1.5"
+      />
+      <g
+        className="statistics-header-legend"
+        transform={`translate(${width * 0.61}, ${headerRatio * height * 0.1})`}
+      >
+        {heatmapColors.map((color, i) => (
+          <rect
+            key={color}
+            x={(width * 0.3 * i) / 5}
+            y={height * headerRatio * 0.1}
+            width={(width * 0.3) / 5}
+            height={height * headerRatio * 0.4}
+            fill={color}
+          />
+        ))}
+        <text
+          x={-width * 0.02}
+          y={height * headerRatio * 0.45}
+          fontSize={fontS * height}
+          textAnchor="end"
+          fill="#aaa"
+        >
+          0
+        </text>
+        <text
+          x={width * 0.32}
+          y={height * headerRatio * 0.45}
+          fontSize={fontS * height}
+          fill="#aaa"
+        >
+          &ge;5
+        </text>
+      </g>
+    </>
+  );
+};
+
+const timeDisYearLeftRatio = heatmapRowLabelWidthRatio * 0.7;
 
 const timeDisBarRatio = timeDistributionRatio * 0.75;
 const timeDisLineRatio = timeDisBarRatio + 0.05 * timeDistributionRatio;
@@ -228,12 +287,30 @@ const TimeLine = ({
     });
   }, [width]);
 
+  const yearTextX = timeDisYearLeftRatio * width;
+  const startYearTextY = timeDistributionRatio * height * 0.3;
+  const endYearTextY = timeDistributionRatio * height * 0.8;
+  const yearTextLinkY = startYearTextY + timeDistributionRatio * height * 0.1;
+  const yearTextLinkHeight = timeDistributionRatio * height * 0.14;
+
   return (
     <g className="time-line-container">
-      <g className="time-line-time">
-        <text>{startYear}</text>
-        <text>{endYear}</text>
-        <path />
+      <g
+        className="time-line-time"
+        fontSize={fontL * height}
+        fontWeight="600"
+        fill="#888"
+      >
+        <text x={yearTextX} y={startYearTextY} textAnchor="middle">
+          {startYear}
+        </text>
+        <text x={yearTextX} y={endYearTextY} textAnchor="middle">
+          {endYear}
+        </text>
+        <path
+          d={`M${yearTextX}, ${yearTextLinkY} v${yearTextLinkHeight} `}
+          stroke="#999"
+        />
       </g>
       <g
         className="time-line-bar-chart"
@@ -247,7 +324,7 @@ const TimeLine = ({
               key={i}
               x={x(i)}
               y={y(d.all)}
-              fill="#bbb"
+              fill="#ccc"
               width={barWidth}
               height={y(0) - y(d.all)}
             />
@@ -267,8 +344,8 @@ const TimeLine = ({
         </g>
         <g className="time-line-axis">
           <path
-            d={`M0,${timeDisLineRatio * height}h${
-              width * heatmapRowRectsWidthRatio
+            d={`M${-barWidth * 0.5},${timeDisLineRatio * height}h${
+              width * heatmapRowRectsWidthRatio + barWidth
             }`}
             stroke="#aaa"
             strokeWidth="1"
@@ -289,14 +366,14 @@ const TimeLine = ({
                   y={timeDisStickTextRatio * height}
                   textAnchor="middle"
                   fontSize={fontS * height}
-                  color="#aaa"
+                  fill="#aaa"
                   // fontWeight="600"
                 >
                   {d.year}
                 </text>
               </g>
             ) : (
-              <path />
+              <></>
             )
           )}
         </g>
