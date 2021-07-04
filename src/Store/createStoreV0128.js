@@ -566,10 +566,11 @@ const createStore = () => {
                 all: this.analysisPapers.filter((paper) => paper.read).length,
                 highlight: this.anaHighPapers.filter((paper) => paper.read)
                   .length,
-                all_timeDis: this.anaYearRange.map((year) =>
-                  this.analysisPapers.filter(
-                    (paper) => paper.read && paper.year == year
-                  ).length
+                all_timeDis: this.anaYearRange.map(
+                  (year) =>
+                    this.analysisPapers.filter(
+                      (paper) => paper.read && paper.year == year
+                    ).length
                 ),
               }
             : {
@@ -580,11 +581,13 @@ const createStore = () => {
                 highlight: this.anaHighPapers.filter((paper) =>
                   paper[category.value].includes(tag)
                 ).length,
-                all_timeDis: this.anaYearRange.map((year) =>
-                  this.analysisPapers.filter(
-                    (paper) =>
-                      paper[category.value].includes(tag) && paper.year == year
-                  ).length
+                all_timeDis: this.anaYearRange.map(
+                  (year) =>
+                    this.analysisPapers.filter(
+                      (paper) =>
+                        paper[category.value].includes(tag) &&
+                        paper.year == year
+                    ).length
                 ),
               }
         );
@@ -645,10 +648,14 @@ const createStore = () => {
         );
       }
     },
+    startYear: 0,
+    endYear: 0,
     setAnaHighPapersByYear(yearRange) {
       debug && console.log("setAnaHighPapersByYear", yearRange);
       // this.setAnaFilterType('year');
       const [yearStart, yearEnd] = yearRange;
+      this.startYear = yearStart;
+      this.endYear = yearEnd;
       this.anaHighTag = `${yearStart}-${yearEnd}`;
       this.anaHighPapers = this.analysisPapers.filter(
         (paper) => +paper.year >= yearStart && +paper.year <= yearEnd
@@ -678,7 +685,7 @@ const createStore = () => {
       debug && console.log("reset drawProjectionFlag");
       this.drawProjectionFlag = false;
     },
-    num_topics: 5,
+    num_topics: 4,
     setNumTopics(num) {
       this.num_topics = num;
       this.tryLda();

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.scss";
 import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
@@ -72,6 +72,9 @@ const StatisticsView = observer(() => {
     anaYearRange,
     num_topics,
     topicColorScale,
+    setAnaFilterType,
+    startYear,
+    endYear,
   } = store;
   // console.log("analysisPapers", analysisPsapers);
 
@@ -103,7 +106,26 @@ const StatisticsView = observer(() => {
       color: topicColorScale[topic_index],
     };
   });
-  console.log("topicData", topicData);
+  // console.log("topicData", topicData);
+  const allDisData = anaYearRange.map((year) => ({
+    year,
+    all: analysisPapers.filter((paper) => paper.year == year).length,
+    highlight: anaHighPapers.filter((paper) => paper.year == year).length,
+  }));
+
+  // brush
+
+  const brushStart = () => {
+    setAnaFilterType("year");
+  };
+
+  const brushing = ({ selection }) => {
+    console.log('selection', selection)
+  }
+
+  const brushEnd = ({ selection }) => {
+    console.log('end', selection, width * heatmapRowRectsWidthRatio)
+  };
 
   return (
     <svg id={svgId} width="100%" height="100%">
@@ -111,7 +133,16 @@ const StatisticsView = observer(() => {
         <circle cx="0" cy="0" r="10" fill="green" />
       </g>
       <g id="time-distribution-g" style={timeDisStyle}>
-        <circle cx="0" cy="0" r="10" fill="green" />
+        <TimeLine
+          data={allDisData}
+          width={width}
+          height={height}
+          startYear={startYear}
+          endYear={endYear}
+          brushStart={brushStart}
+          brushing={brushing}
+          brushEnd={brushEnd}
+        />
       </g>
       <g id="authors-distribution-g" style={authorDisStyle}>
         <HeatmapContent height={height} title={"Author"}>
@@ -132,19 +163,112 @@ const StatisticsView = observer(() => {
   );
 });
 
+const timeDisBarRatio = timeDistributionRatio * 0.75;
+const timeDisLineRatio = timeDisBarRatio + 0.05 * timeDistributionRatio;
+const timeDisStickRatio = timeDisLineRatio + 0.05 * timeDistributionRatio;
+const timeDisStickTextRatio = timeDisStickRatio + fontS;
+
+const TimeLine = ({
+  data = [],
+  width = 0,
+  height = 0,
+  startYear = 0,
+  endYear = 0,
+  brushStart = () => {},
+  brushing = () => {},
+  brushEnd = () => {},
+}) => {
+  const maxCount = d3.max(data, (d) => d.all);
+  const yearCount = data.length === 0 ? 1 : data.length;
+  const x = (i) => ((width * heatmapRowRectsWidthRatio) / yearCount) * i;
+  const y = (count) =>
+    (height * timeDisBarRatio * (maxCount - count)) / maxCount;
+  const barWidth = ((width * heatmapRowRectsWidthRatio) / yearCount) * 0.9;
+
+  const brush = d3
+    .brushX()
+    .extent([
+      [0, 0],
+      [heatmapRowRectsWidthRatio * width, timeDisBarRatio * height],
+    ])
+    .on("start", brushStart)
+    .on("brush", brushing)
+    .on("end", brushEnd);
+  useEffect(() => {
+    const timeline = d3.select(".time-line-bar-chart");
+    timeline.call(brush);
+  });
+
+  return (
+    <g className="time-line-container">
+      <g className="time-line-time">
+        <text>{startYear}</text>
+        <text>{endYear}</text>
+        <path />
+      </g>
+      <g
+        className="time-line-bar-chart"
+        transform={`translate(${
+          width * (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
+        }, 0)`}
+      >
+        <g className="time-line-bars">
+          {data.map((d, i) => (
+            <rect
+              key={i}
+              x={x(i)}
+              y={y(d.all)}
+              fill="#aaa"
+              width={barWidth}
+              height={y(0) - y(d.all)}
+            />
+          ))}
+        </g>
+        <g className="time-line-axis">
+          <path
+            d={`M0,${timeDisLineRatio * height}h${
+              width * heatmapRowRectsWidthRatio
+            }`}
+            stroke="#aaa"
+            strokeWidth="1"
+          />
+          {data.map((d, i) =>
+            +d.year % 5 === 0 ? (
+              <g>
+                <path
+                  key={i}
+                  d={`M${x(i) + barWidth * 0.5},${timeDisLineRatio * height}V${
+                    timeDisStickRatio * height
+                  }`}
+                  stroke="#888"
+                  strokeWidth="2"
+                />
+                <text
+                  x={x(i) + barWidth * 0.5}
+                  y={timeDisStickTextRatio * height}
+                  textAnchor="middle"
+                  fontSize={fontS * height}
+                  color="#aaa"
+                  // fontWeight="600"
+                >
+                  {d.year}
+                </text>
+              </g>
+            ) : (
+              <path />
+            )
+          )}
+        </g>
+      </g>
+    </g>
+  );
+};
+
 const topicBarChartHeightRatio = 0.05;
 const topicBarChartBottomRatio = 0.005;
 
 const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
-  const topicBarChartStyle = (i) => {
-    // tr
-  };
-  let maxCount = 1;
-  data.forEach((topicData) => {
-    topicData.allDis.forEach(
-      (count) => (maxCount = maxCount < count ? count : maxCount)
-    );
-  });
+  const maxCount = d3.max(data.map((topicData) => d3.max(topicData.allDis)));
   const yearCount = data.length === 0 ? 1 : data[0].allDis.length;
   const x = (i) => ((width * heatmapRowRectsWidthRatio) / yearCount) * i;
   const y = (count) =>
@@ -163,7 +287,8 @@ const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
           <text
             x={heatmapRowLabelWidthRatio * width}
             y={topicBarChartHeightRatio * height * 0.5}
-            fontSize={fontS * height}
+            fontSize={fontM * height}
+            fontWeight="600"
             textAnchor="end"
           >
             {topicData.label}
@@ -172,6 +297,7 @@ const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
             x={heatmapRowLabelWidthRatio * width}
             y={topicBarChartHeightRatio * height * 1}
             fontSize={fontS * height}
+            fontWeight="600"
             textAnchor="end"
           >
             {topicData.highlightCount}/{topicData.allCount}
