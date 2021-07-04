@@ -701,7 +701,12 @@ const createStore = () => {
         debug && console.log("try lda OK!", data);
         runInAction(() => {
           // console.log("data", data);
-          const { paper_lda_res, topics_detail, code = "success", topics_word_dis } = data;
+          const {
+            paper_lda_res,
+            topics_detail,
+            code = "success",
+            topics_word_dis,
+          } = data;
           if (code === "success") {
             this.analysisPapers.forEach((paper) => {
               if (paper.doi in paper_lda_res) {
@@ -719,6 +724,12 @@ const createStore = () => {
             this.topics_word_dis = topics_word_dis;
             // 初始化一下
             this.anaHighPapers = this.analysisPapers;
+            this.startYear = d3.min(
+              this.analysisPapers.map((paper) => +paper.year)
+            );
+            this.endYear = d3.max(
+              this.analysisPapers.map((paper) => +paper.year)
+            );
           }
         });
       });

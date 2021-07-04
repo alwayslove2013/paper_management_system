@@ -325,8 +325,8 @@ const ProjectionView = observer(() => {
   };
 
   const mostCitedPapers = d3
-    .sort([...analysisPapers], (p) => +p.citationCount)
-    .slice(-8);
+    .sort([...anaHighPapers], (p) => +p.citationCount)
+    .slice(anaFilterType === "topic" ? -3 : -8);
   const mostCitedPaperDoiSet = new Set(
     mostCitedPapers.map((paper) => paper.doi)
   );
@@ -339,9 +339,9 @@ const ProjectionView = observer(() => {
   const abbr = (paper) => {
     const author = get(paper, "authors[0]", "").split(" ").slice(-1);
     const conference = get(paper, "conferenceName", "");
-    const year = get(paper, "year", "");
+    const year = `${get(paper, "year", "")}`.slice(-2);
     return mostCitedPaperDoiSet.has(paper.doi)
-      ? `[${author}. ${conference} ${year}]`
+      ? `[${author}. ${conference}${year}]`
       : "";
   };
 

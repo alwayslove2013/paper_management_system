@@ -455,9 +455,9 @@ const HeatmapContent = ({
           className="heatmap-title-background"
           x="0"
           y={titleContentHeight * 0.05}
-          width="150"
+          width="130"
           height={titleContentHeight * 0.8}
-          fill="#bbb"
+          fill="#aaa"
         />
         <g className="heatmap-title-content">
           {/* <icon /> */}
@@ -466,6 +466,7 @@ const HeatmapContent = ({
             y={titleContentHeight * 0.64}
             fontSize={fontM * height}
             fill="#fff"
+            fontWeight="600"
           >
             {title}
           </text>
@@ -496,15 +497,31 @@ const HeatMap = ({ data, width, height }) => {
     <>
       {data.map((d, i) => (
         <g className="heatmap-row-g" key={d.label} style={heatmapRowStyle(i)}>
-          <text
-            x={width * heatmapRowLabelWidthRatio}
-            y={ratio(heatmapRectHeightRatio)}
-            fontSize={fontS * height}
-            fill="#aaa"
-            textAnchor="end"
-          >
-            {d.label}
-          </text>
+          {d.label.length > 13 ? (
+            <text
+              x={width * heatmapRowLabelWidthRatio}
+              y={ratio(heatmapRectHeightRatio)}
+              fontSize={fontS * height}
+              fill="#666"
+              textAnchor="end"
+              textLength="100"
+              lengthAdjust="spacingAndGlyphs"
+            >
+              {/* {d.label.length > 15 ? `${d.label.slice(0, 13)}...` : d.label} */}
+              {d.label}
+            </text>
+          ) : (
+            <text
+              x={width * heatmapRowLabelWidthRatio}
+              y={ratio(heatmapRectHeightRatio)}
+              fontSize={fontS * height}
+              fill="#888"
+              textAnchor="end"
+            >
+              {d.label}
+            </text>
+          )}
+
           <g
             className="heatmap-row-rects-g"
             transform={`translate(${
@@ -520,6 +537,7 @@ const HeatMap = ({ data, width, height }) => {
                 width={rectWidth * heatmapRectWidthRatio}
                 height={heatmapRectHeightRatio * height}
                 fill={color(count)}
+                opacity={0.8}
               />
             ))}
           </g>
