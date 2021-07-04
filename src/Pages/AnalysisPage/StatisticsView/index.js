@@ -28,6 +28,7 @@ const heatmapRowRectsWidthRatio =
 const heatmapRectHeightRatio = 0.018;
 const heatmapRectWidthRatio = 0.75;
 const heatmapBottomRatio = 0.01;
+const heatmapColors = ["#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"];
 
 const authorCount = 10;
 const keywordsCount = 10;
@@ -73,8 +74,13 @@ const StatisticsView = observer(() => {
     num_topics,
     topicColorScale,
     setAnaFilterType,
+    setAnaHighPapersByYear,
+    setAnaHighPapersByTag,
+    setAnaHighPapersByTopic,
     startYear,
     endYear,
+    setClearBrushTrigger,
+    clearBrushTrigger,
   } = store;
   // console.log("analysisPapers", analysisPsapers);
 
@@ -120,11 +126,28 @@ const StatisticsView = observer(() => {
   };
 
   const brushing = ({ selection }) => {
-    console.log('selection', selection)
-  }
+    const x2year = (x) =>
+      (x / (width * heatmapRowRectsWidthRatio)) * anaYearRange.length;
+    const start = Math.floor(x2year(selection[0]));
+    const selectStartYear = anaYearRange[start > 0 ? start : 0];
+    const end = Math.floor(x2year(selection[1]));
+    const selectEndYear =
+      anaYearRange[
+        end < anaYearRange.length - 1 ? end : anaYearRange.length - 1
+      ];
+    (startYear !== selectStartYear || endYear !== selectEndYear) &&
+      setAnaHighPapersByYear([selectStartYear, selectEndYear]);
+  };
 
-  const brushEnd = ({ selection }) => {
-    console.log('end', selection, width * heatmapRowRectsWidthRatio)
+  const brushEnd = ({ selection = null }) => {
+    if (selection) {
+    } else {
+      setAnaFilterType("none");
+      setAnaHighPapersByYear([
+        anaYearRange[0],
+        anaYearRange[anaYearRange.length - 1],
+      ]);
+    }
   };
 
   return (
@@ -142,6 +165,7 @@ const StatisticsView = observer(() => {
           brushStart={brushStart}
           brushing={brushing}
           brushEnd={brushEnd}
+          setClearBrushTrigger={setClearBrushTrigger}
         />
       </g>
       <g id="authors-distribution-g" style={authorDisStyle}>
@@ -177,6 +201,7 @@ const TimeLine = ({
   brushStart = () => {},
   brushing = () => {},
   brushEnd = () => {},
+  setClearBrushTrigger = () => {},
 }) => {
   const maxCount = d3.max(data, (d) => d.all);
   const yearCount = data.length === 0 ? 1 : data.length;
@@ -197,7 +222,11 @@ const TimeLine = ({
   useEffect(() => {
     const timeline = d3.select(".time-line-bar-chart");
     timeline.call(brush);
-  });
+    setClearBrushTrigger(() => {
+      d3.brush().move(timeline);
+      brushEnd();
+    });
+  }, [width]);
 
   return (
     <g className="time-line-container">
@@ -212,15 +241,27 @@ const TimeLine = ({
           width * (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
         }, 0)`}
       >
-        <g className="time-line-bars">
+        <g className="time-line-bars-background">
           {data.map((d, i) => (
             <rect
               key={i}
               x={x(i)}
               y={y(d.all)}
-              fill="#aaa"
+              fill="#bbb"
               width={barWidth}
               height={y(0) - y(d.all)}
+            />
+          ))}
+        </g>
+        <g className="time-line-bars-highlight">
+          {data.map((d, i) => (
+            <rect
+              key={i}
+              x={x(i)}
+              y={y(d.highlight)}
+              fill="#888"
+              width={barWidth}
+              height={y(0) - y(d.highlight)}
             />
           ))}
         </g>
@@ -364,8 +405,6 @@ const HeatmapContent = ({
     </>
   );
 };
-
-const heatmapColors = ["#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"];
 
 const HeatMap = ({ data, width, height }) => {
   const yearCount = data.length > 0 ? data[0].all_timeDis.length : 1;
