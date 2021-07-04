@@ -93,15 +93,14 @@ const PapersTable = observer(() => {
       <div className="papers-table-title">
         <div>
           Paper List (
-          {`${anaFilterType === "none" ? '' : `${highlightCount}/`}${allCount}`}
+          {`${anaFilterType === "none" ? "" : `${highlightCount}/`}${allCount}`}
           )
         </div>
-        {anaFilterType === "none" ||
-          (anaFilterType === "topic" ? (
-            <div>{anaHighTopic}</div>
-          ) : (
-            <div>{anaHighTag}</div>
-          ))}
+        {anaFilterType === "none" || (
+          <div style={{ marginRight: 10 }}>
+            {anaFilterType === "topic" ? anaHighTopic : anaHighTag}
+          </div>
+        )}
       </div>
       <div className="papers-table-content">
         <div className="papers-table-header">

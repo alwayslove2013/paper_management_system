@@ -572,6 +572,12 @@ const createStore = () => {
                       (paper) => paper.read && paper.year == year
                     ).length
                 ),
+                highlight_timeDis: this.anaYearRange.map(
+                  (year) =>
+                    this.anaHighPapers.filter(
+                      (paper) => paper.read && paper.year == year
+                    ).length
+                ),
               }
             : {
                 label: tag,
@@ -584,6 +590,14 @@ const createStore = () => {
                 all_timeDis: this.anaYearRange.map(
                   (year) =>
                     this.analysisPapers.filter(
+                      (paper) =>
+                        paper[category.value].includes(tag) &&
+                        paper.year == year
+                    ).length
+                ),
+                highlight_timeDis: this.anaYearRange.map(
+                  (year) =>
+                    this.anaHighPapers.filter(
                       (paper) =>
                         paper[category.value].includes(tag) &&
                         paper.year == year

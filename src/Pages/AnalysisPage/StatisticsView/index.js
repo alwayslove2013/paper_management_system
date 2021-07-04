@@ -204,6 +204,7 @@ const StatisticsView = observer(() => {
             width={width}
             height={height}
             handleClick={handleClickAuthor}
+            anaHighTag={anaHighTag}
           />
         </HeatmapContent>
       </g>
@@ -214,6 +215,7 @@ const StatisticsView = observer(() => {
             width={width}
             height={height}
             handleClick={handleClickTag}
+            anaHighTag={anaHighTag}
           />
         </HeatmapContent>
       </g>
@@ -529,6 +531,7 @@ const HeatMap = ({
   width = 0,
   height = 0,
   handleClick = () => {},
+  anaHighTag = "",
 }) => {
   const yearCount = data.length > 0 ? data[0].all_timeDis.length : 1;
   const rectWidth = (width * heatmapRowRectsWidthRatio) / yearCount;
@@ -552,7 +555,9 @@ const HeatMap = ({
             height={heatmapRectHeightRatio * height * 1.2}
             width={width * 0.98}
             fill="transparent"
-            className="svg-shadow-hover"
+            className={`svg-shadow-hover ${
+              anaHighTag === d.label ? "svg-shadow-active" : ""
+            }`}
             style={{ pointerEvents: "auto" }}
             onClick={() => handleClick(d.label)}
           />
@@ -582,13 +587,33 @@ const HeatMap = ({
           )}
 
           <g
-            className="heatmap-row-rects-g"
+            className="heatmap-row-background-rects-g"
             transform={`translate(${
               width *
               (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
             }, 0)`}
           >
             {d.all_timeDis.map((count, i) => (
+              <rect
+                key={i}
+                x={rectWidth * i}
+                y="0"
+                width={rectWidth * heatmapRectWidthRatio}
+                height={heatmapRectHeightRatio * height}
+                fill={count > 0 ? "#ddd" : "transparent"}
+                opacity={0.8}
+              />
+            ))}
+          </g>
+
+          <g
+            className="heatmap-row-highlight-rects-g"
+            transform={`translate(${
+              width *
+              (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
+            }, 0)`}
+          >
+            {d.highlight_timeDis.map((count, i) => (
               <rect
                 key={i}
                 x={rectWidth * i}
