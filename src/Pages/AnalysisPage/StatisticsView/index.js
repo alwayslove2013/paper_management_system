@@ -350,11 +350,11 @@ const TimeLine = ({
             stroke="#aaa"
             strokeWidth="1"
           />
-          {data.map((d, i) =>
-            +d.year % 5 === 0 ? (
-              <g>
+          {data
+            .filter((d) => +d.year % 5 === 0)
+            .map((d, i) => (
+              <g key={i}>
                 <path
-                  key={i}
                   d={`M${x(i) + barWidth * 0.5},${timeDisLineRatio * height}V${
                     timeDisStickRatio * height
                   }`}
@@ -372,10 +372,7 @@ const TimeLine = ({
                   {d.year}
                 </text>
               </g>
-            ) : (
-              <></>
-            )
-          )}
+            ))}
         </g>
       </g>
     </g>

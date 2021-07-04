@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./index.scss";
 import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
@@ -16,7 +16,7 @@ const NetworkView = observer(() => {
   const clientRect = useClientRect({
     svgId,
   });
-  const { width, height } = clientRect;
+  const { width = 0, height = 0 } = clientRect;
 
   const store = useGlobalStore();
   const {
@@ -264,7 +264,7 @@ const NetworkView = observer(() => {
             strokeWidth="2"
           />
           <g id="ana-network-axis-labels">
-            {anaYearRange.map((year, i) => (
+            {anaYearRange.map((year) => (
               <text
                 key={year}
                 x={x(year)}
@@ -308,9 +308,6 @@ const NetworkView = observer(() => {
                 doi2indexByYear[paper.doi]
               )})`}
               cursor="pointer"
-              onClick={() => {
-                console.log("click", paper);
-              }}
               opacity={rectOpacity(paper)}
               onClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
             >
