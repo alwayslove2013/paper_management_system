@@ -332,8 +332,9 @@ const ProjectionView = observer(() => {
   );
   const labelFontS = d3
     .scaleLinear()
-    .domain(d3.extent(mostCitedPapers, (p) => p.citationCount))
-    .range([16, 22]);
+    .domain(d3.extent(mostCitedPapers, (p) => +p.citationCount))
+    .range([16, 22])
+    .clamp(true);
   console.log("mostCitedPaperDoiSet", mostCitedPaperDoiSet);
 
   const abbr = (paper) => {
@@ -461,7 +462,7 @@ const ProjectionView = observer(() => {
               )})`}
             >
               <text
-                fontSize={labelFontS(paper.citationCount)}
+                fontSize={labelFontS(+paper.citationCount)}
                 fill="#333"
                 stroke="none"
                 textAnchor="middle"

@@ -22,7 +22,7 @@ const AnalysisPage = () => {
   return (
     <div className="analysis-container">
       <div className="left-container">
-        {/* <TagView /> */}
+        {/* <TagView /> */}  
         <StatisticsView />
       </div>
       <div className="middle-container">

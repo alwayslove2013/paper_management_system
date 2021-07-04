@@ -16,6 +16,7 @@ $border-middle: 2px solid #888;
     // padding: 3px 0;
     border-bottom: 1px solid #ccc;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 5px 0px 8px 0;
     margin: 0 5px;
@@ -50,7 +51,7 @@ $border-middle: 2px solid #888;
       position: relative;
       height: 94%;
       // box-shadow: 0 0 5px blue;
-      overflow: auto;
+      overflow-y: scroll;
       font-size: 10px;
       padding-bottom: 10px;
       .papers-table-row {

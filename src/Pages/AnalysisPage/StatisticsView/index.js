@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
 import { useClientRect } from "Hooks";
 import * as d3 from "d3";
+import { get } from "mobx";
 // import { UserOutlined } from "@ant-design/icons";
 
 const fontL = 0.022;
@@ -15,7 +16,7 @@ const ratio = (r) => `${r * 100}%`;
 const headerRatio = 0.045;
 const timeDistributionRatio = 0.1;
 
-const heatmapTitleRatio = 0.036;
+const heatmapTitleRatio = 0.03;
 const heatmapRowRatio = 0.024;
 const heatmapRowLabelWidthRatio = 0.24;
 const heatmapRowRectsLeftPaddingRatio = 0.05;
@@ -73,6 +74,8 @@ const StatisticsView = observer(() => {
     anaYearRange,
     num_topics,
     topicColorScale,
+    anaFilterType,
+    anaHighTag,
     setAnaFilterType,
     setAnaHighPapersByYear,
     setAnaHighPapersByTag,
@@ -139,8 +142,8 @@ const StatisticsView = observer(() => {
       setAnaHighPapersByYear([selectStartYear, selectEndYear]);
   };
 
-  const brushEnd = ({ selection = null }) => {
-    if (selection) {
+  const brushEnd = (something) => {
+    if (something && something.selection) {
     } else {
       setAnaFilterType("none");
       setAnaHighPapersByYear([
@@ -150,11 +153,33 @@ const StatisticsView = observer(() => {
     }
   };
 
+  const handleClickAuthor = (author) => {
+    setAnaHighPapersByTag({ anaHighCate: "authors", anaHighTag: author });
+  };
+
+  const handleClickTag = (keyword) => {
+    setAnaHighPapersByTag({ anaHighCate: "keywords", anaHighTag: keyword });
+  };
+
   return (
     <svg id={svgId} width="100%" height="100%">
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop
+            offset="20%"
+            style={{ "stop-color": "#777", "stop-opacity": 1 }}
+          />
+          <stop
+            offset="100%"
+            style={{ "stop-color": "#fff", "stop-opacity": 1 }}
+          />
+        </linearGradient>
+      </defs>
       <g id="header-g" style={headerStyle}>
         <StatisticsHeader
           allCount={analysisPapers.length}
+          highlightCount={anaHighPapers.length}
+          anaFilterType={anaFilterType}
           width={width}
           height={height}
         />
@@ -174,12 +199,22 @@ const StatisticsView = observer(() => {
       </g>
       <g id="authors-distribution-g" style={authorDisStyle}>
         <HeatmapContent height={height} title={"Author"}>
-          <HeatMap data={authorData} width={width} height={height} />
+          <HeatMap
+            data={authorData}
+            width={width}
+            height={height}
+            handleClick={handleClickAuthor}
+          />
         </HeatmapContent>
       </g>
       <g id="keywords-distribution-g" style={keywordDisStyle}>
-        <HeatmapContent height={height} title={"Keyword"}>
-          <HeatMap data={keywordData} width={width} height={height} />
+        <HeatmapContent height={height} title={"Tag"}>
+          <HeatMap
+            data={keywordData}
+            width={width}
+            height={height}
+            handleClick={handleClickTag}
+          />
         </HeatmapContent>
       </g>
       <g id="topics-distribution-g" style={topicDisStyle}>
@@ -191,7 +226,13 @@ const StatisticsView = observer(() => {
   );
 });
 
-const StatisticsHeader = ({ allCount = 0, width = 0, height = 0 }) => {
+const StatisticsHeader = ({
+  allCount = 0,
+  highlightCount = 0,
+  anaFilterType = "none",
+  width = 0,
+  height = 0,
+}) => {
   return (
     <>
       <text
@@ -201,7 +242,8 @@ const StatisticsHeader = ({ allCount = 0, width = 0, height = 0 }) => {
         fontWeight="600"
         fill="#444"
       >
-        Papers: {allCount}
+        {/* Papers: {anaFilterType === 'none' || `${highlightCount}/`}{allCount} */}
+        All Papers: {allCount}
       </text>
       <path
         d={`M${width * 0.02}, ${headerRatio * height * 0.8} H${width * 0.98}`}
@@ -283,7 +325,7 @@ const TimeLine = ({
     timeline.call(brush);
     setClearBrushTrigger(() => {
       d3.brush().move(timeline);
-      brushEnd();
+      // brushEnd();
     });
   }, [width]);
 
@@ -380,10 +422,10 @@ const TimeLine = ({
   );
 };
 
-const topicBarChartHeightRatio = 0.05;
 const topicBarChartBottomRatio = 0.005;
 
 const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
+  const topicBarChartHeightRatio = data.length > 0 ? 0.21 / data.length : 0.22;
   const maxCount = d3.max(data.map((topicData) => d3.max(topicData.allDis)));
   const yearCount = data.length === 0 ? 1 : data[0].allDis.length;
   const x = (i) => ((width * heatmapRowRectsWidthRatio) / yearCount) * i;
@@ -402,8 +444,8 @@ const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
         >
           <text
             x={heatmapRowLabelWidthRatio * width}
-            y={topicBarChartHeightRatio * height * 0.5}
-            fontSize={fontM * height}
+            y={topicBarChartHeightRatio * height * 0.42}
+            fontSize={fontS * height}
             fontWeight="600"
             textAnchor="end"
           >
@@ -411,7 +453,7 @@ const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
           </text>
           <text
             x={heatmapRowLabelWidthRatio * width}
-            y={topicBarChartHeightRatio * height * 1}
+            y={topicBarChartHeightRatio * height * 0.92}
             fontSize={fontS * height}
             fontWeight="600"
             textAnchor="end"
@@ -453,18 +495,18 @@ const HeatmapContent = ({
       <g className="heatmap-title-g">
         <rect
           className="heatmap-title-background"
-          x="0"
+          x="20"
           y={titleContentHeight * 0.05}
-          width="130"
+          width="100"
           height={titleContentHeight * 0.8}
-          fill="#aaa"
+          fill="url(#grad1)"
         />
         <g className="heatmap-title-content">
           {/* <icon /> */}
           <text
             x="35"
             y={titleContentHeight * 0.64}
-            fontSize={fontM * height}
+            fontSize={fontS * height}
             fill="#fff"
             fontWeight="600"
           >
@@ -482,7 +524,12 @@ const HeatmapContent = ({
   );
 };
 
-const HeatMap = ({ data, width, height }) => {
+const HeatMap = ({
+  data = [],
+  width = 0,
+  height = 0,
+  handleClick = () => {},
+}) => {
   const yearCount = data.length > 0 ? data[0].all_timeDis.length : 1;
   const rectWidth = (width * heatmapRowRectsWidthRatio) / yearCount;
   const heatmapRowStyle = (i) => ({
@@ -494,13 +541,25 @@ const HeatMap = ({ data, width, height }) => {
     return heatmapColors[index - 1];
   };
   return (
-    <>
+    <g style={{ pointerEvents: "none" }}>
       {data.map((d, i) => (
         <g className="heatmap-row-g" key={d.label} style={heatmapRowStyle(i)}>
+          <rect
+            x={width * 0.01}
+            y={-heatmapRectHeightRatio * height * 0.1}
+            rx={5}
+            ry={5}
+            height={heatmapRectHeightRatio * height * 1.2}
+            width={width * 0.98}
+            fill="transparent"
+            className="svg-shadow-hover"
+            style={{ pointerEvents: "auto" }}
+            onClick={() => handleClick(d.label)}
+          />
           {d.label.length > 13 ? (
             <text
               x={width * heatmapRowLabelWidthRatio}
-              y={ratio(heatmapRectHeightRatio)}
+              y={ratio(heatmapRectHeightRatio - 0.004)}
               fontSize={fontS * height}
               fill="#666"
               textAnchor="end"
@@ -513,7 +572,7 @@ const HeatMap = ({ data, width, height }) => {
           ) : (
             <text
               x={width * heatmapRowLabelWidthRatio}
-              y={ratio(heatmapRectHeightRatio)}
+              y={ratio(heatmapRectHeightRatio - 0.004)}
               fontSize={fontS * height}
               fill="#888"
               textAnchor="end"
@@ -543,7 +602,7 @@ const HeatMap = ({ data, width, height }) => {
           </g>
         </g>
       ))}
-    </>
+    </g>
   );
 };
 

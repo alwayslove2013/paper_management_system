@@ -10,7 +10,13 @@ import { toJS } from "mobx";
 
 const PapersTable = observer(() => {
   const store = useGlobalStore();
-  const { analysisPapers, anaHighPapers } = store;
+  const {
+    analysisPapers,
+    anaHighPapers,
+    anaFilterType,
+    anaHighTag,
+    anaHighTopic,
+  } = store;
   const [sortAttr, setSortAttr] = useState("citationCount");
   const [order, setOrder] = useState(1);
   const papers = [...anaHighPapers].sort(
@@ -78,13 +84,33 @@ const PapersTable = observer(() => {
       onClick: () => handleClick("citationCount"),
     },
   ];
+
+  const allCount = analysisPapers.length;
+  const highlightCount = anaHighPapers.length;
+
   return (
     <div className="papers-table-container">
-      <div className="papers-table-title">Paper List</div>
+      <div className="papers-table-title">
+        <div>
+          Paper List (
+          {`${anaFilterType === "none" ? '' : `${highlightCount}/`}${allCount}`}
+          )
+        </div>
+        {anaFilterType === "none" ||
+          (anaFilterType === "topic" ? (
+            <div>{anaHighTopic}</div>
+          ) : (
+            <div>{anaHighTag}</div>
+          ))}
+      </div>
       <div className="papers-table-content">
         <div className="papers-table-header">
           {columns.map((column) => (
-            <div className="papers-table-header-column" style={column.style} onClick={column.onClick}>
+            <div
+              className="papers-table-header-column"
+              style={column.style}
+              onClick={column.onClick}
+            >
               {column.title}
             </div>
           ))}
