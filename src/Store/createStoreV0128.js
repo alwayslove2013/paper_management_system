@@ -691,6 +691,7 @@ const createStore = () => {
       this.tryLda();
     },
     topics_detail: [],
+    topics_word_dis: [],
     tryLda() {
       const dois = this.analysisPapers.map((paper) => paper.doi);
       const uid = this.userId;
@@ -700,7 +701,7 @@ const createStore = () => {
         debug && console.log("try lda OK!", data);
         runInAction(() => {
           // console.log("data", data);
-          const { paper_lda_res, topics_detail, code = "success" } = data;
+          const { paper_lda_res, topics_detail, code = "success", topics_word_dis } = data;
           if (code === "success") {
             this.analysisPapers.forEach((paper) => {
               if (paper.doi in paper_lda_res) {
@@ -715,6 +716,7 @@ const createStore = () => {
             });
             this.drawProjectionFlag = true;
             this.topics_detail = topics_detail;
+            this.topics_word_dis = topics_word_dis;
             // 初始化一下
             this.anaHighPapers = this.analysisPapers;
           }

@@ -227,7 +227,7 @@ const StatisticsHeader = ({ allCount = 0, width = 0, height = 0 }) => {
           y={height * headerRatio * 0.45}
           fontSize={fontS * height}
           textAnchor="end"
-          fill="#aaa"
+          fill="#999"
         >
           0
         </text>
@@ -235,7 +235,7 @@ const StatisticsHeader = ({ allCount = 0, width = 0, height = 0 }) => {
           x={width * 0.32}
           y={height * headerRatio * 0.45}
           fontSize={fontS * height}
-          fill="#aaa"
+          fill="#999"
         >
           &ge;5
         </text>
