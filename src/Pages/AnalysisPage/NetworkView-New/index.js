@@ -10,7 +10,7 @@ const NetworkView = observer(() => {
   const padding = {
     left: 50,
     right: 50,
-    top: 40,
+    top: 50,
     bottom: 40,
   };
   const clientRect = useClientRect({
@@ -31,6 +31,7 @@ const NetworkView = observer(() => {
     anaHighEntityCitePaperDois,
     anaHighEntityCitedPaperDois,
     anaHighTopicIndenpentPaperDois,
+    anaYearRange,
   } = store;
 
   // rect
@@ -254,6 +255,29 @@ const NetworkView = observer(() => {
   return (
     <div className="ana-network-view">
       <svg id={svgId} width="100%" height="100%">
+        <g id="ana-network-axis">
+          <path
+            d={`M${padding.left * 0.3},${padding.top * 0.63}H${
+              width - padding.right * 0.3
+            }`}
+            stroke="#666"
+            strokeWidth="2"
+          />
+          <g id="ana-network-axis-labels">
+            {anaYearRange.map((year, i) => (
+              <text
+                key={year}
+                x={x(year)}
+                y={padding.top * 0.5}
+                fontSize="14"
+                fill="#888"
+                textAnchor="middle"
+              >
+                {year}
+              </text>
+            ))}
+          </g>
+        </g>
         <g id="network-contour-g">
           <path
             d={d3.geoPath()(contour)}
