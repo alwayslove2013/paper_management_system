@@ -1,0 +1,21 @@
+.topic-list-view {
+  position: relative;
+  height: 100%;
+  padding: 0 5px;
+  .topic-list-header {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+    // padding: 3px 0;
+    height: 12%;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+  }
+  .topic-list-content {
+    position: relative;
+    width: 100%;
+    height: 88%;
+    // box-shadow: 0 0 5px red;
+  }
+}

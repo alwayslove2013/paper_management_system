@@ -267,7 +267,7 @@ const TimeLine = ({
   const x = (i) => ((width * heatmapRowRectsWidthRatio) / yearCount) * i;
   const y = (count) =>
     (height * timeDisBarRatio * (maxCount - count)) / maxCount;
-  const barWidth = ((width * heatmapRowRectsWidthRatio) / yearCount) * 0.9;
+  const barWidth = ((width * heatmapRowRectsWidthRatio) / yearCount) * 0.8;
 
   const brush = d3
     .brushX()
@@ -432,7 +432,7 @@ const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
                 key={j}
                 x={x(j)}
                 y={y(count)}
-                width={((width * heatmapRowRectsWidthRatio) / yearCount) * 0.9}
+                width={((width * heatmapRowRectsWidthRatio) / yearCount) * 0.8}
                 height={y(0) - y(count)}
               />
             ))}
