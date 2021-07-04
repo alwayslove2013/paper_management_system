@@ -22,7 +22,6 @@ const TopicView = observer(() => {
   const svgId = "topic-list-content-svg";
   const clientRect = useClientRect({ svgId });
   const { width, height } = clientRect;
-  console.log(width, height);
   const columnWidth = width / num_topics;
   const paddingTop = 0.01;
   const wordsHeight = 0.85;
