@@ -76,6 +76,7 @@ const StatisticsView = observer(() => {
     topicColorScale,
     anaFilterType,
     anaHighTag,
+    anaHighTopic,
     setAnaFilterType,
     setAnaHighPapersByYear,
     setAnaHighPapersByTag,
@@ -161,6 +162,10 @@ const StatisticsView = observer(() => {
     setAnaHighPapersByTag({ anaHighCate: "keywords", anaHighTag: keyword });
   };
 
+  const handleClickTopic = (topic) => {
+    setAnaHighPapersByTopic(topic);
+  };
+
   return (
     <svg id={svgId} width="100%" height="100%">
       <defs>
@@ -221,7 +226,13 @@ const StatisticsView = observer(() => {
       </g>
       <g id="topics-distribution-g" style={topicDisStyle}>
         <HeatmapContent height={height} title={"Topic"}>
-          <TopicDistribution data={topicData} width={width} height={height} />
+          <TopicDistribution
+            data={topicData}
+            width={width}
+            height={height}
+            handleClick={handleClickTopic}
+            anaHighTag={anaHighTag}
+          />
         </HeatmapContent>
       </g>
     </svg>
@@ -426,7 +437,13 @@ const TimeLine = ({
 
 const topicBarChartBottomRatio = 0.005;
 
-const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
+const TopicDistribution = ({
+  data = [],
+  width = 0,
+  height = 0,
+  handleClick = () => {},
+  anaHighTag = "",
+}) => {
   const topicBarChartHeightRatio = data.length > 0 ? 0.21 / data.length : 0.22;
   const maxCount = d3.max(data.map((topicData) => d3.max(topicData.allDis)));
   const yearCount = data.length === 0 ? 1 : data[0].allDis.length;
@@ -443,7 +460,23 @@ const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
             (topicBarChartHeightRatio + topicBarChartBottomRatio) * height * i
           })`}
           fill={topicData.color}
+          style={{ pointerEvents: "none" }}
         >
+          <rect
+            x={width * 0.1}
+            y={-(y(0) - y(maxCount)) * 0.04}
+            rx={5}
+            ry={5}
+            height={(y(0) - y(maxCount)) * 1.08}
+            width={width * 0.88}
+            fill="transparent"
+            className={`svg-shadow-hover ${
+              anaHighTag === topicData.label ? "svg-shadow-active" : ""
+            }
+            `}
+            style={{ pointerEvents: "auto" }}
+            onClick={() => handleClick(i)}
+          />
           <text
             x={heatmapRowLabelWidthRatio * width}
             y={topicBarChartHeightRatio * height * 0.42}
@@ -463,13 +496,31 @@ const TopicDistribution = ({ data = [], width = 0, height = 0 }) => {
             {topicData.highlightCount}/{topicData.allCount}
           </text>
           <g
-            className="topic-bar-chart-bars"
+            className="topic-bar-chart-background-bars"
             transform={`translate(${
               width *
               (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
             }, 0)`}
           >
             {topicData.allDis.map((count, j) => (
+              <rect
+                key={j}
+                x={x(j)}
+                y={y(count)}
+                width={((width * heatmapRowRectsWidthRatio) / yearCount) * 0.8}
+                fill={'#ccc'}
+                height={y(0) - y(count)}
+              />
+            ))}
+          </g>
+          <g
+            className="topic-bar-chart-active-bars"
+            transform={`translate(${
+              width *
+              (heatmapRowLabelWidthRatio + heatmapRowRectsLeftPaddingRatio)
+            }, 0)`}
+          >
+            {topicData.highLightDis.map((count, j) => (
               <rect
                 key={j}
                 x={x(j)}

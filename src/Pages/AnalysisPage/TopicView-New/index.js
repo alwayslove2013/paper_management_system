@@ -41,7 +41,7 @@ const TopicView = observer(() => {
 
   return (
     <div className="topic-list-view">
-      <div className="topic-list-header">Topics List</div>
+      <div className="topic-list-header">Topic List</div>
       <div className="topic-list-content">
         <svg id={svgId} width="100%" height="100%">
           <g
