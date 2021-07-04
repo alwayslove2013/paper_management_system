@@ -26,6 +26,7 @@ const TopicView = observer(() => {
   const columnWidth = width / num_topics;
   const paddingTop = 0.01;
   const wordsHeight = 0.85;
+  const topicLableTop = 0.02;
   const topicLableHeight = 1 - paddingTop - wordsHeight;
   const wordHeight = wordsHeight / get(topics_word_dis, `[0].length`, 1);
 
@@ -35,7 +36,8 @@ const TopicView = observer(() => {
       d3.min(topics_word_dis.map((topics) => d3.min(topics, (d) => d[1]))),
       d3.max(topics_word_dis.map((topics) => d3.max(topics, (d) => d[1]))),
     ])
-    .range([wordHeight * 0.4 * height, wordHeight * 1.1 * height]);
+    .range([wordHeight * 0.45 * height, wordHeight * 1.1 * height])
+    .clamp(true);
 
   return (
     <div className="topic-list-view">
@@ -68,9 +70,35 @@ const TopicView = observer(() => {
             ))}
           </g>
           <g
-            className="topic-list-topics"
-            transform={`translate(0, ${height * (paddingTop + wordsHeight)})`}
-          ></g>
+            className="topic-list-topics-label"
+            transform={`translate(0, ${
+              height * (paddingTop + wordsHeight + topicLableTop)
+            })`}
+          >
+            {d3.range(num_topics).map((i) => (
+              <g
+                className="topic-list-topic-label"
+                transform={`translate(${columnWidth * (i + 0.5)}, 0)`}
+              >
+                <rect
+                  x={-columnWidth * 0.25}
+                  y={fontSize(1) * 0.1}
+                  width={columnWidth * 0.5}
+                  height={fontSize(1) * 0.95}
+                  fill={topicColorScale[i]}
+                />
+                <text
+                  fontSize={fontSize(1) * 0.6}
+                  fill="#fff"
+                  textAnchor="middle"
+                  x="0"
+                  y={fontSize(1) * 0.8}
+                >
+                  Topic {i + 1}
+                </text>
+              </g>
+            ))}
+          </g>
         </svg>
       </div>
     </div>
