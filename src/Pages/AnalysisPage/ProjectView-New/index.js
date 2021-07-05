@@ -335,7 +335,6 @@ const ProjectionView = observer(() => {
     .domain(d3.extent(mostCitedPapers, (p) => +p.citationCount))
     .range([16, 22])
     .clamp(true);
-  console.log("mostCitedPaperDoiSet", mostCitedPaperDoiSet);
 
   const abbr = (paper) => {
     const author = get(paper, "authors[0]", "").split(" ").slice(-1);

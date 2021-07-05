@@ -53,7 +53,7 @@ const NetworkView = observer(() => {
     d3.min([
       rectWidth * 0.4,
       ((height - padding.bottom - padding.top) / d3.max(paperCountByYear)) *
-        0.8,
+        0.7,
     ]),
     0,
   ]);
@@ -94,6 +94,14 @@ const NetworkView = observer(() => {
   };
   const rectStroke = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return "red";
+    if (
+      anaSelectHighlightPaperDoi.length > 0 &&
+      anaHighPapersDoiSet.has(paper.doi)
+    ) {
+      if (paper.refList.includes(anaSelectHighlightPaperDoi)) return "#333";
+      if (doi2paper[anaSelectHighlightPaperDoi].refList.includes(paper.doi))
+        return "#333";
+    }
     if (anaHighEntityTopic >= 0) {
       if (anaHighEntityCitePaperDois.includes(paper.doi)) return "#666";
       if (anaHighEntityCitedPaperDois.includes(paper.doi)) return "#666";
@@ -104,10 +112,26 @@ const NetworkView = observer(() => {
   };
   const rectStrokeWidth = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return 3;
+    else if (
+      anaSelectHighlightPaperDoi.length > 0 &&
+      anaHighPapersDoiSet.has(paper.doi)
+    ) {
+      if (paper.refList.includes(anaSelectHighlightPaperDoi)) return 3;
+      if (doi2paper[anaSelectHighlightPaperDoi].refList.includes(paper.doi))
+        return 3;
+    }
     else return 2;
   };
   const rectStrokeDashArray = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return [4, 7];
+    if (
+      anaSelectHighlightPaperDoi.length > 0 &&
+      anaHighPapersDoiSet.has(paper.doi)
+    ) {
+      if (paper.refList.includes(anaSelectHighlightPaperDoi)) return "none";
+      if (doi2paper[anaSelectHighlightPaperDoi].refList.includes(paper.doi))
+        return "none";
+    }
     if (anaHighEntityTopic >= 0) {
       if (anaHighEntityCitePaperDois.includes(paper.doi)) return "none";
       if (anaHighEntityCitedPaperDois.includes(paper.doi)) return "none";
@@ -175,11 +199,16 @@ const NetworkView = observer(() => {
     }
   };
   const linkStroke = (link) => {
+    // 选中中心文献，高亮“中心文献”与“子集合内部”的所有引用连边。
     if (
-      link.source === anaSelectHighlightPaperDoi ||
-      link.target === anaSelectHighlightPaperDoi
+      (link.source === anaSelectHighlightPaperDoi &&
+        anaHighPapersDoiSet.has(link.target)) ||
+      (link.target === anaSelectHighlightPaperDoi &&
+        anaHighPapersDoiSet.has(link.source))
     )
       return "#333";
+
+    // 有高亮主题且高亮连边的情况下，主题影响力颜色方向
     if (anaHighEntityTopic >= 0) {
       if (
         anaHighEntityCitePaperDois.includes(link.target) &&
@@ -192,6 +221,8 @@ const NetworkView = observer(() => {
       )
         return topicColorScale[anaHighEntityTopic];
     }
+
+    // 集合内部
     if (
       anaHighPapersDoiSet.has(link.source) &&
       anaHighPapersDoiSet.has(link.target)
@@ -201,10 +232,12 @@ const NetworkView = observer(() => {
   };
   const linkOpacity = (link) => {
     if (
-      link.source === anaSelectHighlightPaperDoi ||
-      link.target === anaSelectHighlightPaperDoi
+      (link.source === anaSelectHighlightPaperDoi &&
+        anaHighPapersDoiSet.has(link.target)) ||
+      (link.target === anaSelectHighlightPaperDoi &&
+        anaHighPapersDoiSet.has(link.source))
     )
-      return 0.7;
+      return 1;
     if (anaFilterType === "none") return 0.1;
     if (anaHighEntityTopic >= 0) {
       if (
