@@ -791,10 +791,29 @@ const createStore = () => {
       // newPaper.refList = newPaper.refList.join(";")
       singleUpdatePaper(oriDoi, newPaper).then(() => {
         runInAction(() => {
-          console.log("singleUpdatePaper finished", oriDoi, newPaper);
+          debug && console.log("singleUpdatePaper finished", oriDoi, newPaper);
           this.initPapers();
         });
       });
+    },
+
+    anaHoverPaperDoi: "",
+    get anaHoverPaper() {
+      return this.anaHighPapers.find(
+        (paper) => paper.doi === this.anaHoverPaperDoi
+      );
+    },
+    anaHoverPaperPositionX: 0,
+    anaHoverPaperPositionY: 0,
+    setAnaHoverPaperDoi(clientX, clientY, doi) {
+      debug && console.log("set hover paper doi", clientX, clientY, doi);
+      this.anaHoverPaperDoi = doi;
+      this.anaHoverPaperPositionX = clientX;
+      this.anaHoverPaperPositionY = clientY;
+    },
+    removeHoverPaperDoi() {
+      debug && console.log("remover hover paper doi");
+      this.anaHoverPaperDoi = "";
     },
   };
 };

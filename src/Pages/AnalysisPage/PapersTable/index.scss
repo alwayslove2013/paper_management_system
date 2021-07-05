@@ -70,6 +70,10 @@ $border-middle: 2px solid #888;
           border-right: 1px solid #ddd;
         }
       }
+      .papers-table-row-active {
+        background: #999;
+        color: #fff;
+      }
     }
   }
 }

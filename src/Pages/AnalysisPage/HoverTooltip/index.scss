@@ -1,0 +1,33 @@
+.ana-hover-tooltip-container {
+  position: fixed;
+  max-width: 500px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 5px #ccc;
+  padding: 5px 5px;
+  font-size: 12px;
+  .ana-tooltip-header {
+    position: relative;
+    .ana-tooltip-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    padding-bottom: 3px;
+    border-bottom: 1px solid #aaa;
+  }
+  .ana-tooltip-content {
+    position: relative;
+    padding-top: 2px;
+    .ana-tooltip-content-row {
+      position: relative;
+      padding: 2px 0;
+      .ana-tooltip-row-label {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .ana-tooltip-row-text {
+        margin-left: 10px;
+      }
+    }
+  }
+}

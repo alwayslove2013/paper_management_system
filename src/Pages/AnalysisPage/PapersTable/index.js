@@ -16,12 +16,26 @@ const PapersTable = observer(() => {
     anaFilterType,
     anaHighTag,
     anaHighTopic,
+    anaSelectHighlightPaperDoi,
+    setAnaSelectHighlightPaperDoi,
+    setAnaHoverPaperDoi,
+    removeHoverPaperDoi,
   } = store;
-  const [sortAttr, setSortAttr] = useState("citationCount");
+  const [sortAttr, setSortAttr] = useState("year");
   const [order, setOrder] = useState(1);
   const papers = [...anaHighPapers].sort(
     (a, b) => order * (+a[sortAttr] - +b[sortAttr])
   );
+  // const papers = [
+  //   ...anaHighPapers.filter(
+  //     (paper) => paper.doi === anaSelectHighlightPaperDoi
+  //   ),
+  //   ...[
+  //     ...anaHighPapers.filter(
+  //       (paper) => paper.doi !== anaSelectHighlightPaperDoi
+  //     ),
+  //   ].sort((a, b) => order * (+a[sortAttr] - +b[sortAttr])),
+  // ];
   const handleClick = (attr) => {
     if (attr === sortAttr) setOrder(order * -1);
     else setSortAttr(attr);
@@ -87,6 +101,13 @@ const PapersTable = observer(() => {
 
   const allCount = analysisPapers.length;
   const highlightCount = anaHighPapers.length;
+  const handleClickPaperRow = (paper) =>
+    setAnaSelectHighlightPaperDoi(paper.doi);
+
+  const handleHover = (e, doi) => {
+    const { clientX, clientY } = e;
+    setAnaHoverPaperDoi(clientX, clientY, doi);
+  };
 
   return (
     <div className="papers-table-container">
@@ -116,7 +137,17 @@ const PapersTable = observer(() => {
         </div>
         <div className="papers-table-rows-container">
           {papers.map((paper) => (
-            <div className="papers-table-row" key={paper.doi}>
+            <div
+              key={paper.doi}
+              className={`papers-table-row ${
+                anaSelectHighlightPaperDoi === paper.doi
+                  ? "papers-table-row-active"
+                  : ""
+              }`}
+              onClick={() => handleClickPaperRow(paper)}
+              onMouseEnter={(e) => handleHover(e, paper.doi)}
+              onMouseLeave={removeHoverPaperDoi}
+            >
               {columns.map((column) => (
                 <div className="papers-table-column" style={column.style}>
                   {column.showText(paper)}

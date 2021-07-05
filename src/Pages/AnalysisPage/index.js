@@ -11,6 +11,7 @@ import TopicView from "./TopicView-New";
 // import DetailView from "./DetailView";
 import StatisticsView from "./StatisticsView";
 import PapersTable from "./PapersTable";
+import HoverTooltip from "./HoverTooltip";
 
 const AnalysisPage = () => {
   const store = useGlobalStore();
@@ -21,8 +22,9 @@ const AnalysisPage = () => {
   }, []);
   return (
     <div className="analysis-container">
+      <HoverTooltip />
       <div className="left-container">
-        {/* <TagView /> */}  
+        {/* <TagView /> */}
         <StatisticsView />
       </div>
       <div className="middle-container">
@@ -47,6 +49,7 @@ const AnalysisPage = () => {
           <PapersTable />
         </div>
       </div>
+      <HoverTooltip />
     </div>
   );
 };
