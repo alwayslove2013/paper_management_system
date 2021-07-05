@@ -27,6 +27,8 @@ const ProjectionView = observer(() => {
     setHighEntityLinkData,
     anaHighEntityTopic,
     setAnaHighEntityTopic,
+    setAnaHoverPaperDoi,
+    removeHoverPaperDoi,
   } = store;
   const [num_topics_ing, set_num_topics_ing] = useState(num_topics);
 
@@ -345,6 +347,11 @@ const ProjectionView = observer(() => {
       : "";
   };
 
+  const handleHover = (e, doi) => {
+    const { clientX, clientY } = e;
+    setAnaHoverPaperDoi(clientX, clientY, doi);
+  };
+
   return (
     <div className="projection-view">
       <svg id={svgId} width="100%" height="100%">
@@ -395,6 +402,8 @@ const ProjectionView = observer(() => {
                 stroke={paperCircleStroke(paper)}
                 cursor="pointer"
                 onClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
+                onMouseEnter={(e) => handleHover(e, paper.doi)}
+                onMouseLeave={removeHoverPaperDoi}
               />
             </g>
           ))}

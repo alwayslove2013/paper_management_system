@@ -32,6 +32,8 @@ const NetworkView = observer(() => {
     anaHighEntityCitedPaperDois,
     anaHighTopicIndenpentPaperDois,
     anaYearRange,
+    setAnaHoverPaperDoi,
+    removeHoverPaperDoi,
   } = store;
 
   // rect
@@ -119,8 +121,7 @@ const NetworkView = observer(() => {
       if (paper.refList.includes(anaSelectHighlightPaperDoi)) return 3;
       if (doi2paper[anaSelectHighlightPaperDoi].refList.includes(paper.doi))
         return 3;
-    }
-    else return 2;
+    } else return 2;
   };
   const rectStrokeDashArray = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return [4, 7];
@@ -285,6 +286,11 @@ const NetworkView = observer(() => {
     return 0;
   };
 
+  const handleHover = (e, doi) => {
+    const { clientX, clientY } = e;
+    setAnaHoverPaperDoi(clientX, clientY, doi);
+  };
+
   return (
     <div className="ana-network-view">
       <svg id={svgId} width="100%" height="100%">
@@ -367,6 +373,8 @@ const NetworkView = observer(() => {
                   strokeWidth={rectStrokeWidth(paper)}
                   strokeLinecap="round"
                   strokeDasharray={rectStrokeDashArray(paper)}
+                  onMouseEnter={(e) => handleHover(e, paper.doi)}
+                  onMouseLeave={removeHoverPaperDoi}
                 />
               </>
             </g>

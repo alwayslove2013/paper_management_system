@@ -799,7 +799,7 @@ const createStore = () => {
 
     anaHoverPaperDoi: "",
     get anaHoverPaper() {
-      return this.anaHighPapers.find(
+      return this.analysisPapers.find(
         (paper) => paper.doi === this.anaHoverPaperDoi
       );
     },
