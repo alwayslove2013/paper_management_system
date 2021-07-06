@@ -29,6 +29,7 @@ const ProjectionView = observer(() => {
     setAnaHighEntityTopic,
     setAnaHoverPaperDoi,
     removeHoverPaperDoi,
+    anaHoverPaperDoi,
   } = store;
   const [num_topics_ing, set_num_topics_ing] = useState(num_topics);
 
@@ -326,9 +327,31 @@ const ProjectionView = observer(() => {
     );
   };
 
-  const mostCitedPapers = d3
+  // const mostCitedPapers = d3
+  //   .sort([...anaHighPapers], (p) => +p.citationCount)
+  //   .slice(anaFilterType === "topic" ? -3 : -8);
+  // const mostCitedPaperDoiSet = new Set(
+  //   mostCitedPapers.map((paper) => paper.doi)
+  // );
+  const papersSortByCite = d3
     .sort([...anaHighPapers], (p) => +p.citationCount)
-    .slice(anaFilterType === "topic" ? -3 : -8);
+    .reverse();
+  const mostCitedPapers = [];
+  const countLimit = 16;
+  const xDis = 200;
+  const yDis = 30;
+  const isCover = (p1, p2) =>
+    Math.abs(x(p1.projection[0]) - x(p2.projection[0])) < xDis &&
+    Math.abs(y(p1.projection[1]) - y(p2.projection[1])) < yDis;
+  const isShow = (paper) =>
+    mostCitedPapers.find((p) => isCover(paper, p)) ? false : true;
+  papersSortByCite.forEach((paper) => {
+    if (mostCitedPapers.length < countLimit) {
+      if (isShow(paper)) {
+        mostCitedPapers.push(paper);
+      }
+    }
+  });
   const mostCitedPaperDoiSet = new Set(
     mostCitedPapers.map((paper) => paper.doi)
   );
@@ -342,7 +365,8 @@ const ProjectionView = observer(() => {
     const author = get(paper, "authors[0]", "").split(" ").slice(-1);
     const conference = get(paper, "conferenceName", "");
     const year = `${get(paper, "year", "")}`.slice(-2);
-    return mostCitedPaperDoiSet.has(paper.doi)
+    return mostCitedPaperDoiSet.has(paper.doi) ||
+      anaSelectHighlightPaperDoi === paper.doi || anaHoverPaperDoi === paper.doi
       ? `[${author}. ${conference}${year}]`
       : "";
   };

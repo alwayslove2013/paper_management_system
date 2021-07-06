@@ -17,6 +17,7 @@ const TopicView = observer(() => {
     // anaFilterType,
     // setAnaHighPapersByTopic,
     // anaHighTopic,
+    setAnaHighPapersByTopic,
     num_topics,
   } = store;
   const svgId = "topic-list-content-svg";
@@ -35,7 +36,7 @@ const TopicView = observer(() => {
       d3.min(topics_word_dis.map((topics) => d3.min(topics, (d) => d[1]))),
       d3.max(topics_word_dis.map((topics) => d3.max(topics, (d) => d[1]))),
     ])
-    .range([wordHeight * 0.45  * height, wordHeight * 1.1 * height])
+    .range([wordHeight * 0.45 * height, wordHeight * 1.1 * height])
     .clamp(true);
 
   return (
@@ -78,6 +79,7 @@ const TopicView = observer(() => {
               <g
                 className="topic-list-topic-label"
                 transform={`translate(${columnWidth * (i + 0.5)}, 0)`}
+                onClick={() => setAnaHighPapersByTopic(i)}
               >
                 <rect
                   x={-columnWidth * 0.25}

@@ -292,7 +292,7 @@ const NetworkView = observer(() => {
   };
 
   return (
-    <div className="ana-network-view">
+    <div className="ana-network-view" style={{pointerEvents:"none"}}>
       <svg id={svgId} width="100%" height="100%">
         <g id="ana-network-axis">
           <path
@@ -349,6 +349,9 @@ const NetworkView = observer(() => {
               cursor="pointer"
               opacity={rectOpacity(paper)}
               onClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
+              onMouseEnter={(e) => handleHover(e, paper.doi)}
+              onMouseLeave={removeHoverPaperDoi}
+              style={{pointerEvents:"auto"}}
             >
               <>
                 {paper.topics.map((topic, i, s) => (
@@ -373,8 +376,6 @@ const NetworkView = observer(() => {
                   strokeWidth={rectStrokeWidth(paper)}
                   strokeLinecap="round"
                   strokeDasharray={rectStrokeDashArray(paper)}
-                  onMouseEnter={(e) => handleHover(e, paper.doi)}
-                  onMouseLeave={removeHoverPaperDoi}
                 />
               </>
             </g>
