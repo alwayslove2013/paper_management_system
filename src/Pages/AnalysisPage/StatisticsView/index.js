@@ -203,7 +203,7 @@ const StatisticsView = observer(() => {
         />
       </g>
       <g id="authors-distribution-g" style={authorDisStyle}>
-        <HeatmapContent height={height} title={"Author"}>
+        <HeatmapContent height={height} title={"Author"} width={width}>
           <HeatMap
             data={authorData}
             width={width}
@@ -214,7 +214,7 @@ const StatisticsView = observer(() => {
         </HeatmapContent>
       </g>
       <g id="keywords-distribution-g" style={keywordDisStyle}>
-        <HeatmapContent height={height} title={"Tag"}>
+        <HeatmapContent height={height} title={"Tag"} width={width}>
           <HeatMap
             data={keywordData}
             width={width}
@@ -225,7 +225,7 @@ const StatisticsView = observer(() => {
         </HeatmapContent>
       </g>
       <g id="topics-distribution-g" style={topicDisStyle}>
-        <HeatmapContent height={height} title={"Topic"}>
+        <HeatmapContent height={height} title={"Topic"} width={width}>
           <TopicDistribution
             data={topicData}
             width={width}
@@ -414,7 +414,7 @@ const TimeLine = ({
                       timeDisLineRatio * height
                     }V${timeDisStickRatio * height}`}
                     stroke="#888"
-                    strokeWidth="2"
+                    strokeWidth="1"
                   />
                   <text
                     x={x(i) + barWidth * 0.5}
@@ -463,12 +463,12 @@ const TopicDistribution = ({
           style={{ pointerEvents: "none" }}
         >
           <rect
-            x={width * 0.1}
+            x={width * 0.01}
             y={-(y(0) - y(maxCount)) * 0.04}
-            rx={5}
-            ry={5}
+            // rx={5}
+            // ry={5}
             height={(y(0) - y(maxCount)) * 1.08}
-            width={width * 0.88}
+            width={width * 0.98}
             fill="transparent"
             className={`svg-shadow-hover ${
               anaHighTag === topicData.label ? "svg-shadow-active" : ""
@@ -541,6 +541,7 @@ const HeatmapContent = ({
   title = "",
   children = <></>,
   height = 0,
+  width = 0,
 }) => {
   const titleContentHeight = height * heatmapTitleRatio;
   return (
@@ -550,18 +551,20 @@ const HeatmapContent = ({
           className="heatmap-title-background"
           x="20"
           y={titleContentHeight * 0.05}
-          width="100"
+          width={heatmapRowLabelWidthRatio * width - 20}
           height={titleContentHeight * 0.8}
-          fill="url(#grad1)"
+          // fill="url(#grad1)"
+          fill="#999"
         />
         <g className="heatmap-title-content">
           {/* <icon /> */}
           <text
-            x="35"
+            x={heatmapRowLabelWidthRatio * width * 0.5 + 10}
             y={titleContentHeight * 0.64}
             fontSize={fontS * height}
             fill="#fff"
             fontWeight="600"
+            textAnchor="middle"
           >
             {title}
           </text>
@@ -601,8 +604,8 @@ const HeatMap = ({
           <rect
             x={width * 0.01}
             y={-heatmapRectHeightRatio * height * 0.1}
-            rx={5}
-            ry={5}
+            // rx={5}
+            // ry={5}
             height={heatmapRectHeightRatio * height * 1.2}
             width={width * 0.98}
             fill="transparent"
@@ -619,18 +622,18 @@ const HeatMap = ({
               fontSize={fontS * height}
               fill="#666"
               textAnchor="end"
-              textLength="100"
-              lengthAdjust="spacingAndGlyphs"
+              // textLength="100"
+              // lengthAdjust="spacingAndGlyphs"
             >
-              {/* {d.label.length > 15 ? `${d.label.slice(0, 13)}...` : d.label} */}
-              {d.label}
+              {d.label.length > 13 ? `${d.label.slice(0, 11)}...` : d.label}
+              {/* {d.label} */}
             </text>
           ) : (
             <text
               x={width * heatmapRowLabelWidthRatio}
               y={ratio(heatmapRectHeightRatio - 0.004)}
               fontSize={fontS * height}
-              fill="#888"
+              fill="#666"
               textAnchor="end"
             >
               {d.label}

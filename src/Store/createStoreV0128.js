@@ -649,6 +649,7 @@ const createStore = () => {
       this.clearBrushTrigger();
       if (this.anaFilterType === "topic" && this.anaHighTopic === topic) {
         this.anaHighTopic = "none";
+        this.anaHighTag = "none";
         this.anaHighEntityTopic = -1;
         this.setAnaFilterType("none");
         this.anaHighPapers = this.analysisPapers;
@@ -806,13 +807,13 @@ const createStore = () => {
     anaHoverPaperPositionX: 0,
     anaHoverPaperPositionY: 0,
     setAnaHoverPaperDoi(clientX, clientY, doi) {
-      debug && console.log("set hover paper doi", clientX, clientY, doi);
+      // debug && console.log("set hover paper doi", clientX, clientY, doi);
       this.anaHoverPaperDoi = doi;
       this.anaHoverPaperPositionX = clientX;
       this.anaHoverPaperPositionY = clientY;
     },
     removeHoverPaperDoi() {
-      debug && console.log("remover hover paper doi");
+      // debug && console.log("remover hover paper doi");
       this.anaHoverPaperDoi = "";
     },
   };

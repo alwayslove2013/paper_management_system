@@ -14,9 +14,9 @@ const TopicView = observer(() => {
     topicColorScale,
     // analysisPapers,
     // anaHighPapers,
-    // anaFilterType,
+    anaFilterType,
     // setAnaHighPapersByTopic,
-    // anaHighTopic,
+    anaHighTopic,
     setAnaHighPapersByTopic,
     num_topics,
   } = store;
@@ -54,6 +54,7 @@ const TopicView = observer(() => {
                 className="topic-list-words-column"
                 key={i}
                 transform={`translate(${columnWidth * (i + 0.5)}, 0)`}
+                opacity={anaFilterType === 'topic' && anaHighTopic !== i ? 0.2 : 1}
               >
                 {topic_dis.map((topic, j) => (
                   <g
@@ -80,6 +81,7 @@ const TopicView = observer(() => {
                 className="topic-list-topic-label"
                 transform={`translate(${columnWidth * (i + 0.5)}, 0)`}
                 onClick={() => setAnaHighPapersByTopic(i)}
+                opacity={anaFilterType === 'topic' && anaHighTopic !== i ? 0.2 : 1}
               >
                 <rect
                   x={-columnWidth * 0.25}

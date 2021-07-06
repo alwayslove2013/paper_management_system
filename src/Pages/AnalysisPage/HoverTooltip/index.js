@@ -20,10 +20,10 @@ const HoverTooltip = observer(() => {
       label: "Keywords",
       showText: (paper) => paper.keywords.join("; "),
     },
-    {
-      label: "Affiliation",
-      showText: (paper) => paper.affiliation,
-    },
+    // {
+    //   label: "Affiliation",
+    //   showText: (paper) => paper.affiliation,
+    // },
     {
       label: "Abstract",
       showText: (paper) => paper.abstract,

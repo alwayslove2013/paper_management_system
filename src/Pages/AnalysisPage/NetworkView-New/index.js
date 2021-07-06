@@ -121,7 +121,8 @@ const NetworkView = observer(() => {
       if (paper.refList.includes(anaSelectHighlightPaperDoi)) return 3;
       if (doi2paper[anaSelectHighlightPaperDoi].refList.includes(paper.doi))
         return 3;
-    } else return 2;
+    }
+    return 2;
   };
   const rectStrokeDashArray = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return [4, 7];
@@ -292,15 +293,15 @@ const NetworkView = observer(() => {
   };
 
   return (
-    <div className="ana-network-view" style={{pointerEvents:"none"}}>
+    <div className="ana-network-view" style={{ pointerEvents: "none" }}>
       <svg id={svgId} width="100%" height="100%">
         <g id="ana-network-axis">
           <path
             d={`M${padding.left * 0.3},${padding.top * 0.63}H${
               width - padding.right * 0.3
             }`}
-            stroke="#666"
-            strokeWidth="2"
+            stroke="#999"
+            strokeWidth="1"
           />
           <g id="ana-network-axis-labels">
             {anaYearRange.map((year) => (
@@ -340,46 +341,65 @@ const NetworkView = observer(() => {
           ))}
         </g>
         <g id="network-rects-g">
-          {analysisPapers.map((paper) => (
-            <g
-              key={paper.doi}
-              transform={`translate(${x(+paper.year)}, ${y(
-                doi2indexByYear[paper.doi]
-              )})`}
-              cursor="pointer"
-              opacity={rectOpacity(paper)}
-              onClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
-              onMouseEnter={(e) => handleHover(e, paper.doi)}
-              onMouseLeave={removeHoverPaperDoi}
-              style={{pointerEvents:"auto"}}
-            >
-              <>
-                {paper.topics.map((topic, i, s) => (
+          {analysisPapers.map((paper) => {
+            const topicsDis = paper.topics.map((t) => t[1]);
+            const topicsDisSum = topicsDis.reduce((s, a) => s + a, 0);
+            const topicsWidth = topicsDis
+              .slice(1)
+              .map(
+                (t) =>
+                  (t / topicsDisSum < 0.2 ? 0.2 : t / topicsDisSum) * rectWidth
+              );
+            topicsWidth.unshift(
+              rectWidth - topicsWidth.reduce((s, a) => s + a, 0)
+            );
+            const topicX = [0];
+            for (let i = 0; i < topicsWidth.length - 1; i++) {
+              topicX.push(topicX[i] + topicsWidth[i]);
+            }
+            return (
+              <g
+                key={paper.doi}
+                transform={`translate(${x(+paper.year)}, ${y(
+                  doi2indexByYear[paper.doi]
+                )})`}
+                cursor="pointer"
+                opacity={rectOpacity(paper)}
+                onClick={() => setAnaSelectHighlightPaperDoi(paper.doi)}
+                onMouseEnter={(e) => handleHover(e, paper.doi)}
+                onMouseLeave={removeHoverPaperDoi}
+                style={{ pointerEvents: "auto" }}
+              >
+                <>
+                  {paper.topics.map((topic, i, s) => (
+                    <rect
+                      key={topic[0]}
+                      fill={topicColorScale[topic[0]]}
+                      // x={-rectWidth / 2 + (rectWidth / s.length) * i}
+                      x={-rectWidth / 2 + topicX[i]}
+                      y={-rectHeight / 2}
+                      // width={rectWidth / s.length}
+                      width={topicsWidth[i]}
+                      height={rectHeight}
+                      stroke="#fff"
+                      strokeWidth="1"
+                    />
+                  ))}
                   <rect
-                    key={topic[0]}
-                    fill={topicColorScale[topic[0]]}
-                    x={-rectWidth / 2 + (rectWidth / s.length) * i}
-                    y={-rectHeight / 2}
-                    width={rectWidth / s.length}
-                    height={rectHeight}
-                    stroke="#fff"
-                    strokeWidth="1"
+                    x={-rectWidth / 2 - rectStrokeWidth(paper) / 2}
+                    y={-rectHeight / 2 - rectStrokeWidth(paper) / 2}
+                    fill="none"
+                    width={rectWidth + rectStrokeWidth(paper)}
+                    height={rectHeight + rectStrokeWidth(paper)}
+                    stroke={rectStroke(paper)}
+                    strokeWidth={rectStrokeWidth(paper)}
+                    strokeLinecap="round"
+                    strokeDasharray={rectStrokeDashArray(paper)}
                   />
-                ))}
-                <rect
-                  x={-rectWidth / 2 - rectStrokeWidth(paper) / 2}
-                  y={-rectHeight / 2 - rectStrokeWidth(paper) / 2}
-                  fill="none"
-                  width={rectWidth + rectStrokeWidth(paper)}
-                  height={rectHeight + rectStrokeWidth(paper)}
-                  stroke={rectStroke(paper)}
-                  strokeWidth={rectStrokeWidth(paper)}
-                  strokeLinecap="round"
-                  strokeDasharray={rectStrokeDashArray(paper)}
-                />
-              </>
-            </g>
-          ))}
+                </>
+              </g>
+            );
+          })}
         </g>
       </svg>
     </div>
