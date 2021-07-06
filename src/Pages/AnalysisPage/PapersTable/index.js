@@ -119,7 +119,7 @@ const PapersTable = observer(() => {
         </div>
         {anaFilterType === "none" || (
           <div style={{ marginRight: 10 }}>
-            {anaFilterType === "topic" ? anaHighTopic : anaHighTag}
+            {anaHighTag}
           </div>
         )}
       </div>

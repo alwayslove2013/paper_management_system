@@ -113,16 +113,16 @@ const NetworkView = observer(() => {
     else return "#fff";
   };
   const rectStrokeWidth = (paper) => {
-    if (paper.doi === anaSelectHighlightPaperDoi) return 3;
+    if (paper.doi === anaSelectHighlightPaperDoi) return 2;
     else if (
       anaSelectHighlightPaperDoi.length > 0 &&
       anaHighPapersDoiSet.has(paper.doi)
     ) {
-      if (paper.refList.includes(anaSelectHighlightPaperDoi)) return 3;
+      if (paper.refList.includes(anaSelectHighlightPaperDoi)) return 1;
       if (doi2paper[anaSelectHighlightPaperDoi].refList.includes(paper.doi))
-        return 3;
+        return 1;
     }
-    return 2;
+    return 1;
   };
   const rectStrokeDashArray = (paper) => {
     if (paper.doi === anaSelectHighlightPaperDoi) return [4, 7];
@@ -266,24 +266,24 @@ const NetworkView = observer(() => {
       link.source === anaSelectHighlightPaperDoi ||
       link.target === anaSelectHighlightPaperDoi
     )
-      return 5;
+      return 1;
     if (anaHighEntityTopic >= 0) {
       if (
         anaHighEntityCitePaperDois.includes(link.target) &&
         anaHighTopicIndenpentPaperDois.includes(link.source)
       )
-        return 5;
+        return 1;
       if (
         anaHighEntityCitedPaperDois.includes(link.source) &&
         anaHighTopicIndenpentPaperDois.includes(link.target)
       )
-        return 5;
+        return 1;
     }
     if (
       anaHighPapersDoiSet.has(link.source) &&
       anaHighPapersDoiSet.has(link.target)
     )
-      return 4;
+      return 1;
     return 0;
   };
 
@@ -300,7 +300,7 @@ const NetworkView = observer(() => {
             d={`M${padding.left * 0.3},${padding.top * 0.63}H${
               width - padding.right * 0.3
             }`}
-            stroke="#999"
+            stroke="#666"
             strokeWidth="1"
           />
           <g id="ana-network-axis-labels">

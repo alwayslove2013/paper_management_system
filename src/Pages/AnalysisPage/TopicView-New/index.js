@@ -91,11 +91,11 @@ const TopicView = observer(() => {
                   fill={topicColorScale[i]}
                 />
                 <text
-                  fontSize={fontSize(1) * 0.6}
+                  fontSize={fontSize(1) * 0.5}
                   fill="#fff"
                   textAnchor="middle"
                   x="0"
-                  y={fontSize(1) * 0.8}
+                  y={fontSize(1) * 0.77}
                 >
                   Topic {i + 1}
                 </text>

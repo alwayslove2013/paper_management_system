@@ -18,7 +18,8 @@ const Header = observer(() => {
   const { currentPage, userId, initPapers } = store;
   const [uploadModalShow, _setUploadModalShow] = useState(false);
   const setUploadModalShow = () => _setUploadModalShow(!uploadModalShow);
-  const title = `Literature ${currentPage} System`;
+  // const title = `Literature ${currentPage} System`;
+  const title = 'LitVis'
   const switchPage = currentPage === "Analysis" ? "management" : "analysis";
   const switchPageShowText = currentPage === "Analysis" ? "Manage" : "Analyze";
   const SwitchButton = () => (
