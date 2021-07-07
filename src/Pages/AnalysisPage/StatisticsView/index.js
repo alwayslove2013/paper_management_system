@@ -116,6 +116,74 @@ const StatisticsView = observer(() => {
       color: topicColorScale[topic_index],
     };
   });
+  const fakeTopicData_siming = [
+    {
+      label: `topic 1`,
+      allCount: 42,
+      highlightCount: 17,
+      allDis: [0,1,3,0,2,0,0,3,8,2,4,6,4,4,4,1],
+      highLightDis: [0,0,0,0,0,0,0,0,4,1,2,5,2,1,1,1],
+      color: topicColorScale[0]
+    },
+    {
+      label: `topic 2`,
+      allCount: 39,
+      highlightCount: 3,
+      allDis: [0,1,3,3,2,1,2,3,6,5,4,1,0,2,5,1],
+      highLightDis: [0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0],
+      color: topicColorScale[1]
+    },
+    {
+      label: `topic 3`,
+      allCount: 31,
+      highlightCount: 1,
+      allDis: [1,1,1,0,0,2,3,3,7,2,2,2,5,0,1,1],
+      highLightDis: [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+      color: topicColorScale[2]
+    },
+    {
+      label: `topic 4`,
+      allCount: 12,
+      highlightCount: 3,
+      allDis: [0,0,0,1,1,1,0,0,5,0,0,1,0,2,0,1],
+      highLightDis: [0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1],
+      color: topicColorScale[3]
+    },
+  ]
+  const fakeTopicData_hanqi = [
+    {
+      label: `topic 1`,
+      allCount: 42,
+      highlightCount: 4,
+      allDis: [0,1,3,0,2,0,0,3,8,2,4,6,4,4,4,1],
+      highLightDis: [0,0,0,0,1,0,0,1,1,0,0,1,0,0,0,0],
+      color: topicColorScale[0]
+    },
+    {
+      label: `topic 2`,
+      allCount: 39,
+      highlightCount: 5,
+      allDis: [0,1,3,3,2,1,2,3,6,5,4,1,0,2,5,1],
+      highLightDis: [0,0,0,0,0,1,0,0,1,1,2,0,0,0,0,0],
+      color: topicColorScale[1]
+    },
+    {
+      label: `topic 3`,
+      allCount: 31,
+      highlightCount: 19,
+      allDis: [1,1,1,0,0,2,3,3,7,2,2,2,5,0,1,1],
+      highLightDis: [0,0,0,0,0,2,2,2,5,2,2,2,2,0,0,0],
+      color: topicColorScale[2]
+    },
+    {
+      label: `topic 4`,
+      allCount: 12,
+      highlightCount: 5,
+      allDis: [0,0,0,1,1,1,0,0,5,0,0,1,0,2,0,1],
+      highLightDis: [0,0,0,0,1,1,0,0,3,0,0,0,0,0,0,0],
+      color: topicColorScale[3]
+    },
+  ]
   // console.log("topicData", topicData);
   const allDisData = anaYearRange.map((year) => ({
     year,

@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import "./index.scss";
 import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
 import { useClientRect } from "Hooks";
 import * as d3 from "d3";
+import { Select } from "antd";
+
+const { Option } = Select;
 
 const NetworkView = observer(() => {
   const svgId = "ana-network-svg";
@@ -292,6 +295,11 @@ const NetworkView = observer(() => {
     setAnaHoverPaperDoi(clientX, clientY, doi);
   };
 
+  const [uniform, setUniform] = useState("on");
+  const handleChange = (value) => {
+    setUniform(value);
+  };
+
   return (
     <div className="ana-network-view" style={{ pointerEvents: "none" }}>
       <svg id={svgId} width="100%" height="100%">
@@ -376,10 +384,16 @@ const NetworkView = observer(() => {
                       key={topic[0]}
                       fill={topicColorScale[topic[0]]}
                       // x={-rectWidth / 2 + (rectWidth / s.length) * i}
-                      x={-rectWidth / 2 + topicX[i]}
+                      x={
+                        uniform === "on"
+                          ? -rectWidth / 2 + (rectWidth / s.length) * i
+                          : -rectWidth / 2 + topicX[i]
+                      }
                       y={-rectHeight / 2}
                       // width={rectWidth / s.length}
-                      width={topicsWidth[i]}
+                      width={
+                        uniform === "on" ? rectWidth / s.length : topicsWidth[i]
+                      }
                       height={rectHeight}
                       stroke="#fff"
                       strokeWidth="1"
@@ -402,6 +416,18 @@ const NetworkView = observer(() => {
           })}
         </g>
       </svg>
+      <div className="topics-uniform-select" style={{ pointerEvents: "auto" }}>
+        <div className="select-label">uniform</div>
+        <Select
+          defaultValue="on"
+          style={{ width: 60 }}
+          onChange={handleChange}
+          size="small"
+        >
+          <Option value="on">on</Option>
+          <Option value="off">off</Option>
+        </Select>
+      </div>
     </div>
   );
 });
