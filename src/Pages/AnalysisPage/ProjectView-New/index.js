@@ -394,14 +394,14 @@ const ProjectionView = observer(() => {
                 }
                 strokeDasharray={topicIndex === anaHighTopic ? 5 : "none"}
               />
-              <path
+              {/* <path
                 key={`${topicIndex}-border`}
                 d={d3.geoPath()(contour)}
                 fill={"none"}
                 opacity={1}
                 stroke={topicColorScale[topicIndex]}
                 strokeDasharray={5}
-              />
+              /> */}
             </>
           ))}
         </g>

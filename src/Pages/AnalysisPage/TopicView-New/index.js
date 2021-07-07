@@ -35,9 +35,135 @@ const TopicView = observer(() => {
     .domain([
       d3.min(topics_word_dis.map((topics) => d3.min(topics, (d) => d[1]))),
       d3.max(topics_word_dis.map((topics) => d3.max(topics, (d) => d[1]))),
+      // 10, 20,
     ])
     .range([wordHeight * 0.45 * height, wordHeight * 1.1 * height])
     .clamp(true);
+
+  // const min_topics = [
+  //   [
+  //     "visual",
+  //     "data",
+  //     "analysi",
+  //     "user",
+  //     "interact",
+  //     "explor",
+  //     "media",
+  //     "analyt",
+  //     "pattern",
+  //     "social",
+  //   ],
+  //   [
+  //     "visual",
+  //     "data",
+  //     "graph",
+  //     "interact",
+  //     "user",
+  //     "system",
+  //     "pattern",
+  //     "traffic",
+  //     "analysi",
+  //     "propos",
+  //   ],
+  //   [
+  //     "data",
+  //     "visual",
+  //     "flow",
+  //     "parallel",
+  //     "feature",
+  //     "particl",
+  //     "volum",
+  //     "method",
+  //     "propos",
+  //     "trace",
+  //   ],
+  //   [
+  //     "pm2",
+  //     "stream",
+  //     "5",
+  //     "visual",
+  //     "volume",
+  //     "transfer",
+  //     "model",
+  //     "function",
+  //     "event",
+  //     "seismic",
+  //   ],
+  // ];
+
+  // const min_topics_2 = [
+  //   [
+  //     "visual",
+  //     "topic",
+  //     "paper",
+  //     "citat",
+  //     "user",
+  //     "data",
+  //     "analysi",
+  //     "literatur",
+  //     "collect",
+  //     "use",
+  //   ],
+  //   [
+  //     "visual",
+  //     "document",
+  //     "topic",
+  //     "inform",
+  //     "collect",
+  //     "paper",
+  //     "use",
+  //     "set",
+  //     "analysi",
+  //     "text",
+  //   ],
+  //   [
+  //     "visual",
+  //     "influenc",
+  //     "graph",
+  //     "cluster",
+  //     "map",
+  //     "citat",
+  //     "use",
+  //     "can",
+  //     "network",
+  //     "summar",
+  //   ],
+  //   [
+  //     "visual",
+  //     "network",
+  //     "data",
+  //     "interact",
+  //     "research",
+  //     "inform",
+  //     "explor",
+  //     "dynam",
+  //     "analysi",
+  //     "citat",
+  //   ],
+  // ];
+
+  // const topicDis_map = {
+  //   social: 9,
+  //   media: 8,
+  //   user: 5,
+  //   graph: 5,
+  //   traffic: 9,
+  //   interact: 6,
+  //   parallel: 6,
+  //   volum: 7,
+  //   trace: 5,
+  //   flow: 4,
+  //   transfer: 4,
+  //   model: 3,
+  //   function: 4,
+  //   event: 5,
+  // };
+
+  // const fakeSize = (word) => {
+  //   if (word in topicDis_map)
+  //     return 10 + topicDis_map[word] + Math.random() * 5;
+  //   else return 10 + Math.random() * 5;
+  // };
 
   return (
     <div className="topic-list-view">
@@ -54,7 +180,9 @@ const TopicView = observer(() => {
                 className="topic-list-words-column"
                 key={i}
                 transform={`translate(${columnWidth * (i + 0.5)}, 0)`}
-                opacity={anaFilterType === 'topic' && anaHighTopic !== i ? 0.2 : 1}
+                opacity={
+                  anaFilterType === "topic" && anaHighTopic !== i ? 0.2 : 1
+                }
               >
                 {topic_dis.map((topic, j) => (
                   <g
@@ -63,6 +191,8 @@ const TopicView = observer(() => {
                     transform={`translate(0, ${wordHeight * height * (j + 1)})`}
                   >
                     <text fontSize={fontSize(topic[1])} fill="#333">
+                      {/* <text fontSize={fakeSize(min_topics[i][j])} fill="#333">
+                      {min_topics_2[i][j]} */}
                       {topic[0]}
                     </text>
                   </g>
@@ -81,21 +211,23 @@ const TopicView = observer(() => {
                 className="topic-list-topic-label"
                 transform={`translate(${columnWidth * (i + 0.5)}, 0)`}
                 onClick={() => setAnaHighPapersByTopic(i)}
-                opacity={anaFilterType === 'topic' && anaHighTopic !== i ? 0.2 : 1}
+                opacity={
+                  anaFilterType === "topic" && anaHighTopic !== i ? 0.2 : 1
+                }
               >
                 <rect
                   x={-columnWidth * 0.25}
-                  y={fontSize(1) * 0.1}
+                  y={fontSize(30) * 0.1}
                   width={columnWidth * 0.5}
-                  height={fontSize(1) * 0.95}
+                  height={fontSize(30) * 0.95}
                   fill={topicColorScale[i]}
                 />
                 <text
-                  fontSize={fontSize(1) * 0.5}
+                  fontSize={fontSize(30) * 0.5}
                   fill="#fff"
                   textAnchor="middle"
                   x="0"
-                  y={fontSize(1) * 0.77}
+                  y={fontSize(30) * 0.77}
                 >
                   Topic {i + 1}
                 </text>
