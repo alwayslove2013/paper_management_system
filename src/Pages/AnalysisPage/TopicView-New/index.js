@@ -33,9 +33,9 @@ const TopicView = observer(() => {
   const fontSize = d3
     .scaleLinear()
     .domain([
-      d3.min(topics_word_dis.map((topics) => d3.min(topics, (d) => d[1]))),
-      d3.max(topics_word_dis.map((topics) => d3.max(topics, (d) => d[1]))),
-      // 10, 20,
+      // d3.min(topics_word_dis.map((topics) => d3.min(topics, (d) => d[1]))),
+      // d3.max(topics_word_dis.map((topics) => d3.max(topics, (d) => d[1]))),
+      10, 20,
     ])
     .range([wordHeight * 0.45 * height, wordHeight * 1.1 * height])
     .clamp(true);
@@ -157,6 +157,16 @@ const TopicView = observer(() => {
   //   model: 3,
   //   function: 4,
   //   event: 5,
+  //   topic: 9,
+  //   literatur: 8,
+  //   analysi: 6,
+  //   citat: 5,
+  //   text: 7,
+  //   document: 4,
+  //   influenc: 8,
+  //   network: 8,
+  //   dynam: 8,
+  //   interact: 5
   // };
 
   // const fakeSize = (word) => {
@@ -191,9 +201,10 @@ const TopicView = observer(() => {
                     transform={`translate(0, ${wordHeight * height * (j + 1)})`}
                   >
                     <text fontSize={fontSize(topic[1])} fill="#333">
-                      {/* <text fontSize={fakeSize(min_topics[i][j])} fill="#333">
+                      {/* <text fontSize={fakeSize(min_topics_2[i][j])} fill="#333">
                       {min_topics_2[i][j]} */}
                       {topic[0]}
+                      {/* {min_topics_2[i][j]} */}
                     </text>
                   </g>
                 ))}
