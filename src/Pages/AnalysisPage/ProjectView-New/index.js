@@ -526,7 +526,7 @@ const ProjectionView = observer(() => {
           value={num_topics_ing}
         />
       </div>
-      <div className="lda-state-input">
+      {/* <div className="lda-state-input">
         <div className="lda-state-input-text">
           LDA State:
         </div>
@@ -551,7 +551,7 @@ const ProjectionView = observer(() => {
           onChange={setTsneState}
           size="small"
         />
-      </div>
+      </div> */}
     </div>
   );
 });

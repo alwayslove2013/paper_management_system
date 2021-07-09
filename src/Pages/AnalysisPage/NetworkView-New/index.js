@@ -11,10 +11,10 @@ const { Option } = Select;
 const NetworkView = observer(() => {
   const svgId = "ana-network-svg";
   const padding = {
-    left: 50,
-    right: 50,
+    left: 60,
+    right: 60,
     top: 50,
-    bottom: 40,
+    bottom: 45,
   };
   const clientRect = useClientRect({
     svgId,

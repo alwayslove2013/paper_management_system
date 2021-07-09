@@ -705,12 +705,12 @@ const createStore = () => {
       this.num_topics = num;
       this.tryLda();
     },
-    ldaState: 12357,
+    ldaState: 82970,
     setLdaState(num) {
       this.ldaState = num;
       this.tryLda();
     },
-    tsneState: 45269,
+    tsneState: 12711,
     setTsneState(num) {
       this.tsneState = num;
       this.tryLda();
