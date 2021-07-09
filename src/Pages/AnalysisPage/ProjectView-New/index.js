@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useGlobalStore } from "Store";
 import { useClientRect } from "Hooks";
 import * as d3 from "d3";
-import { Slider } from "antd";
+import { Slider, InputNumber } from "antd";
 import { find_d } from "Common";
 import { get } from "lodash";
 
@@ -30,6 +30,10 @@ const ProjectionView = observer(() => {
     setAnaHoverPaperDoi,
     removeHoverPaperDoi,
     anaHoverPaperDoi,
+    ldaState,
+    setLdaState,
+    tsneState,
+    setTsneState,
   } = store;
   const [num_topics_ing, set_num_topics_ing] = useState(num_topics);
 
@@ -376,6 +380,8 @@ const ProjectionView = observer(() => {
     setAnaHoverPaperDoi(clientX, clientY, doi);
   };
 
+  const handleChangeLdaState = (value) => {}
+
   return (
     <div className="projection-view">
       <svg id={svgId} width="100%" height="100%">
@@ -518,6 +524,32 @@ const ProjectionView = observer(() => {
           onAfterChange={setNumTopics}
           onChange={set_num_topics_ing}
           value={num_topics_ing}
+        />
+      </div>
+      <div className="lda-state-input">
+        <div className="lda-state-input-text">
+          LDA State:
+        </div>
+        <InputNumber
+          style={{width: 100}}
+          min={1}
+          max={999999}
+          defaultValue={12357}
+          onChange={setLdaState}
+          size="small"
+        />
+      </div>
+      <div className="tsne-state-input">
+        <div className="tsne-state-input-text">
+          T-SNE State:
+        </div>
+        <InputNumber
+          style={{width: 100}}
+          min={1}
+          max={999999}
+          defaultValue={45629}
+          onChange={setTsneState}
+          size="small"
         />
       </div>
     </div>

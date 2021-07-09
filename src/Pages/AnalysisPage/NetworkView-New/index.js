@@ -48,11 +48,11 @@ const NetworkView = observer(() => {
       (year) => analysisPapers.filter((paper) => +paper.year === +year).length
     );
 
-  const rectWidth = d3.max([
+  const rectWidth = d3.min([
     ((width - padding.left - padding.right) /
       (yearRange[1] - yearRange[0] + 1)) *
       0.68,
-    0,
+    36,
   ]);
   const rectHeight = d3.max([
     d3.min([

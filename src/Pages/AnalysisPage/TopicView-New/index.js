@@ -33,9 +33,9 @@ const TopicView = observer(() => {
   const fontSize = d3
     .scaleLinear()
     .domain([
-      // d3.min(topics_word_dis.map((topics) => d3.min(topics, (d) => d[1]))),
-      // d3.max(topics_word_dis.map((topics) => d3.max(topics, (d) => d[1]))),
-      10, 20,
+      d3.min(topics_word_dis.map((topics) => d3.min(topics, (d) => d[1]))),
+      d3.max(topics_word_dis.map((topics) => d3.max(topics, (d) => d[1]))),
+      // 10, 20,
     ])
     .range([wordHeight * 0.45 * height, wordHeight * 1.1 * height])
     .clamp(true);

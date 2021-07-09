@@ -22,4 +22,33 @@
       margin-right: 10px;
     }
   }
+  .lda-state-input {
+    position: absolute;
+    right: 20px;
+    top: 33px;
+    // width: 200px;
+    display: flex;
+    align-items: center;
+    .lda-state-input-text {
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+      margin-right: 35px;
+    }
+  }
+  
+  .tsne-state-input {
+    position: absolute;
+    right: 20px;
+    top: 58px;
+    // width: 200px;
+    display: flex;
+    align-items: center;
+    .tsne-state-input-text {
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+      margin-right: 23px;
+    }
+  }
 }

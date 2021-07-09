@@ -1,7 +1,7 @@
 import qs from "qs";
 
-// const baseUrl = "http://vis.pku.edu.cn/vis4vis/";
-const baseUrl = "http://127.0.0.1:12357/";
+const baseUrl = "http://vis.pku.edu.cn/vis4vis/";
+// const baseUrl = "http://127.0.0.1:12357/";
 
 const fetchData = (url, params = "") => {
   const getUrl =
@@ -59,8 +59,8 @@ function postData(url, data) {
   }).then((response) => response.json()); // parses response to JSON
 }
 
-export const getLdaRes = ({ dois, uid, num_topics = 3 }) => {
-  return postData(baseUrl + "get_lda_results", { dois, num_topics, uid });
+export const getLdaRes = ({ dois, uid, num_topics = 3, ldaState, tsneState }) => {
+  return postData(baseUrl + "get_lda_results", { dois, num_topics, uid, ldaState, tsneState });
 };
 
 export const singleUpdatePaper = (oriDoi, newPaper) => {

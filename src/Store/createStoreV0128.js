@@ -705,14 +705,26 @@ const createStore = () => {
       this.num_topics = num;
       this.tryLda();
     },
+    ldaState: 12357,
+    setLdaState(num) {
+      this.ldaState = num;
+      this.tryLda();
+    },
+    tsneState: 45269,
+    setTsneState(num) {
+      this.tsneState = num;
+      this.tryLda();
+    },
     topics_detail: [],
     topics_word_dis: [],
     tryLda() {
       const dois = this.analysisPapers.map((paper) => paper.doi);
       const uid = this.userId;
       const num_topics = this.num_topics;
-      debug && console.log("try lda Start!", num_topics);
-      getLdaRes({ dois, uid, num_topics }).then((data) => {
+      const ldaState = this.ldaState;
+      const tsneState = this.tsneState;
+      debug && console.log("try lda Start!", num_topics, ldaState, tsneState);
+      getLdaRes({ dois, uid, num_topics, ldaState, tsneState }).then((data) => {
         debug && console.log("try lda OK!", data);
         runInAction(() => {
           // console.log("data", data);
