@@ -338,7 +338,7 @@ const ProjectionView = observer(() => {
   //   mostCitedPapers.map((paper) => paper.doi)
   // );
   const papersSortByCite = d3
-    .sort([...anaHighPapers], (p) => +p.citationCount)
+    .sort([...analysisPapers], (p) => +p.citationCount)
     .reverse();
   const mostCitedPapers = [];
   const countLimit = 16;

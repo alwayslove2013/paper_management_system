@@ -512,7 +512,7 @@ const TopicDistribution = ({
   handleClick = () => {},
   anaHighTag = "",
 }) => {
-  const topicBarChartHeightRatio = data.length > 0 ? 0.21 / data.length : 0.22;
+  const topicBarChartHeightRatio = data.length > 0 ? 0.23 / data.length : 0.22;
   const maxCount = d3.max(data.map((topicData) => d3.max(topicData.allDis)));
   const yearCount = data.length === 0 ? 1 : data[0].allDis.length;
   const x = (i) => ((width * heatmapRowRectsWidthRatio) / yearCount) * i;
